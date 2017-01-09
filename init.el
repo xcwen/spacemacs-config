@@ -31,8 +31,9 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
-     javascript
      php
+     ;;javascript
+     ;;php
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
@@ -40,14 +41,14 @@ values."
      ;; ----------------------------------------------------------------
      helm
      auto-completion
-     ;; better-defaults
+     better-defaults
      emacs-lisp
      ;; git
       markdown
       org
-      (shell :variables
-             shell-default-height 30
-             shell-default-position 'bottom)
+     ;; (shell :variables
+     ;;       shell-default-height 30
+     ;;      shell-default-position 'bottom)
      ;; spell-checking
       syntax-checking
      ;; version-control
@@ -56,7 +57,7 @@ values."
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '( alchemist ac-php js2-mode typescript-mode  )
+   dotspacemacs-additional-packages '( alchemist ac-php js2-mode web-mode typescript-mode  multi-term )
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
@@ -134,7 +135,7 @@ values."
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
    dotspacemacs-default-font '(  "XHei Mono.Ubuntu"  ;;"Source Code Pro"
-                               :size  24 
+                               :size  48 
                                :weight normal 
                                :width normal
                                :height 183 
@@ -295,6 +296,7 @@ before packages are loaded. If you are unsure, you should try in setting them in
   )
 (setq custom-file (expand-file-name "xcwen-misc.el" dotspacemacs-directory))
 (load custom-file )
+(load  (expand-file-name "init-syntax-table.el" dotspacemacs-directory) )
 ;;(require 'xcwenn-misc)
 ;;(defun dotspacemacs/user-config )
 (defun dotspacemacs/user-config ()
@@ -328,6 +330,11 @@ you should place your code here."
   (spacemacs/set-leader-keys-for-major-mode  'php-mode "i" 'ac-php-show-tip)
   (spacemacs/set-leader-keys-for-major-mode  'emacs-lisp-mode "," nil)
 
+  (add-hook 'php-mode-hook '(lambda ( )
+                              (when (s-matches-p "\\.blade\\.php" (buffer-name))
+                                (web-mode )
+                                )
+                              ))
 
   (add-hook 'emacs-lisp-mode-hook '(lambda ()
                                ( my-jump-set-evil-local-map 'find-function )
@@ -348,25 +355,39 @@ you should place your code here."
   (set-evil-normal-state-key "D"  'kill-region-or-whole-line )
 
 
+  (add-hook 'after-save-hook 'ts2js)
+
+  (custom-set-faces
+   '(term-color-blue ((t (:background "blue" :foreground "steel blue"))))
+   '(term-color-green ((t (:background "green3" :foreground "lime green"))))
+   '(term-color-red ((t (:background "red3" :foreground "brown")))))
+
   (global-set-key (kbd "M-w")   'copy-region-or-whole-line)
 ;
   (define-key evil-normal-state-map [escape] '(lambda()
                                                 (interactive )
-                                                (fcitx-inactivate-input-method)
-                                                (evil-force-normal-state)
-                                                ))
-  (define-key evil-motion-state-map [escape] '(lambda()
-                                                (interactive )
-                                                (fcitx-inactivate-input-method)
-                                                (evil-force-normal-state)
+                                                (if (string= major-mode "term-mode" )
+                                                    (let()
+                                                      (term-send-esc )
+                                                      )
+                                                  (fcitx-inactivate-input-method)
+                                                  (evil-force-normal-state)
+                                                  )
+
                                                 ))
 
 
 
   (define-key evil-insert-state-map [escape] '(lambda()
                                                 (interactive )
-                                                (fcitx-inactivate-input-method)
-                                                (evil-normal-state)
+                                                (if (string= major-mode "term-mode" )
+                                                    (let()
+                                                      (term-send-esc )
+                                                      )
+                                                  (fcitx-inactivate-input-method)
+                                                  (evil-normal-state)
+
+                                                  )
                                                 ))
 
   (global-set-key "\M-1" 'delete-other-windows)
@@ -398,14 +419,20 @@ you should place your code here."
 
   (setq yas-snippet-dirs   (list   "~/site-lisp/config/my-yas" )  )
 
-  ;;term 
-  (custom-set-faces
-   '(term-color-blue ((t (:background "blue" :foreground "steel blue"))))
-   '(term-color-green ((t (:background "green3" :foreground "lime green"))))
-   '(term-color-red ((t (:background "red3" :foreground "brown")))))
+(add-hook
+ 'term-mode-hook
+ '(lambda()
+    (message "==========term-mode-hook==============")
+	(yas-minor-mode -1 )
 
+  (define-key evil-insert-state-local-map   (kbd "C-y")  'term-paste )
+  (define-key evil-insert-state-local-map   (kbd "C-v")  'term-paste )
+  (define-key evil-insert-state-local-map   (kbd "C-c")  'copy-region-or-whole-line  )
+
+	(setq term-unbind-key-list  '("C-x"))
 	(setq term-bind-key-alist nil)
 
+	(add-to-list 'term-bind-key-alist '("M-x" . helm-M-x  ))
 	(add-to-list 'term-bind-key-alist '("M-1" .  delete-other-windows ))
 	(add-to-list 'term-bind-key-alist '("C-^" . helm-mini ))
 
@@ -416,14 +443,17 @@ you should place your code here."
 	(add-to-list 'term-bind-key-alist '( "C-S-h". (lambda() (interactive) (multi-term-prev 1 )   ) ))
 	(add-to-list 'term-bind-key-alist '( "C-S-l". (lambda() (interactive) ( multi-term-next 1 )   ) ))
 	(add-to-list 'term-bind-key-alist '( "C-S-w". my-join-line  ))
-	(add-to-list 'term-bind-key-alist '( "C-S-c".   term-interrupt-subjob  ))
 
-	(add-to-list 'term-bind-key-alist '( "C-c".  copy-region-or-whole-line  ))
+	;;(add-to-list 'term-bind-key-alist '( "C-c".  copy-region-or-whole-line  ))
 	(add-to-list 'term-bind-key-alist '( "M-w". copy-region-or-whole-line ))
-	(add-to-list 'term-bind-key-alist '( "C-v". term-paste ))
-	(add-to-list 'term-bind-key-alist '( "C-y". term-paste ))
+	;;(add-to-list 'term-bind-key-alist '( "C-v". term-paste ))
+	;;(add-to-list 'term-bind-key-alist '( "C-y". term-paste ))
+	;;(add-to-list 'term-bind-key-alist '( "<up>". term-send-raw ))
+	))
+
 
   )
+
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
