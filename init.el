@@ -318,6 +318,7 @@ you should place your code here."
                  'js2-mode
                  'typescript-mode
                  'web-mode
+                 'org-mode
                  ))
     (spacemacs/set-leader-keys-for-major-mode  mode "w" 'save-buffer)
     (spacemacs/set-leader-keys-for-major-mode  mode "u" 'upper-or-lower-whole-word)
@@ -428,6 +429,7 @@ you should place your code here."
   (define-key evil-insert-state-local-map   (kbd "C-y")  'term-paste )
   (define-key evil-insert-state-local-map   (kbd "C-v")  'term-paste )
   (define-key evil-insert-state-local-map   (kbd "C-c")  'copy-region-or-whole-line  )
+  (define-key evil-insert-state-local-map   (kbd "C-S-c")  'term-interrupt-subjob   )
 
 	(setq term-unbind-key-list  '("C-x"))
 	(setq term-bind-key-alist nil)

@@ -1133,15 +1133,9 @@ object satisfying `yas--field-p' to restrict the expansion to."
 			( company-complete ))
 		   ((and (string= major-mode "term-mode")  )
         (  term-send-raw-string "\t" ))
-
-
-
-
-
-
-
+		   ((and (string= major-mode "org-mode")  )
+        ( org-cycle ))
 		   ( t (indent-for-tab-command ))))
-		
 		)
 	  )))
 
