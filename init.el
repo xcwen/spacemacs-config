@@ -56,7 +56,7 @@ values."
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '(php-mode ac-php js2-mode typescript-mode  )
+   dotspacemacs-additional-packages '( alchemist ac-php js2-mode typescript-mode  )
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
@@ -69,7 +69,6 @@ values."
    ;; them if they become unused. `all' installs *all* packages supported by
    ;; Spacemacs and never uninstall them. (default is `used-only')
    dotspacemacs-install-packages 'used-only))
-
 (defun dotspacemacs/init ()
   "Initialization function.
 This function is called at the very startup of Spacemacs initialization
@@ -128,16 +127,17 @@ values."
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(spacemacs-dark
+   dotspacemacs-themes '( tsdh-dark  spacemacs-dark
                          spacemacs-light)
    ;; If non nil the cursor color matches the state color in GUI Emacs.
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
-   dotspacemacs-default-font '("Source Code Pro"
-                               :size 20 
-                               :weight normal
+   dotspacemacs-default-font '(  "XHei Mono.Ubuntu"  ;;"Source Code Pro"
+                               :size  24 
+                               :weight normal 
                                :width normal
+                               :height 183 
                                :powerline-scale 1.1)
    ;; The leader key
    dotspacemacs-leader-key "SPC"
@@ -293,7 +293,6 @@ executes.
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
   )
-(global-set-key (kbd "<f8>")    'switch-file-term)   
 (setq custom-file (expand-file-name "xcwen-misc.el" dotspacemacs-directory))
 (load custom-file )
 ;;(require 'xcwenn-misc)
@@ -319,27 +318,31 @@ you should place your code here."
                  'web-mode
                  ))
     (spacemacs/set-leader-keys-for-major-mode  mode "w" 'save-buffer)
+    (spacemacs/set-leader-keys-for-major-mode  mode "u" 'upper-or-lower-whole-word)
+    (spacemacs/set-leader-keys-for-major-mode  mode "l" 'revert-buffer )
+    (spacemacs/set-leader-keys-for-major-mode  mode "a" 'switch-file-opt )
+
     )
 
   (spacemacs/set-leader-keys-for-major-mode  'php-mode "r" 'ac-php-remake-tags )
   (spacemacs/set-leader-keys-for-major-mode  'php-mode "i" 'ac-php-show-tip)
+  (spacemacs/set-leader-keys-for-major-mode  'emacs-lisp-mode "," nil)
+
+
+  (add-hook 'emacs-lisp-mode-hook '(lambda ()
+                               ( my-jump-set-evil-local-map 'find-function )
+                                ))
+
   (add-hook 'php-mode-hook '(lambda ()
                              (auto-complete-mode t)
                              (require 'ac-php)
                              (setq ac-sources  '(ac-source-php ) )
                              (yas-global-mode 1)
-                             (company-mode 0 )
-                             ;;(make-local-variable 'evil-normal-state-map )
-                             ;;(make-local-variable 'evil-insert-state-map )
-
-                             ;;(spacemacs/set-leader-keys-for-major-mode 'php-mode "C-]" 'ac-php-find-symbol-at-point  )
-                             (define-key evil-normal-state-map (kbd "C-]") 'my-jump-function )
-                             (define-key evil-insert-state-map (kbd "C-]") 'my-jump-function )
-
-                             (define-key evil-normal-state-map (kbd "C-t") 'my-jump-back-function )
-                             (define-key evil-insert-state-map (kbd "C-t") 'my-jump-back-function )
-
+                             (company-mode -1 )
+                             ( my-jump-set-evil-local-map 'ac-php-find-symbol-at-point 'ac-php-location-stack-back )
                              ))
+
+  (global-set-key (kbd "<f8>")    'switch-file-term)
   (set-evil-all-state-key "\C-^"  'helm-mini )
   (set-evil-normal-state-key "Y"  'copy-region-or-whole-line )
   (set-evil-normal-state-key "D"  'kill-region-or-whole-line )
@@ -366,24 +369,17 @@ you should place your code here."
                                                 (evil-normal-state)
                                                 ))
 
-
-  (set-evil-all-state-key "\M-h"  'backward-kill-word-without-_)
-
-
   (global-set-key "\M-1" 'delete-other-windows)
   (set-evil-all-state-key  (kbd "<tab>")  'yas-expand-for-vim )
-  (set-evil-all-state-key  (kbd "C-<tab>")  'auto-complete)
+  (set-evil-all-state-key  (kbd "C-<tab>")  '(lambda () (interactive)
+                                               (if  (string= major-mode "php-mode")
+                                                   (auto-complete)
+                                                 (company-complete))
+                                               ))
   (set-evil-all-state-key  (kbd "M-1")  'delete-other-windows)
-  (define-key evil-normal-state-map (kbd "M-1") 'delete-other-windows )
-  (define-key evil-insert-state-map (kbd "M-1") 'delete-other-windows )
+  (set-evil-all-state-key  (kbd "M-h") 'backward-kill-word-without-_)
 
 
-  (define-key evil-normal-state-map (kbd "M-h") 'backward-kill-word-without-_)
-  (define-key evil-insert-state-map (kbd "M-h") 'backward-kill-word-without-_)
-
-
-
-  
   ;;ex 命令行调整
   (evil-ex-define-cmd  "wq"  '(lambda ()
                                 (interactive )
@@ -400,53 +396,33 @@ you should place your code here."
 
   (message "do user-config" )
 
-  (evil-leader/set-key
-    "mu" 'upper-or-lower-whole-word
-    "mw" 'save-buffer
-    "mo" 'other-window
-    "mp" 'ac-php-reformat
-    "md" 'show-dict
-    "my" '(lambda ()
-           (interactive )
-           (let ( line-msg  txt file-name other-file-name )
-             (setq line-msg (buffer-substring-no-properties
-                             (line-beginning-position)
-                             (line-end-position )))
-             (setq file-name (buffer-file-name) )
+  (setq yas-snippet-dirs   (list   "~/site-lisp/config/my-yas" )  )
 
-             ;; /home/jim/telepresence-read-only/doubango-read-only/tinySIP/src/tsip_message.c:243
-             ;; /home/jim/doubango-read-only/tinySIP/src/tsip_message.c:243
-             ;; 	tsk_size_t index = 0;
-             (cond
-              ((s-match  "telepresence-read-only"    file-name   )
-               (progn
-                 (setq other-file-name (s-replace "telepresence-read-only/" "" file-name ))
-                 (setq txt (format "%s:%d\n%s:%d\n%s\n"
-                                   file-name  (line-number-at-pos )
-                                   other-file-name  (line-number-at-pos )
-                                   line-msg  ) )))
-              ((s-match  "jim/doubango-read-only"   file-name   )
-               (progn
-                 (setq other-file-name (s-replace "/jim/" "/jim/telepresence-read-only/"  file-name ))
-                 (setq txt (format "%s:%d\n%s:%d\n%s\n"
-                                   file-name  (line-number-at-pos )
-                                   other-file-name  (line-number-at-pos )
-                                   line-msg  ) )))
+  ;;term 
+  (custom-set-faces
+   '(term-color-blue ((t (:background "blue" :foreground "steel blue"))))
+   '(term-color-green ((t (:background "green3" :foreground "lime green"))))
+   '(term-color-red ((t (:background "red3" :foreground "brown")))))
 
-              (t
-               (setq txt (format "%s:%d\n%s\n" file-name  (line-number-at-pos ) line-msg  ) )))
-             (message "%s" txt)
-             (kill-new txt  )
-             ))
+	(setq term-bind-key-alist nil)
 
-    "mq" '(lambda ()
-           (interactive )
-           (multi-term-prev 0 )
-           ;;(evil-check-close-local-mode )
-           )
+	(add-to-list 'term-bind-key-alist '("M-1" .  delete-other-windows ))
+	(add-to-list 'term-bind-key-alist '("C-^" . helm-mini ))
 
-    "ma" 'switch-file-opt
-    )
+    ;; C-6 -> C-^ 
+	(add-to-list 'term-bind-key-alist '( "C-6". (lambda() (interactive)  (term-send-raw-string "\C-^" ) ) ))
+
+	(add-to-list 'term-bind-key-alist '( "C-S-t". (lambda() (interactive) (multi-term)  ) ))
+	(add-to-list 'term-bind-key-alist '( "C-S-h". (lambda() (interactive) (multi-term-prev 1 )   ) ))
+	(add-to-list 'term-bind-key-alist '( "C-S-l". (lambda() (interactive) ( multi-term-next 1 )   ) ))
+	(add-to-list 'term-bind-key-alist '( "C-S-w". my-join-line  ))
+	(add-to-list 'term-bind-key-alist '( "C-S-c".   term-interrupt-subjob  ))
+
+	(add-to-list 'term-bind-key-alist '( "C-c".  copy-region-or-whole-line  ))
+	(add-to-list 'term-bind-key-alist '( "M-w". copy-region-or-whole-line ))
+	(add-to-list 'term-bind-key-alist '( "C-v". term-paste ))
+	(add-to-list 'term-bind-key-alist '( "C-y". term-paste ))
+
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
