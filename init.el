@@ -139,8 +139,8 @@ values."
    ;; quickly tweak the mode-line size to make separators look not too crappy.
    ;;(if (string= (system-name) "jim-MacBookPro") 48 24  )
    dotspacemacs-default-font '(  "XHei Mono.Ubuntu"  ;;"Source Code Pro"
-                                 :size  48 
-                               :weight normal 
+                                 :size  24 
+                               :weight normal
                                :width normal
                                :powerline-scale 1.1)
    ;; The leader key
@@ -289,6 +289,14 @@ values."
    dotspacemacs-whitespace-cleanup nil
    ))
 
+
+(if (string= (system-name) "jim-MacBookPro")
+    (setq dotspacemacs-default-font '(  "XHei Mono.Ubuntu"  ;;"Source Code Pro"
+                                   :size  48
+                                   :weight normal
+                                   :width normal
+                                   :powerline-scale 1.1)
+                                               ))
 (defun dotspacemacs/user-init ()
   "Initialization function for user code.
 It is called immediately after `dotspacemacs/init', before layer configuration
@@ -338,7 +346,6 @@ you should place your code here."
                               ))
 
 
-
   (global-set-key (kbd "<f8>")    'switch-file-term)
   (set-evil-all-state-key (kbd "C-x C-k")    'ido-kill-buffer )
   (set-evil-all-state-key "\C-^"  'helm-mini )
@@ -346,8 +353,15 @@ you should place your code here."
   (set-evil-normal-state-key "Y"  'copy-region-or-whole-line )
   (set-evil-normal-state-key "D"  'kill-region-or-whole-line )
 
+  (define-key ac-completing-map  (kbd  "C-p")   'ac-previous)
+  (define-key ac-completing-map  (kbd  "C-n")   'ac-next)
+  (define-key ac-completing-map "\C-s" 'ac-isearch)
+  (define-key ac-completing-map [f1] nil)
+  (define-key ac-mode-map  [(control tab )] 'auto-complete)
+
 
   (add-hook 'after-save-hook 'ts2js)
+
 
   (custom-set-faces
    '(term-color-blue ((t (:background "blue" :foreground "steel blue"))))

@@ -34,10 +34,6 @@
     :mode ("\\.php\\'" . php-mode)))
 
 
-(defun ac-php/init-ac-php ()
-  (use-package ac-php 
-    :defer t
-    ))
 
 (defun ac-php/init-ac-php ()
   (use-package ac-php 
