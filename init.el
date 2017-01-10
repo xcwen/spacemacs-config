@@ -31,7 +31,7 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
-     php
+     ac-php
      typescript
      elixir
      javascript
@@ -43,6 +43,7 @@ values."
      ;; ----------------------------------------------------------------
      helm
      auto-completion
+
      better-defaults
      emacs-lisp
      ;; git
@@ -322,6 +323,7 @@ you should place your code here."
     (spacemacs/set-leader-keys-for-major-mode  mode "u" 'upper-or-lower-whole-word)
     (spacemacs/set-leader-keys-for-major-mode  mode "l" 'revert-buffer )
     (spacemacs/set-leader-keys-for-major-mode  mode "a" 'switch-file-opt )
+    (spacemacs/set-leader-keys-for-major-mode  mode "o" 'other-window )
 
     )
 
@@ -336,20 +338,30 @@ you should place your code here."
                               ))
 
   (add-hook 'emacs-lisp-mode-hook '(lambda ()
-                               ( my-jump-set-evil-local-map 'find-function )
+                               ;;( my-jump-set-evil-local-map 'find-function-at-point )
+                               ;;( my-jump-set-evil-local-map 'find-function )
                                 ))
 
-  (add-hook 'php-mode-hook '(lambda ()
-                             (auto-complete-mode t)
-                             (require 'ac-php)
-                             (setq ac-sources  '(ac-source-php ) )
-                             (yas-global-mode 1)
-                             (company-mode -1 )
-                             ( my-jump-set-evil-local-map 'ac-php-find-symbol-at-point 'ac-php-location-stack-back )
-                             ))
+  (add-hook
+   'elixir-mode-hook
+   '(lambda()
+      (interactive)
+      ;;(my-jump-set-evil-local-map 'alchemist-goto-definition-at-point )
+      ))
 
-  (global-set-key (kbd "<f8>")    'switch-file-term)
+
+  ;; (add-hook 'php-mode-hook '(lambda ()
+  ;;                            (auto-complete-mode t)
+  ;;                            (require 'ac-php)
+  ;;                            (setq ac-sources  '(ac-source-php ) )
+  ;;                            (yas-global-mode 1)
+  ;;                            ( my-jump-set-evil-local-map 'ac-php-find-symbol-at-point 'ac-php-location-stack-back )
+  ;;                            ))
+
+   (global-set-key (kbd "<f8>")    'switch-file-term)
+  (set-evil-all-state-key (kbd "C-x C-k")    'ido-kill-buffer )
   (set-evil-all-state-key "\C-^"  'helm-mini )
+  (set-evil-all-state-key "\C-]"  'spacemacs/jump-to-definition )
   (set-evil-normal-state-key "Y"  'copy-region-or-whole-line )
   (set-evil-normal-state-key "D"  'kill-region-or-whole-line )
 
@@ -457,20 +469,3 @@ you should place your code here."
 
   )
 
-
-;; Do not write anything past this comment. This is where Emacs will
-;; auto-generate custom variable definitions.
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   (quote
-    (phpunit phpcbf php-extras php-auto-yasnippets drupal-mode php-mode org-projectile org-present org alert log4e gntp org-download markdown-mode htmlize helm-company helm-c-yasnippet gh-md pos-tip flycheck company yasnippet ac-ispell auto-complete volatile-highlights vi-tilde-fringe spaceline powerline rainbow-delimiters org-bullets lorem-ipsum ido-vertical-mode highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds google-translate flx-ido fancy-battery eyebrowse evil-mc evil-lisp-state smartparens evil-indent-plus evil-exchange evil-escape evil-ediff evil-args define-word clean-aindent-mode ace-jump-helm-line evil-unimpaired spacemacs-theme youdao-dictionary yapfify yaml-mode xterm-color ws-butler wrap-region window-numbering which-key wgrep web-mode web-beautify visual-regexp-steroids uuidgen use-package toc-org tiny tide tagedit solarized-theme smex slim-mode sicp shell-pop scss-mode sass-mode rvm ruby-tools ruby-test-mode rubocop rspec-mode robe reveal-in-osx-finder restclient restart-emacs rbenv ranger rainbow-mode rainbow-identifiers racket-mode quelpa pyvenv pytest pyenv-mode py-isort pug-mode projectile-rails prodigy popwin pip-requirements persp-mode peep-dired pbcopy paradox osx-trash osx-dictionary origami org-pomodoro org-plus-contrib org-octopress open-junk-file ob-http nodejs-repl neotree mwim multi-term move-text mmm-mode minitest markdown-toc macrostep lua-mode live-py-mode lispy linum-relative link-hint less-css-mode launchctl js2-refactor js-doc ivy-hydra info+ indent-guide impatient-mode ibuffer-projectile hy-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-global hide-comnt help-fns+ helm-github-stars helm-ag graphviz-dot-mode golden-ratio gnuplot glsl-mode gitignore-mode github-search github-clone github-browse-file gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gist ggtags flyspell-correct-ivy flycheck-pos-tip flx find-file-in-project fill-column-indicator feature-mode expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-matchit evil-magit evil-iedit-state evil-anzu etags-select eshell-z eshell-prompt-extras esh-help engine-mode emmet-mode elisp-slime-nav dumb-jump dockerfile-mode docker discover-my-major deft cython-mode counsel company-web company-tern company-statistics company-c-headers company-anaconda column-enforce-mode color-identifiers-mode coffee-mode cmake-font-lock clojure-snippets clj-refactor cider-eval-sexp-fu chruby bundler bind-map auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-link 4clojure))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
