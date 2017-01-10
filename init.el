@@ -32,7 +32,9 @@ values."
    dotspacemacs-configuration-layers
    '(
      php
-     ;;javascript
+     typescript
+     elixir
+     javascript
      ;;php
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
@@ -57,7 +59,7 @@ values."
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '( alchemist ac-php js2-mode web-mode typescript-mode  multi-term )
+   dotspacemacs-additional-packages '( ac-php js2-mode web-mode typescript-mode  multi-term )
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
@@ -134,11 +136,11 @@ values."
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
+   ;;(if (string= (system-name) "jim-MacBookPro") 48 24  )
    dotspacemacs-default-font '(  "XHei Mono.Ubuntu"  ;;"Source Code Pro"
-                               :size  48 
+                                 :size  48 
                                :weight normal 
                                :width normal
-                               :height 183 
                                :powerline-scale 1.1)
    ;; The leader key
    dotspacemacs-leader-key "SPC"
@@ -223,7 +225,7 @@ values."
    dotspacemacs-loading-progress-bar t
    ;; If non nil the frame is fullscreen when Emacs starts up. (default nil)
    ;; (Emacs 24.4+ only)
-   dotspacemacs-fullscreen-at-startup nil  
+   dotspacemacs-fullscreen-at-startup nil
    ;; If non nil `spacemacs/toggle-fullscreen' will not use native fullscreen.
    ;; Use to disable fullscreen animations in OSX. (default nil)
    dotspacemacs-fullscreen-use-non-native nil
@@ -294,9 +296,10 @@ executes.
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
   )
-(setq custom-file (expand-file-name "xcwen-misc.el" dotspacemacs-directory))
+(setq custom-file (expand-file-name "custom.el" dotspacemacs-directory))
 (load custom-file )
 (load  (expand-file-name "init-syntax-table.el" dotspacemacs-directory) )
+(load  (expand-file-name "xcwen-misc.el" dotspacemacs-directory) )
 ;;(require 'xcwenn-misc)
 ;;(defun dotspacemacs/user-config )
 (defun dotspacemacs/user-config ()
@@ -306,12 +309,6 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
-  ;; (let ( mode mode-list ) 
-  ;;   (setq mode-list '( emacs-lisp-mode php-mode js2-mode ))
-  ;;   (dolist (mode mode-list)
-  ;;     (spacemacs/set-leader-keys-for-major-mode  mode "w" 'save-buffer)
-  ;;     )
-  ;;   )
   (dolist (mode (list
                  'emacs-lisp-mode
                  'php-mode
@@ -319,6 +316,7 @@ you should place your code here."
                  'typescript-mode
                  'web-mode
                  'org-mode
+                 'elixir-mode
                  ))
     (spacemacs/set-leader-keys-for-major-mode  mode "w" 'save-buffer)
     (spacemacs/set-leader-keys-for-major-mode  mode "u" 'upper-or-lower-whole-word)
@@ -379,6 +377,7 @@ you should place your code here."
 
 
 
+  (define-key evil-normal-state-map "gf" 'my-goto-file )
   (define-key evil-insert-state-map [escape] '(lambda()
                                                 (interactive )
                                                 (if (string= major-mode "term-mode" )
@@ -418,40 +417,42 @@ you should place your code here."
 
   (message "do user-config" )
 
+  (setq frame-title-format  '("file: %f "  ))
   (setq yas-snippet-dirs   (list   "~/site-lisp/config/my-yas" )  )
 
-(add-hook
- 'term-mode-hook
- '(lambda()
-    (message "==========term-mode-hook==============")
-	(yas-minor-mode -1 )
+  (add-hook
+   'term-mode-hook
+   '(lambda()
+      (message "==========term-mode-hook==============")
+      (yas-minor-mode -1 )
 
-  (define-key evil-insert-state-local-map   (kbd "C-y")  'term-paste )
-  (define-key evil-insert-state-local-map   (kbd "C-v")  'term-paste )
-  (define-key evil-insert-state-local-map   (kbd "C-c")  'copy-region-or-whole-line  )
-  (define-key evil-insert-state-local-map   (kbd "C-S-c")  'term-interrupt-subjob   )
+      (define-key evil-insert-state-local-map   (kbd "C-y")  'term-paste )
+      (define-key evil-insert-state-local-map   (kbd "C-v")  'term-paste )
+      (define-key evil-insert-state-local-map   (kbd "C-c")  'copy-region-or-whole-line  )
+      (define-key evil-insert-state-local-map   (kbd "C-S-c")  'term-interrupt-subjob   )
 
-	(setq term-unbind-key-list  '("C-x"))
-	(setq term-bind-key-alist nil)
+      (setq term-unbind-key-list  '("C-x"))
+      (setq term-bind-key-alist nil)
 
-	(add-to-list 'term-bind-key-alist '("M-x" . helm-M-x  ))
-	(add-to-list 'term-bind-key-alist '("M-1" .  delete-other-windows ))
-	(add-to-list 'term-bind-key-alist '("C-^" . helm-mini ))
+      (add-to-list 'term-bind-key-alist '("M-x" . helm-M-x  ))
+      (add-to-list 'term-bind-key-alist '("M-1" .  delete-other-windows ))
+      (add-to-list 'term-bind-key-alist '("C-^" . helm-mini ))
 
-    ;; C-6 -> C-^ 
-	(add-to-list 'term-bind-key-alist '( "C-6". (lambda() (interactive)  (term-send-raw-string "\C-^" ) ) ))
+      ;; C-6 -> C-^ 
+      (add-to-list 'term-bind-key-alist '( "C-6". (lambda() (interactive)  (term-send-raw-string "\C-^" ) ) ))
 
-	(add-to-list 'term-bind-key-alist '( "C-S-t". (lambda() (interactive) (multi-term)  ) ))
-	(add-to-list 'term-bind-key-alist '( "C-S-h". (lambda() (interactive) (multi-term-prev 1 )   ) ))
-	(add-to-list 'term-bind-key-alist '( "C-S-l". (lambda() (interactive) ( multi-term-next 1 )   ) ))
-	(add-to-list 'term-bind-key-alist '( "C-S-w". my-join-line  ))
+      (add-to-list 'term-bind-key-alist '( "C-S-t". (lambda() (interactive) (multi-term)  ) ))
+      (add-to-list 'term-bind-key-alist '( "C-S-h". (lambda() (interactive) (multi-term-prev 1 )   ) ))
+      (add-to-list 'term-bind-key-alist '( "C-S-l". (lambda() (interactive) ( multi-term-next 1 )   ) ))
+      (add-to-list 'term-bind-key-alist '( "C-S-w". my-join-line  ))
 
-	;;(add-to-list 'term-bind-key-alist '( "C-c".  copy-region-or-whole-line  ))
-	(add-to-list 'term-bind-key-alist '( "M-w". copy-region-or-whole-line ))
-	;;(add-to-list 'term-bind-key-alist '( "C-v". term-paste ))
-	;;(add-to-list 'term-bind-key-alist '( "C-y". term-paste ))
-	;;(add-to-list 'term-bind-key-alist '( "<up>". term-send-raw ))
-	))
+
+      ;;(add-to-list 'term-bind-key-alist '( "C-c".  copy-region-or-whole-line  ))
+      (add-to-list 'term-bind-key-alist '( "M-w". copy-region-or-whole-line ))
+      ;;(add-to-list 'term-bind-key-alist '( "C-v". term-paste ))
+      ;;(add-to-list 'term-bind-key-alist '( "C-y". term-paste ))
+      ;;(add-to-list 'term-bind-key-alist '( "<up>". term-send-raw ))
+      ))
 
 
   )

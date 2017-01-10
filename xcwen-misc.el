@@ -1080,64 +1080,63 @@ object satisfying `yas--field-p' to restrict the expansion to."
         (yas--expand-or-prompt-for-template (first templates-and-pos)
                                             (second templates-and-pos)
                                             (third templates-and-pos))
-	  (progn
-		(message "do indent-for-tab-command  %s" major-mode )
+      (progn
         (when ( string= major-mode "web-mode")
           (message  "xx:%s"(web-mode-language-at-pos)  )
           )
-		(let ((c (char-before)))
-		  (cond
-		   ((and (or  (string= major-mode "c-mode") (string= major-mode "c++-mode"))
-                (or (eq ?\. c)
-					;; ->
-					(and (eq ?> c)
-						 (eq ?- (char-before (1- (point)))))
-					;; ::
-					(and (eq ?: c)
-						 (eq ?: (char-before (1- (point)))))))
-			(my-ac-mode-complete  ))
+        (let ((c (char-before)))
+          (cond
+           ((and (or  (string= major-mode "c-mode") (string= major-mode "c++-mode"))
+                 (or (eq ?\. c)
+                     ;; ->
+                     (and (eq ?> c)
+                          (eq ?- (char-before (1- (point)))))
+                     ;; ::
+                     (and (eq ?: c)
+                          (eq ?: (char-before (1- (point)))))))
+            (my-ac-mode-complete  ))
 
-		   ((and (or
+           ((and (or
                   (string= major-mode "php-mode")
                   (and (string= major-mode "web-mode")
                        (string=   (web-mode-language-at-pos)  "php"  ))) 
                  (or 
-					;; ->
-					(and (eq ?> c)
-						 (eq ?- (char-before (1- (point)))))
-                    ;;\
-					(eq ?\\ c)
-					;; ::
-					(and (eq ?: c)
-						 (eq ?: (char-before (1- (point)))))))
+                  ;; ->
+                  (and (eq ?> c)
+                       (eq ?- (char-before (1- (point)))))
+                  ;;\
+                  (eq ?\\ c)
+                  ;; ::
+                  (and (eq ?: c)
+                       (eq ?: (char-before (1- (point)))))))
 
             (message "do ac-source-php")
-			(auto-complete '(ac-source-php)  ))
+            (auto-complete '(ac-source-php)  ))
 
 
-		   ((and (string= major-mode "go-mode")  (eq ?\. c))
-			( auto-complete  '(ac-source-go )))
+           ((and (string= major-mode "go-mode")  (eq ?\. c))
+            ( auto-complete  '(ac-source-go )))
 
-		   ((and (string= major-mode "java-mode")  (eq ?\. c))
-			( auto-complete  ))
-		   ((and (string= major-mode "python-mode")  (eq ?\. c))
-			(elpy-company-backend  `interactive ))
-		   ((and (string= major-mode "erlang-mode")  (eq ?\: c))
-			( auto-complete  ))
-		   ((and (string= major-mode "js2-mode")  (eq ?\. c))
-			( auto-complete  ))
-		   ((and (string= major-mode "typescript-mode")  (eq ?\. c))
-			( company-complete ))
+           ((and (string= major-mode "java-mode")  (eq ?\. c))
+            ( auto-complete  ))
+           ((and (string= major-mode "python-mode")  (eq ?\. c))
+            (elpy-company-backend  `interactive ))
+           ((and (string= major-mode "erlang-mode")  (eq ?\: c))
+            ( auto-complete  ))
+           ((and (string= major-mode "js2-mode")  (eq ?\. c))
+            ( auto-complete  ))
+           ((and (string= major-mode "typescript-mode")  (eq ?\. c))
+            ( company-complete ))
 
-		   ((and (string= major-mode "elixir-mode")  (eq ?\. c))
-			( company-complete ))
-		   ((and (string= major-mode "term-mode")  )
-        (  term-send-raw-string "\t" ))
-		   ((and (string= major-mode "org-mode")  )
-        ( org-cycle ))
-		   ( t (indent-for-tab-command ))))
-		)
-	  )))
+           ((and (string= major-mode "elixir-mode")  (eq ?\. c))
+            ( company-complete ))
+           ((and (string= major-mode "term-mode")  )
+            (  term-send-raw-string "\t" ))
+           ((and (string= major-mode "org-mode")  )
+            ( org-cycle ))
+           ( t (indent-for-tab-command ))))
+        )
+      )))
 
 
 
@@ -1243,25 +1242,56 @@ If FORWARD is nil, search backward, otherwise forward."
       ))
   )
 
+(defun my-goto-file ()
+    "DOCSTRING"
+  (interactive)
+  (let (line-txt  line-info filename  line deal-flag file-info)
+    (setq line-txt (buffer-substring-no-properties
+                    (line-beginning-position)
+                    (line-end-position )))
+
+    (setq line-info  (split-string  line-txt ":" ) )
+    (when (=  (length  line-info ) 2)
+      (setq filename  (nth 0 line-info) )
+      (setq line (string-to-number  (nth 1 line-info)) )
+      (when (file-exists-p  filename  )
+        (find-file filename)
+        (goto-char (point-min))
+        (forward-line (1-  line ))
+        (setq deal-flag t )))
+
+     ;;$this->tpl->display('audition.html')
+     (when (string= "php-mode" major-mode)
+       (setq file-info (php-get-html-in-handle) ))
+     (when (string= "js2-mode" major-mode)
+       (setq file-info (js-get-file-at-point) ))
+
+     (when (string= "typescript-mode" major-mode)
+       (setq file-info (js-get-file-at-point) ))
+
+
+
+     (when (string= "web-mode" major-mode)
+       (setq file-info (web-get-file-at-point) ))
+
+    (when  ( and (nth 0 file-info) (file-exists-p  (nth 0 file-info)  ) )
+      (find-file  (nth 0 file-info)  )
+      ;;pos info
+      (let ((pos-info (nth 1 file-info)) )
+        (when pos-info  
+          (when (string=(substring-no-properties pos-info 0 1 )  "/")
+            (goto-char (point-min))
+            (re-search-forward  (substring-no-properties pos-info 1 ) )
+            )
+        ))
+      (setq deal-flag t ))
+
+    (unless deal-flag (find-file-at-point))))
+
+
 
 
 
 (provide 'xcwen-misc)
 
 ;;; xcwen-misc.el ends here
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   (quote
-    (packed phpunit phpcbf php-extras php-auto-yasnippets drupal-mode php-mode org-projectile org-present org alert log4e gntp org-download markdown-mode htmlize helm-company helm-c-yasnippet gh-md pos-tip flycheck company yasnippet ac-ispell auto-complete volatile-highlights vi-tilde-fringe spaceline powerline rainbow-delimiters org-bullets lorem-ipsum ido-vertical-mode highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds google-translate flx-ido fancy-battery eyebrowse evil-mc evil-lisp-state smartparens evil-indent-plus evil-exchange evil-escape evil-ediff evil-args define-word clean-aindent-mode ace-jump-helm-line evil-unimpaired spacemacs-theme youdao-dictionary yapfify yaml-mode xterm-color ws-butler wrap-region window-numbering which-key wgrep web-mode web-beautify visual-regexp-steroids uuidgen use-package toc-org tiny tide tagedit solarized-theme smex slim-mode sicp shell-pop scss-mode sass-mode rvm ruby-tools ruby-test-mode rubocop rspec-mode robe reveal-in-osx-finder restclient restart-emacs rbenv ranger rainbow-mode rainbow-identifiers racket-mode quelpa pyvenv pytest pyenv-mode py-isort pug-mode projectile-rails prodigy popwin pip-requirements persp-mode peep-dired pbcopy paradox osx-trash osx-dictionary origami org-pomodoro org-plus-contrib org-octopress open-junk-file ob-http nodejs-repl neotree mwim multi-term move-text mmm-mode minitest markdown-toc macrostep lua-mode live-py-mode lispy linum-relative link-hint less-css-mode launchctl js2-refactor js-doc ivy-hydra info+ indent-guide impatient-mode ibuffer-projectile hy-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-global hide-comnt help-fns+ helm-github-stars helm-ag graphviz-dot-mode golden-ratio gnuplot glsl-mode gitignore-mode github-search github-clone github-browse-file gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gist ggtags flyspell-correct-ivy flycheck-pos-tip flx find-file-in-project fill-column-indicator feature-mode expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-matchit evil-magit evil-iedit-state evil-anzu etags-select eshell-z eshell-prompt-extras esh-help engine-mode emmet-mode elisp-slime-nav dumb-jump dockerfile-mode docker discover-my-major deft cython-mode counsel company-web company-tern company-statistics company-c-headers company-anaconda column-enforce-mode color-identifiers-mode coffee-mode cmake-font-lock clojure-snippets clj-refactor cider-eval-sexp-fu chruby bundler bind-map auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-link 4clojure))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(term-color-blue ((t (:background "blue" :foreground "steel blue"))))
- '(term-color-green ((t (:background "green3" :foreground "lime green"))))
- '(term-color-red ((t (:background "red3" :foreground "brown")))))
