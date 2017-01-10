@@ -73,6 +73,8 @@ values."
    ;; them if they become unused. `all' installs *all* packages supported by
    ;; Spacemacs and never uninstall them. (default is `used-only')
    dotspacemacs-install-packages 'used-only))
+
+
 (defun dotspacemacs/init ()
   "Initialization function.
 This function is called at the very startup of Spacemacs initialization
@@ -138,11 +140,11 @@ values."
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
    ;;(if (string= (system-name) "jim-MacBookPro") 48 24  )
-   dotspacemacs-default-font '(  "XHei Mono.Ubuntu"  ;;"Source Code Pro"
-                                 :size  24 
-                               :weight normal
-                               :width normal
-                               :powerline-scale 1.1)
+   dotspacemacs-default-font (list  "XHei Mono.Ubuntu"  ;;"Source Code Pro"
+                                    :size  (if (string= (system-name) "jim-MacBookPro") 48 24  )
+                                    :weight 'normal
+                                    :width 'normal
+                                    :powerline-scale 1.1)
    ;; The leader key
    dotspacemacs-leader-key "SPC"
    ;; The key used for Emacs commands (M-x) (after pressing on the leader key).
@@ -290,13 +292,6 @@ values."
    ))
 
 
-(if (string= (system-name) "jim-MacBookPro")
-    (setq dotspacemacs-default-font '(  "XHei Mono.Ubuntu"  ;;"Source Code Pro"
-                                   :size  48
-                                   :weight normal
-                                   :width normal
-                                   :powerline-scale 1.1)
-                                               ))
 (defun dotspacemacs/user-init ()
   "Initialization function for user code.
 It is called immediately after `dotspacemacs/init', before layer configuration
