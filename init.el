@@ -337,28 +337,9 @@ you should place your code here."
                                 )
                               ))
 
-  (add-hook 'emacs-lisp-mode-hook '(lambda ()
-                               ;;( my-jump-set-evil-local-map 'find-function-at-point )
-                               ;;( my-jump-set-evil-local-map 'find-function )
-                                ))
-
-  (add-hook
-   'elixir-mode-hook
-   '(lambda()
-      (interactive)
-      ;;(my-jump-set-evil-local-map 'alchemist-goto-definition-at-point )
-      ))
 
 
-  ;; (add-hook 'php-mode-hook '(lambda ()
-  ;;                            (auto-complete-mode t)
-  ;;                            (require 'ac-php)
-  ;;                            (setq ac-sources  '(ac-source-php ) )
-  ;;                            (yas-global-mode 1)
-  ;;                            ( my-jump-set-evil-local-map 'ac-php-find-symbol-at-point 'ac-php-location-stack-back )
-  ;;                            ))
-
-   (global-set-key (kbd "<f8>")    'switch-file-term)
+  (global-set-key (kbd "<f8>")    'switch-file-term)
   (set-evil-all-state-key (kbd "C-x C-k")    'ido-kill-buffer )
   (set-evil-all-state-key "\C-^"  'helm-mini )
   (set-evil-all-state-key "\C-]"  'spacemacs/jump-to-definition )
