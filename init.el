@@ -235,7 +235,7 @@ values."
    ;; If non nil the frame is maximized when Emacs starts up.
    ;; Takes effect only if `dotspacemacs-fullscreen-at-startup' is nil.
    ;; (default nil) (Emacs 24.4+ only)
-   dotspacemacs-maximized-at-startup t 
+   dotspacemacs-maximized-at-startup t
    ;; A value from the range (0..100), in increasing opacity, which describes
    ;; the transparency level of a frame when it's active or selected.
    ;; Transparency can be toggled through `toggle-transparency'. (default 90)
@@ -288,9 +288,8 @@ values."
    ;; `trailing' to delete only the whitespace at end of lines, `changed'to
    ;; delete only whitespace for changed lines or `nil' to disable cleanup.
    ;; (default nil)
-   dotspacemacs-whitespace-cleanup nil
+   dotspacemacs-whitespace-cleanup 'all
    ))
-
 
 (defun dotspacemacs/user-init ()
   "Initialization function for user code.
@@ -334,6 +333,16 @@ you should place your code here."
   (spacemacs/set-leader-keys-for-major-mode  'php-mode "i" 'ac-php-show-tip)
   (spacemacs/set-leader-keys-for-major-mode  'emacs-lisp-mode "," nil)
 
+
+
+ ;; (add-hook 'php-mode-hook '(lambda ()
+ ;;                              (auto-complete-mode t)
+ ;;                              (require 'ac-php)
+ ;;                              (setq ac-sources  '(ac-source-php ) )
+ ;;                              (yas-global-mode 1)
+ ;;                              ))
+
+
   (add-hook 'php-mode-hook '(lambda ( )
                               (when (s-matches-p "\\.blade\\.php" (buffer-name))
                                 (web-mode )
@@ -348,11 +357,16 @@ you should place your code here."
   (set-evil-normal-state-key "Y"  'copy-region-or-whole-line )
   (set-evil-normal-state-key "D"  'kill-region-or-whole-line )
 
+  (require 'auto-complete)
   (define-key ac-completing-map  (kbd  "C-p")   'ac-previous)
   (define-key ac-completing-map  (kbd  "C-n")   'ac-next)
   (define-key ac-completing-map "\C-s" 'ac-isearch)
   (define-key ac-completing-map [f1] nil)
   (define-key ac-mode-map  [(control tab )] 'auto-complete)
+  (setq ac-use-quick-help t)
+  (setq ac-quick-help-delay 0.5)
+  (setq ac-auto-start nil)
+
 
 
   (add-hook 'after-save-hook 'ts2js)
@@ -401,6 +415,25 @@ you should place your code here."
                                                ))
   (set-evil-all-state-key  (kbd "M-1")  'delete-other-windows)
   (set-evil-all-state-key  (kbd "M-h") 'backward-kill-word-without-_)
+  (set-evil-all-state-key (kbd "C-v") 'yank )
+  (set-evil-all-state-key (kbd "C-c") 'copy-region-or-whole-line )
+
+  ;;查找时,使用trim-string,去掉前后空格
+  (define-key isearch-mode-map (kbd "C-y")  '(lambda()(interactive)
+                                               (isearch-yank-string (trim-string (current-kill 0) ))))
+
+  (define-key isearch-mode-map (kbd "C-v")  '(lambda()(interactive)
+                                               (isearch-yank-string (trim-string (current-kill 0) ))))
+
+
+  (define-key  minibuffer-inactive-mode-map (kbd "C-y")  '(lambda()(interactive)
+                                                            (insert (trim-string (current-kill 0) ))))
+  (define-key  minibuffer-inactive-mode-map (kbd "M-p")  'previous-line-or-history-element)
+  (define-key  minibuffer-inactive-mode-map (kbd "M-n")  'next-line-or-history-element)
+
+  (define-key  minibuffer-inactive-mode-map (kbd "C-p")  'previous-line-or-history-element)
+  (define-key  minibuffer-inactive-mode-map (kbd "C-n")  'next-line-or-history-element)
+
 
 
   ;;ex 命令行调整
@@ -440,7 +473,7 @@ you should place your code here."
       (add-to-list 'term-bind-key-alist '("M-1" .  delete-other-windows ))
       (add-to-list 'term-bind-key-alist '("C-^" . helm-mini ))
 
-      ;; C-6 -> C-^ 
+      ;; C-6 -> C-^
       (add-to-list 'term-bind-key-alist '( "C-6". (lambda() (interactive)  (term-send-raw-string "\C-^" ) ) ))
 
       (add-to-list 'term-bind-key-alist '( "C-S-t". (lambda() (interactive) (multi-term)  ) ))
@@ -458,4 +491,3 @@ you should place your code here."
 
 
   )
-

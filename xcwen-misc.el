@@ -40,7 +40,7 @@ localhost:~/site-lisp/config$"
   (interactive)
   (if (not buffer-file-name)
       (write-file (concat "/sudo:root@localhost:" (ido-read-file-name "File:")))
-    (write-file (concat "/sudo:root@localhost:" buffer-file-name)))) 
+    (write-file (concat "/sudo:root@localhost:" buffer-file-name))))
 
 (defun add-to-alist (alist-var elt-cons &optional no-replace)
   "Add to the value of ALIST-VAR an element ELT-CONS if it isn't there yet.
@@ -68,37 +68,37 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 (defun set-tags-config-for-cur-file ()
   "DOCSTRING"
   (interactive)
-  (let ((tags-dir (get-tags-dir) ) ) 
-	(message "tags-dir=%s" tags-dir)
-	(if tags-dir 
-		(progn
-		  (setq  tags-file (concat tags-dir  ".tags/TAGS"  ))
-		  (if (string= major-mode  "c++-mode")
-			  (progn
-				(setq tags-table-list (list "~/.emacs.d/TAGS" tags-file ))
-				(setq cscope-database-regexps
-					  (list
-					   ( list "^/"
-							  ( list t )
-							  ( list (concat  tags-dir ".tags/" ))
-							  ))))
-			(setq tags-table-list (list  tags-file))))
-	  ;;没有找到
-	  (setq tags-table-list '( "~/.emacs.d/TAGS"  ) ))))
+  (let ((tags-dir (get-tags-dir) ) )
+  (message "tags-dir=%s" tags-dir)
+  (if tags-dir
+    (progn
+      (setq  tags-file (concat tags-dir  ".tags/TAGS"  ))
+      (if (string= major-mode  "c++-mode")
+        (progn
+        (setq tags-table-list (list "~/.emacs.d/TAGS" tags-file ))
+        (setq cscope-database-regexps
+            (list
+             ( list "^/"
+                ( list t )
+                ( list (concat  tags-dir ".tags/" ))
+                ))))
+      (setq tags-table-list (list  tags-file))))
+    ;;没有找到
+    (setq tags-table-list '( "~/.emacs.d/TAGS"  ) ))))
 
 (defun cscope-find-functions-calling-this-function-and-set-tags-file (symbol)
   "Display functions calling a function."
   (interactive (list
-		(cscope-prompt-for-symbol
-		 "Find functions calling this function: " nil)
-		))
+    (cscope-prompt-for-symbol
+     "Find functions calling this function: " nil)
+    ))
 
   (set-tags-config-for-cur-file)
   (let ()
     (setq cscope-symbol symbol)
     (cscope-call (format "Finding functions calling: %s" symbol)
-		 (list "-3" symbol) nil 'cscope-process-filter
-		 'cscope-process-sentinel)
+     (list "-3" symbol) nil 'cscope-process-filter
+     'cscope-process-sentinel)
     ))
 
 
@@ -122,12 +122,12 @@ The test for presence of the car of ELT-CONS is done with `equal'."
   (let ((yas/fallback-behavior 'return-nil)) (yas-expand)))
 
 (defun set-evil-all-state-key ( key func )
-  (define-key evil-insert-state-map key  func) 
-  (define-key evil-normal-state-map  key  func ) 
-  (define-key evil-visual-state-map key func) 
-  (define-key evil-emacs-state-map key func) 
-  (define-key evil-motion-state-map key func) 
-  ) 
+  (define-key evil-insert-state-map key  func)
+  (define-key evil-normal-state-map  key  func )
+  (define-key evil-visual-state-map key func)
+  (define-key evil-emacs-state-map key func)
+  (define-key evil-motion-state-map key func)
+  )
 
 (defun set-evil-normal-state-key ( key func )
   (define-key evil-normal-state-map key  func )
@@ -162,13 +162,13 @@ The test for presence of the car of ELT-CONS is done with `equal'."
         (save-excursion
           (let (file-name-begin file-name-end file-name  )
 
-            (skip-chars-backward "a-zA-Z0-9._/"   ) 
+            (skip-chars-backward "a-zA-Z0-9._/"   )
             (setq file-name-begin (point))
 
-            (skip-chars-forward "a-zA-Z0-9._/"   ) 
+            (skip-chars-forward "a-zA-Z0-9._/"   )
 
             (setq file-name-end (point))
-            (setq cur-path (buffer-substring-no-properties file-name-begin file-name-end )) 
+            (setq cur-path (buffer-substring-no-properties file-name-begin file-name-end ))
             (setq file-name ( concat  (nth 1  (s-split "/" cur-path  )) ".php" ) )
             (setq pos-info ( concat "/function[ \t]*" (nth 2  (s-split "/" cur-path  )) ) )
             (setq cur-path (concat (nth 0  (s-split "/public/" (buffer-file-name)) ) "/app/Http/Controllers/" file-name ))
@@ -182,18 +182,18 @@ The test for presence of the car of ELT-CONS is done with `equal'."
         (save-excursion
           (let (file-name-begin file-name-end file-name  )
 
-            (skip-chars-backward "a-zA-Z0-9._/"   ) 
+            (skip-chars-backward "a-zA-Z0-9._/"   )
             (setq file-name-begin (point))
 
-            (skip-chars-forward "a-zA-Z0-9._/"   ) 
+            (skip-chars-forward "a-zA-Z0-9._/"   )
 
 
             (setq file-name-end (point))
-            (setq cur-path (buffer-substring-no-properties file-name-begin file-name-end )) 
+            (setq cur-path (buffer-substring-no-properties file-name-begin file-name-end ))
 
             (if (s-match "\.js"  cur-path )
                 (setq cur-path (concat (nth 0  (s-split "/template/" (buffer-file-name)) ) "/webroot/" cur-path ))
-              (progn 
+              (progn
                 (setq file-name ( concat  (nth 1  (s-split "/" cur-path  )) ".class.php" ) )
                 (setq pos-info ( concat "/function.*" (nth 2  (s-split "/" cur-path  )) ) )
                 (setq cur-path (concat (nth 0  (s-split "/template/" (buffer-file-name)) ) "/handler/" file-name )))
@@ -217,14 +217,14 @@ The test for presence of the car of ELT-CONS is done with `equal'."
         ))
 
 
-    (if opt-dir 
+    (if opt-dir
         (save-excursion
           (let (file-name-begin file-name-end )
 
-            (skip-chars-backward "a-zA-Z0-9._/"   ) 
+            (skip-chars-backward "a-zA-Z0-9._/"   )
             (setq file-name-begin (point))
 
-            (skip-chars-forward "a-zA-Z0-9._/"   ) 
+            (skip-chars-forward "a-zA-Z0-9._/"   )
 
             (setq file-name-end (point))
 
@@ -273,7 +273,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
           (progn
             (setq ctrl-name (f-base  (f-base path-name )) )
             (save-excursion
-              (let (line-txt  ) 
+              (let (line-txt  )
                 (beginning-of-defun)
                 (setq line-txt (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
                 (setq tmp-arr (s-match  ".*function[ \t]+\\([a-zA-Z0-9_]*\\)"  line-txt ) )
@@ -291,9 +291,9 @@ The test for presence of the car of ELT-CONS is done with `equal'."
             (setq  ctrl-name   (nth 1 tmp-arr) )
             (setq  action-name   (nth 2 tmp-arr) ))
 
-          (when (s-match "/views/" path-name )  
+          (when (s-match "/views/" path-name )
             (setq  obj-file  (concat"../../../public/page_ts/" ctrl-name  "/" action-name ".ts" ) )
-            
+
             )
           (let (js-obj-file)
           (when ( and (not (f-exists? obj-file )) (s-match "/views/" path-name )   )
@@ -307,9 +307,9 @@ The test for presence of the car of ELT-CONS is done with `equal'."
             (setq  ctrl-name   (nth 1 tmp-arr) )
             (setq  action-name   (nth 2 tmp-arr) ))
 
-          (when (s-match "/views/" path-name )  
+          (when (s-match "/views/" path-name )
             (setq  obj-file  (concat"../../web_public/page_ts/" ctrl-name  "/" action-name ".ts" ) )
-            
+
             )
           )
 
@@ -319,7 +319,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
           (when tmp-arr
             (setq  ctrl-name   (nth 1 tmp-arr) )
             (setq  action-name   (nth 2 tmp-arr) ))
-          (when (s-match "/public/page_js/" path-name )  
+          (when (s-match "/public/page_js/" path-name )
             (setq  obj-file  (concat"../../../app/Http/Controllers/" ctrl-name  ".php" ) )
             (setq pos-info ( concat "/function[ \t]+" action-name "[ \t]*("  ) )
 
@@ -330,7 +330,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
           (when tmp-arr
             (setq  ctrl-name   (nth 1 tmp-arr) )
             (setq  action-name   (nth 2 tmp-arr) )
-            (when (s-match "/public/page_ts/" path-name )  
+            (when (s-match "/public/page_ts/" path-name )
               (setq  obj-file  (concat"../../../app/Http/Controllers/" ctrl-name  ".php" ) )
               (setq pos-info ( concat "/function[ \t]+" action-name "[ \t]*("  ) )
 
@@ -347,14 +347,14 @@ The test for presence of the car of ELT-CONS is done with `equal'."
             (setq  obj-file  (concat "../../../routes/" ctrl-name  ".ts" ) )
             (setq pos-info ( concat "/public[ \t]+" action-name "[ \t]*("  ) )
 
-            ) 
+            )
           ;; nodejs  ts
 
-          (when (s-match "/routes/" path-name )  
+          (when (s-match "/routes/" path-name )
             (progn
               (setq ctrl-name (f-base  (f-base path-name )) )
               (save-excursion
-                (let (line-txt  ) 
+                (let (line-txt  )
                   (re-search-backward "[ \t]*public[ \t]+"  0 t 1 )
                   (setq line-txt (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
                   (setq tmp-arr (s-match  ".*public[ \t]+\\([a-zA-Z0-9_]*\\)"  line-txt ) )
@@ -366,7 +366,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
                 )
               ))
 
-         
+
           ))))
 
       (when obj-file
@@ -376,15 +376,15 @@ The test for presence of the car of ELT-CONS is done with `equal'."
           (setq obj-file nil)
           )
         )
-    
+
       (if obj-file
           (let(line-txt (move-flag t ))
             (find-file obj-file)
-            (when pos-info  
+            (when pos-info
               (when (string=(substring-no-properties pos-info 0 1 )  "/")
 
 
-                (when (> (line-number-at-pos )  2)   
+                (when (> (line-number-at-pos )  2)
                   (save-excursion
                     (if (string= major-mode "typescript-mode" )
                         (re-search-backward "[ \t]*public[ \t]+" 0 t 1 )
@@ -421,48 +421,48 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
   "DOCSTRING"
   (let (cmdid  obj-tag)
     (setq  cmdid (thing-at-point 'symbol))
-	(if cmdid 
-		(progn 
-		  (setq obj-tag  cmdid)
-		  (setq obj-tag (replace-regexp-in-string  "\\(.*\\)_in$" "\\1" cmdid ) ) 
-		  (if (string= obj-tag cmdid)
-			  (setq obj-tag (replace-regexp-in-string  "\\(.*\\)_out$" "\\1" cmdid ) ))
-		  (if (string= obj-tag cmdid)
-			  (setq obj-tag (replace-regexp-in-string  "\\(.*\\)_cmd$" "\\1" cmdid ) ))
-		  (if (string= obj-tag cmdid)
-			  (setq obj-tag (replace-regexp-in-string  "send_\\(.*\\)$" "\\1" cmdid ) ))
+  (if cmdid
+    (progn
+      (setq obj-tag  cmdid)
+      (setq obj-tag (replace-regexp-in-string  "\\(.*\\)_in$" "\\1" cmdid ) )
+      (if (string= obj-tag cmdid)
+        (setq obj-tag (replace-regexp-in-string  "\\(.*\\)_out$" "\\1" cmdid ) ))
+      (if (string= obj-tag cmdid)
+        (setq obj-tag (replace-regexp-in-string  "\\(.*\\)_cmd$" "\\1" cmdid ) ))
+      (if (string= obj-tag cmdid)
+        (setq obj-tag (replace-regexp-in-string  "send_\\(.*\\)$" "\\1" cmdid ) ))
 
 
 
-		  (if (string= obj-tag cmdid)
-			  (setq obj-tag (replace-regexp-in-string  "^n_\\(.*\\)$" "\\1" cmdid ) ))
+      (if (string= obj-tag cmdid)
+        (setq obj-tag (replace-regexp-in-string  "^n_\\(.*\\)$" "\\1" cmdid ) ))
 
-		  (if (string= obj-tag cmdid)
-			  (setq obj-tag (replace-regexp-in-string  "0[xX]\\(.*\\)$" "\\1" cmdid ) ))
+      (if (string= obj-tag cmdid)
+        (setq obj-tag (replace-regexp-in-string  "0[xX]\\(.*\\)$" "\\1" cmdid ) ))
 
-		  obj-tag
-		  )
-	 "" 
-	  ))
+      obj-tag
+      )
+   ""
+    ))
   )
 ;;
 (defun find-cmd-def ( cmdid )
   "查找命令号所在调用函数"
-  ;;(interactive  (list (read-string cmdid) "sCMD:")) 
+  ;;(interactive  (list (read-string cmdid) "sCMD:"))
   (interactive (list (read-string  (format "CMD(default %s) :" (proto-get-cur-cmd) ) )) )
 
-	      
+
   ;;(interactive (find-tag-interactive "Find tag: "))
 
-  (let (cmd-name obj-tag ) 
+  (let (cmd-name obj-tag )
     (setq obj-tag (if (string= cmdid "")
-		      (proto-get-cur-cmd )
-		    cmdid
-		    ))
+          (proto-get-cur-cmd )
+        cmdid
+        ))
 
     ;;重置tags 文件
     (set-tags-config-for-cur-file)
-    
+
 
 
     (if (get-buffer  "*tmp-cmd-info*") (kill-buffer "*tmp-cmd-info*"))
@@ -470,14 +470,14 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
     (call-process  "awk"  nil "*tmp-cmd-info*" nil  "-F[,(]"  " {cmdid=$2; if ( tolower( substr(cmdid,1,2 )) == \"0x\" ){cmdid=substr(cmdid,3 );} if (tolower(cmdid)==tolower(v) ||  tolower(v)==tolower($3)    ){printf (\"%s\",$3); exit;}  } "  (format  "v=%s" obj-tag )  "./.tags/bind_all.h"   )
 
     (with-current-buffer
-	"*tmp-cmd-info*"
+  "*tmp-cmd-info*"
       (setq cmd-name  (trim-string (buffer-substring-no-properties (point-min) (point-max)) ) )
       (kill-buffer  "*tmp-cmd-info*")
       (message "cmd funcion:%s" cmd-name)
 
       )
     (if  (string= (trim-string cmd-name) "")
-		(message  "nofind cmd:[%s] " obj-tag   )
+    (message  "nofind cmd:[%s] " obj-tag   )
       (find-tag   cmd-name nil nil))
     )
 
@@ -489,8 +489,8 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
   (interactive)
   (let ((cmd "goldendict")(word))
     (setq word (if (and  mark-active
-	    (not  (= (region-beginning) (region-end) )))
-	(buffer-substring-no-properties (region-beginning)(region-end)) (current-word )))
+      (not  (= (region-beginning) (region-end) )))
+  (buffer-substring-no-properties (region-beginning)(region-end)) (current-word )))
     (call-process  cmd nil 0 nil  word   )
     ))
 (defun fcitx-inactivate-input-method()
@@ -512,46 +512,46 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
   (interactive)
   (let (line-msg message-type io-type hex-buf io-type-arg)
     (setq line-msg (buffer-substring-no-properties
-		    (line-beginning-position)
-		    (line-end-position )))
+        (line-beginning-position)
+        (line-end-position )))
     ;;找到buffer
     (string-match
      "^.*\\([A-Za-z]+\\)\\([IO]\\)[ \t]*\\[\\(.*\\)\\]\\[\\([0-9A-F ]*\\)\\][\t ]*$"
      line-msg)
     (setq cat_proto "/home/jim/framework/gen_proto/gen_proto_app/bin/cat_proto")
-    
+
     (match-string 0 line-msg)
     (setq message-type (match-string  1 line-msg))
     (setq io-type (match-string  2 line-msg))
     (setq hex-buf (match-string  4 line-msg))
     (if (not hex-buf)
-	(progn
-	  
-	  (message "it no a data line "))
+  (progn
+
+    (message "it no a data line "))
       (progn
-	(when (string= message-type "C")
-	  (progn
-	    (setq io-type-arg (if (string= io-type "I")  "-i" ""))
-	    (setq bigend-flag "-b")
-	    (setq header-arg "-fcmdid,H,4,2|userid,L,6,4|seqid,L,10,4|result,l,14,4")
-	    (setq proto-src-arg "-p/home/jim/server/online/trunk/gen_proto/python/ultraman_online_proto.py") ))
-	(when (string= message-type "S")
-	  (progn
-	    (setq io-type-arg (if (string= io-type "I")  "" "-i"))
-	    (setq bigend-flag "")
-	    (setq header-arg "")
-	    (setq proto-src-arg "-p/home/jim/work/ultraman/online/trunk/gen_proto/python/ultraman_db_proto.py") ))
-	
-	;;(message "%s %s %s %s %s %s"  cat_proto io-type-arg bigend-flag header-arg proto-src-arg hex-buf  )
-	(if (get-buffer  "*proto-out*") (kill-buffer "*proto-out*"))
-	(call-process  cat_proto nil "*proto-out*" nil  io-type-arg bigend-flag header-arg proto-src-arg hex-buf  )
-	(delete-other-windows)
-	(unless (get-buffer-window  "*proto-out*")
-	  (set-window-buffer (split-window-below 17)  "*proto-out*"))
-	(switch-to-buffer-other-window "*proto-out*")
-	(goto-line 20)
-	(other-window 1)
-	))))
+  (when (string= message-type "C")
+    (progn
+      (setq io-type-arg (if (string= io-type "I")  "-i" ""))
+      (setq bigend-flag "-b")
+      (setq header-arg "-fcmdid,H,4,2|userid,L,6,4|seqid,L,10,4|result,l,14,4")
+      (setq proto-src-arg "-p/home/jim/server/online/trunk/gen_proto/python/ultraman_online_proto.py") ))
+  (when (string= message-type "S")
+    (progn
+      (setq io-type-arg (if (string= io-type "I")  "" "-i"))
+      (setq bigend-flag "")
+      (setq header-arg "")
+      (setq proto-src-arg "-p/home/jim/work/ultraman/online/trunk/gen_proto/python/ultraman_db_proto.py") ))
+
+  ;;(message "%s %s %s %s %s %s"  cat_proto io-type-arg bigend-flag header-arg proto-src-arg hex-buf  )
+  (if (get-buffer  "*proto-out*") (kill-buffer "*proto-out*"))
+  (call-process  cat_proto nil "*proto-out*" nil  io-type-arg bigend-flag header-arg proto-src-arg hex-buf  )
+  (delete-other-windows)
+  (unless (get-buffer-window  "*proto-out*")
+    (set-window-buffer (split-window-below 17)  "*proto-out*"))
+  (switch-to-buffer-other-window "*proto-out*")
+  (goto-line 20)
+  (other-window 1)
+  ))))
 
 ;;全屏
 (defun my-fullscreen ()
@@ -564,7 +564,7 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
 ;;最化大
 (defun my-maximized ()
   (interactive)
-  (when (check-in-linux ) 
+  (when (check-in-linux )
     (x-send-client-message
      nil 0 nil "_NET_WM_STATE" 32
      '(2 "_NET_WM_STATE_MAXIMIZED_HORZ" 0))
@@ -578,10 +578,10 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
   "得到当前单词的开始和结束"
   (save-excursion
     (let ((beg
-	   (progn (skip-syntax-backward "w_") (point)))
-	  (end
-	   (progn (skip-syntax-forward "w_") (point))
-	  ))
+     (progn (skip-syntax-backward "w_") (point)))
+    (end
+     (progn (skip-syntax-forward "w_") (point))
+    ))
       (list beg end))))
 (defun copy-whole-word (&optional arg)
   "Copy a sequence of string into kill-ring"
@@ -598,21 +598,21 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
       ;;找到当前行定义的函数
       (beginning-of-line)
       (setq func-msg (buffer-substring-no-properties (point)
-		       (re-search-forward ";" (point-max) t 1 )  ))
+           (re-search-forward ";" (point-max) t 1 )  ))
       ;;处理前置的 virtual static
-      (setq func-msg (replace-regexp-in-string  "\\`[ \t\n]*\\(virtual\\|static\\)[ \t\n]+\\(.*\\)" "\\2" func-msg   ) ) 
+      (setq func-msg (replace-regexp-in-string  "\\`[ \t\n]*\\(virtual\\|static\\)[ \t\n]+\\(.*\\)" "\\2" func-msg   ) )
 
-	  ;;去掉其中的 =0 , =NULL 之类的东西 
+    ;;去掉其中的 =0 , =NULL 之类的东西
       (setq func-msg (replace-regexp-in-string  "=[ \t]*[a-zA-Z0-9]\+" ""  func-msg ))
 
-      
+
 
       ;;找到是哪一个类的
-      (re-search-backward "^\s*class" 0 t 1) 
+      (re-search-backward "^\s*class" 0 t 1)
       (forward-word 2)
       (setq pos (get-whole-word-pos))
       (setq class-type (buffer-substring-no-properties
-			(car pos)(cadr pos )))
+      (car pos)(cadr pos )))
       ;;在函数名前加上 class-name::
       ;;在最后加上 {}
       (setq re-str "\\`[ \t\n]*\\([a-zA-Z0-9_]+[ \t]*[&*]*\\)[ \t\n]*\\(\\(.\\|\n\\)*\\);")
@@ -664,7 +664,7 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
     (setq pos (get-whole-word-pos))
     (setq cur_char (following-char))
     (if (and (>= cur_char ?a ) (<= cur_char ?z )  )
-	(upcase-region (car pos) (cadr pos))
+  (upcase-region (car pos) (cadr pos))
       (downcase-region (car pos) (cadr pos))
       )
     ))
@@ -680,8 +680,8 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
   "Go to the matching paren if on a paren; otherwise insert %."
   (interactive "p")
   (cond ((looking-at "\\s(") (forward-list 1) (backward-char 1))
-	((looking-at "\\s)") (forward-char 1) (backward-list 1))
-	(t (self-insert-command (or arg 1)))))
+  ((looking-at "\\s)") (forward-char 1) (backward-list 1))
+  (t (self-insert-command (or arg 1)))))
 ;;---------------------------------------------------------------------------
 
 (defun join-line-0 (arg)
@@ -694,7 +694,7 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
     (beginning-of-line)
     (let ((begin-point (point)))
       (forward-line num)
-      (comment-or-uncomment-region	 begin-point (point)))
+      (comment-or-uncomment-region   begin-point (point)))
     ))
 
 (defun copy-whole-line(num)
@@ -732,15 +732,15 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
 (defun opt-region-or-whole-line(opt-type   arg)
   "提供高级的复制 剪切功能
 "
-  (save-excursion 
-	(cond
-	 ( (string= opt-type "copy")
-	   (setq do-region-func 'copy-region-as-kill do-line-func  'copy-whole-line  ))
+  (save-excursion
+  (cond
+   ( (string= opt-type "copy")
+     (setq do-region-func 'copy-region-as-kill do-line-func  'copy-whole-line  ))
 
-	 ( (string= opt-type "comment")
-	   (setq do-region-func 'comment-or-uncomment-region do-line-func   'comment-or-uncomment-whole-line ))
-	 (t
-	  (setq do-region-func 'kill-region do-line-func  'kill-whole-line  )))
+   ( (string= opt-type "comment")
+     (setq do-region-func 'comment-or-uncomment-region do-line-func   'comment-or-uncomment-whole-line ))
+   (t
+    (setq do-region-func 'kill-region do-line-func  'kill-whole-line  )))
 
     (if (and  mark-active
               (not  (= (region-beginning) (region-end) ))
@@ -760,11 +760,11 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
 ;;;###autoload
 (defun copy-region-or-whole-line(&optional arg)
   "有选择区域时：
-	1:复制的内容是跨行的：复制区域所在的所有行的内容。不仅仅是区域内的内容
-	2:复制的内容没有跨行：复制区域中的内内容
-没有选择区域时: 
-	1:复制所在的行
-	2:支持复制多行.  如 复制3行是  M-3 C-w  
+  1:复制的内容是跨行的：复制区域所在的所有行的内容。不仅仅是区域内的内容
+  2:复制的内容没有跨行：复制区域中的内内容
+没有选择区域时:
+  1:复制所在的行
+  2:支持复制多行.  如 复制3行是  M-3 C-w
 "
   (interactive "P")
   (opt-region-or-whole-line "copy" arg)
@@ -773,11 +773,11 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
 ;;;###autoload
 (defun comment-or-uncomment-region-or-whole-line(&optional arg)
   "有选择区域时：
-	1:comment的内容是跨行的：comment区域所在的所有行的内容。不仅仅是区域内的内容
-	2:comment的内容没有跨行：comment区域中的内内容
-没有选择区域时: 
-	1:comment所在的行
-	2:支持comment多行.  如 comment3行是  M-3 C-w  
+  1:comment的内容是跨行的：comment区域所在的所有行的内容。不仅仅是区域内的内容
+  2:comment的内容没有跨行：comment区域中的内内容
+没有选择区域时:
+  1:comment所在的行
+  2:支持comment多行.  如 comment3行是  M-3 C-w
 "
   (interactive "P")
   (opt-region-or-whole-line "comment" arg)
@@ -787,11 +787,11 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
 ;;;###autoload
 (defun kill-region-or-whole-line(&optional arg)
   "有选择区域时：
-	1:剪切的内容是跨行的：剪切区域所在的所有行的内容。不仅仅是区域内的内容
-	2:剪切的内容没有跨行：剪切区域中的内内容
-没有选择区域时: 
-	1:剪切所在的行
-	2:支持剪切多行.  如 剪切3行是  M-3 C-k
+  1:剪切的内容是跨行的：剪切区域所在的所有行的内容。不仅仅是区域内的内容
+  2:剪切的内容没有跨行：剪切区域中的内内容
+没有选择区域时:
+  1:剪切所在的行
+  2:支持剪切多行.  如 剪切3行是  M-3 C-k
 "
   (interactive "P")
   (opt-region-or-whole-line "kill" arg))
@@ -842,7 +842,7 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
     (setq mark-pos  (get-mark-pos-ex))
     (message  "%d %d" (car mark-pos) (cadr mark-pos) )
     (if is-add
-	(replace-regexp "^" "    " nil (nth 0 mark-pos) (- (nth 1 mark-pos) 1) )
+  (replace-regexp "^" "    " nil (nth 0 mark-pos) (- (nth 1 mark-pos) 1) )
       (replace-regexp "\\(^\t\\)\\|\\(^    \\)" "" nil (nth 0 mark-pos) (- (nth 1 mark-pos)  1)))
     ))
 (defun region-indent-add ()
@@ -857,13 +857,13 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
   )
 (defun get-tags-dir  ()
   "DOCSTRING"
-  (let (tags-dir tags-file) 
+  (let (tags-dir tags-file)
     (setq tags-dir (file-name-directory (buffer-file-name)  ))
     (while (not (or (file-exists-p  (concat tags-dir  ".tags" )) (string= tags-dir "/") ))
-	  (setq tags-dir  ( file-name-directory (directory-file-name  tags-dir ) ) ))
-	(if (string= tags-dir "/") (setq tags-dir nil )   )
-	tags-dir
-	)
+    (setq tags-dir  ( file-name-directory (directory-file-name  tags-dir ) ) ))
+  (if (string= tags-dir "/") (setq tags-dir nil )   )
+  tags-dir
+  )
   )
 (defun get-string-from-file (filePath)
   "Return filePath's file content."
@@ -873,14 +873,14 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 
 (defun get-build-args  ()
   "得到编译参数, build/self.cxx_flags.conf   "
-  (let (build-dir build-file) 
+  (let (build-dir build-file)
     (setq build-dir (file-name-directory (buffer-file-name)  ))
     (while (not (or (file-exists-p  (concat build-dir  "build/self.cxx_flags.conf" ) ) (string= build-dir "/") ))
-	  (setq build-dir  ( file-name-directory (directory-file-name  build-dir ) ) )
-	  )
-	(append ac-clang-flags-g++-base  (if (string= build-dir "/") nil 
-	  (split-string (get-string-from-file (concat build-dir  "build/self.cxx_flags.conf" )  ))
-	))
+    (setq build-dir  ( file-name-directory (directory-file-name  build-dir ) ) )
+    )
+  (append ac-clang-flags-g++-base  (if (string= build-dir "/") nil
+    (split-string (get-string-from-file (concat build-dir  "build/self.cxx_flags.conf" )  ))
+  ))
   ))
 
 
@@ -888,39 +888,39 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
   "对mode 指定匹配方案, go , c++  "
   (interactive)
   (if (string= major-mode  "go-mode")
-	  ( auto-complete  '(ac-source-go ))
-	(progn
-	  (if  (get-tags-dir) ;; 自己的代码 
-		  (progn 
-			;;查找编译参数	
-			(let ((build-args  (get-build-args))  old-flags  ) 
-			  ;;(message "build-args :%s" build-args)
-			  ;;设置当前ac-clang-flags 配置
-			  (if build-args
-				  (progn
-					(setq old-flags ac-clang-flags )
-					(setq  ac-clang-flags build-args )  ))
-			  
-			  ( auto-complete  '(ac-source-clang ))
+    ( auto-complete  '(ac-source-go ))
+  (progn
+    (if  (get-tags-dir) ;; 自己的代码
+      (progn
+      ;;查找编译参数
+      (let ((build-args  (get-build-args))  old-flags  )
+        ;;(message "build-args :%s" build-args)
+        ;;设置当前ac-clang-flags 配置
+        (if build-args
+          (progn
+          (setq old-flags ac-clang-flags )
+          (setq  ac-clang-flags build-args )  ))
 
-			  ;;还原
-			  (if build-args
-				  (setq  ac-clang-flags old-flags ))
-			  ))
+        ( auto-complete  '(ac-source-clang ))
+
+        ;;还原
+        (if build-args
+          (setq  ac-clang-flags old-flags ))
+        ))
 
         (progn
           (message "use ac-source-rtags")
-		( auto-complete  '(ac-source-rtags ))
+    ( auto-complete  '(ac-source-rtags ))
         ))
-	  ))) 
+    )))
 
 (defun remake-tags ()
   "DOCSTRING"
   (interactive)
-  (let ((tags-dir (get-tags-dir) ) ) 
-	(message "remake %s" tags-dir )
-	(if tags-dir 
-		(message (shell-command-to-string  (concat tags-dir "/.tags/metags") )))))
+  (let ((tags-dir (get-tags-dir) ) )
+  (message "remake %s" tags-dir )
+  (if tags-dir
+    (message (shell-command-to-string  (concat tags-dir "/.tags/metags") )))))
 
 (defun kill-other-buffers ()
   "Kill all other buffers."
@@ -934,7 +934,7 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
          (start (car a))
          (end (cadr a))
          (goto-point (if (= from start )
-			 end
+       end
                        start)))
     (if (eq last-command 'wcy-mark-some-thing-at-point)
         (progn
@@ -950,19 +950,19 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
   "DOCSTRING"
   (interactive)
   (if (and  mark-active
-	    (not  (= (region-beginning) (region-end) ))
-	    )
+      (not  (= (region-beginning) (region-end) ))
+      )
       (kill-region (region-beginning) (region-end) )
     (progn
       (let (start-pos end-pos)
-	(setq start-pos (point))
-	(save-excursion
-	  (skip-chars-backward "^a-z0-9A-Z一-龠^")
-	  (skip-chars-backward "a-z0-9一-龠^")
-	  (skip-chars-backward "A-Z")
-	  (setq end-pos (point))
-	  )
-	(kill-region start-pos end-pos)))))
+  (setq start-pos (point))
+  (save-excursion
+    (skip-chars-backward "^a-z0-9A-Z一-龠^")
+    (skip-chars-backward "a-z0-9一-龠^")
+    (skip-chars-backward "A-Z")
+    (setq end-pos (point))
+    )
+  (kill-region start-pos end-pos)))))
 
 (defun  multi-term-goto-last-term ()
   "DOCSTRING"
@@ -970,7 +970,8 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
   (let (find-flag opt-file-name find-path-str init-cmd  line-txt)
     (setq opt-file-name (buffer-file-name)   )
 
-    ;;go to file location dir 
+    ;;go to file location dir
+    (message "1111")
     (if (and  opt-file-name  (file-exists-p opt-file-name ) )
         (setq file-path-str (file-name-directory opt-file-name ) )
       (setq file-path-str (concat  (getenv "HOME") "/" )))
@@ -981,39 +982,40 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
           (setq check-free-term
                 (and
                  ;;term-mode
-                 (string= "term-mode" major-mode) 
+                 (string= "term-mode" major-mode)
                  ;;本地，处于命令行完成状态
                  (string-match term-local-cmd-start-line-regex-str (buffer-substring-no-properties (line-beginning-position) (line-end-position )))
                  ;;同一个目录
                  (string= file-path-str default-directory )
                      )))
-      
-        (when check-free-term 
-          (switch-to-buffer opt-buffer) 
+
+        (when check-free-term
+          (switch-to-buffer opt-buffer)
           (setq find-flag t)
           (return )
         )))
 
-    (unless  find-flag 
+    (unless  find-flag
       (dolist  ( opt-buffer (buffer-list) )
         (let (check-free-term)
           (with-current-buffer opt-buffer
             (setq check-free-term
                   (and
                    ;;term-mode
-                   (string= "term-mode" major-mode) 
+                   (string= "term-mode" major-mode)
                    ;;本地，处于命令行完成状态
                    (string-match term-local-cmd-start-line-regex-str (buffer-substring-no-properties (line-beginning-position) (line-end-position )))
-                   
+
                    )))
-          
-          (when check-free-term 
-            (switch-to-buffer opt-buffer) 
+
+          (when check-free-term
+            (switch-to-buffer opt-buffer)
             (setq find-flag t)
             (return )
             ))))
 
 
+    (message "222")
     (unless find-flag
       (multi-term  ))
 
@@ -1034,7 +1036,6 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
       (term-send-raw-string init-cmd ))
     ))
 
-
 (defun switch-file-term ()
   " 交换终端和文件"
   (interactive)
@@ -1051,7 +1052,7 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
     (setq pos (if (< (point) (point-max)) (+ (point) 1) (point) ))
     (setq cur_char (following-char))
     (if (and (>= cur_char ?a ) (<= cur_char ?z )  )
-	(upcase-region (point) pos)
+  (upcase-region (point) pos)
       (downcase-region (point)  pos)
       )
     ))
@@ -1099,8 +1100,8 @@ object satisfying `yas--field-p' to restrict the expansion to."
            ((and (or
                   (string= major-mode "php-mode")
                   (and (string= major-mode "web-mode")
-                       (string=   (web-mode-language-at-pos)  "php"  ))) 
-                 (or 
+                       (string=   (web-mode-language-at-pos)  "php"  )))
+                 (or
                   ;; ->
                   (and (eq ?> c)
                        (eq ?- (char-before (1- (point)))))
@@ -1147,8 +1148,8 @@ If FORWARD is nil, search backward, otherwise forward."
   (let (string obj-str tmp-str )
     (setq isearch-forward t)
     (setq string (evil-find-symbol  t) )
-    
-    (if  (null string) 
+
+    (if  (null string)
         (error "No proto item under point"))
 
     (setq tmp-str "")
@@ -1161,9 +1162,9 @@ If FORWARD is nil, search backward, otherwise forward."
       (setq tmp-str (substring string 0 -4)))
      )
     (if (not (string= tmp-str ""))
-	(setq obj-str  (format "\\_<%s_cmd\\_>\\|\\_<%s_in\\_>\\|\\_<%s_out\\_>" tmp-str tmp-str tmp-str   ))
+  (setq obj-str  (format "\\_<%s_cmd\\_>\\|\\_<%s_in\\_>\\|\\_<%s_out\\_>" tmp-str tmp-str tmp-str   ))
       (setq obj-str string))
-    
+
 
     (evil-search obj-str t t)))
 
@@ -1217,7 +1218,7 @@ If FORWARD is nil, search backward, otherwise forward."
     (when ( and (string= major-mode "typescript-mode" )
                 (s-matches-p "/page_ts/" (buffer-file-name))
                 (not (s-matches-p "\\.d\\.ts$" (buffer-file-name) ))
-                             ) 
+                             )
       (setq obj-file  (s-replace ".ts" ".js" (s-replace "page_ts" "page_js" (buffer-file-name) ) ) )
       (when (not (f-exists?  (f-dirname obj-file) ) )
         (f-mkdir (f-dirname obj-file) )
@@ -1230,12 +1231,12 @@ If FORWARD is nil, search backward, otherwise forward."
               (string= (s-trim  obj-data ) "" )
               )
 
-          (progn 
+          (progn
             (when (f-exists? obj-file  )
               (f-delete obj-file  ))
 
             (if (s-matches-p "//TS_FLAG:true" (buffer-string) )
-                (compile (concat "tsc  --out  " obj-file " "  (buffer-file-name) ) ) 
+                (compile (concat "tsc  --out  " obj-file " "  (buffer-file-name) ) )
               (f-copy (buffer-file-name) obj-file  ))
             (message "%s:生成完毕" obj-file  ))
         (message "%s :不是 typescript 生成的文件, 请备份为其它文件." obj-file  ))
@@ -1278,7 +1279,7 @@ If FORWARD is nil, search backward, otherwise forward."
       (find-file  (nth 0 file-info)  )
       ;;pos info
       (let ((pos-info (nth 1 file-info)) )
-        (when pos-info  
+        (when pos-info
           (when (string=(substring-no-properties pos-info 0 1 )  "/")
             (goto-char (point-min))
             (re-search-forward  (substring-no-properties pos-info 1 ) )
