@@ -9,7 +9,6 @@
 
 
 (defun ac-php/post-init-ac-php ()
-  (require 'ac-php)
 
   )
 (defun ac-php/post-init-yasnippet()
@@ -36,7 +35,7 @@
 
 
 (defun ac-php/init-ac-php ()
-  (use-package ac-php 
+  (use-package ac-php
     :defer t
     ))
 
