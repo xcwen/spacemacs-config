@@ -976,7 +976,10 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
         (setq file-path-str (file-name-directory opt-file-name ) )
       (setq file-path-str (concat  (getenv "HOME") "/" )))
 
+    (message "1.1")
     (dolist  ( opt-buffer (buffer-list) )
+
+      (message "1.1.1")
       (let (check-free-term)
         (with-current-buffer opt-buffer
           (setq check-free-term
@@ -995,8 +998,10 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
           (return )
         )))
 
+    (message "1.2")
     (unless  find-flag
       (dolist  ( opt-buffer (buffer-list) )
+        (message "1.2.1 %s " opt-buffer )
         (let (check-free-term)
           (with-current-buffer opt-buffer
             (setq check-free-term
@@ -1011,6 +1016,7 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
           (when check-free-term
             (switch-to-buffer opt-buffer)
             (setq find-flag t)
+            (message "1.2.2: %s" opt-buffer)
             (return )
             ))))
 
@@ -1112,7 +1118,7 @@ object satisfying `yas--field-p' to restrict the expansion to."
                        (eq ?: (char-before (1- (point)))))))
 
             (message "do ac-source-php")
-            (auto-complete '(ac-source-php)  ))
+            (company-complete  ))
 
 
            ((and (string= major-mode "go-mode")  (eq ?\. c))
@@ -1288,7 +1294,6 @@ If FORWARD is nil, search backward, otherwise forward."
       (setq deal-flag t ))
 
     (unless deal-flag (find-file-at-point))))
-
 
 
 

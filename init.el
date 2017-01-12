@@ -32,7 +32,7 @@ values."
    dotspacemacs-configuration-layers
    '(
      html
-     ac-php
+     company-php
      typescript
      elixir
      javascript
@@ -134,7 +134,7 @@ values."
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '( tsdh-dark  spacemacs-dark
+   dotspacemacs-themes '(   spacemacs-dark tsdh-dark
                          spacemacs-light)
    ;; If non nil the cursor color matches the state color in GUI Emacs.
    dotspacemacs-colorize-cursor-according-to-state t
@@ -358,16 +358,25 @@ you should place your code here."
   (set-evil-normal-state-key "Y"  'copy-region-or-whole-line )
   (set-evil-normal-state-key "D"  'kill-region-or-whole-line )
 
-  (require 'auto-complete)
-  (define-key ac-completing-map  (kbd  "C-p")   'ac-previous)
-  (define-key ac-completing-map  (kbd  "C-n")   'ac-next)
-  (define-key ac-completing-map "\C-s" 'ac-isearch)
-  (define-key ac-completing-map [f1] nil)
-  (define-key ac-mode-map  [(control tab )] 'auto-complete)
-  (setq ac-use-quick-help t)
-  (setq ac-quick-help-delay 0.5)
-  (setq ac-auto-start nil)
+  (define-key company-active-map  (kbd  "C-n")   'company-select-next )
+  (define-key company-active-map  (kbd  "C-p")   'company-select-previous )
 
+
+  ;;(require 'auto-complete)
+  ;; (define-key ac-completing-map  (kbd  "C-p")   'ac-previous)
+  ;; (define-key ac-completing-map  (kbd  "C-n")   'ac-next)
+  ;; (define-key ac-completing-map "\C-s" 'ac-isearch)
+  ;; (define-key ac-completing-map [f1] nil)
+  ;; (define-key ac-mode-map  [(control tab )] 'auto-complete)
+  ;; (setq ac-use-quick-help t)
+  ;; (setq ac-quick-help-delay 0.5)
+  ;; (setq ac-auto-start nil)
+
+
+  (global-set-key (kbd  "C-/"  ) nil)
+  (require 'undo-tree)
+  (define-key undo-tree-map (kbd "C-/")  nil)
+  (global-set-key  (kbd  "C-/"  )   'comment-or-uncomment-region-or-whole-line )
 
 
   (add-hook 'after-save-hook 'ts2js)
@@ -411,7 +420,7 @@ you should place your code here."
   (set-evil-all-state-key  (kbd "<tab>")  'yas-expand-for-vim )
   (set-evil-all-state-key  (kbd "C-<tab>")  '(lambda () (interactive)
                                                (if  (string= major-mode "php-mode")
-                                                   (auto-complete)
+                                                   (company-complete)
                                                  (company-complete))
                                                ))
   (set-evil-all-state-key  (kbd "M-1")  'delete-other-windows)
