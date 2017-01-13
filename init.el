@@ -31,12 +31,12 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
+     phpplus
+     go
      html
-     company-php
      typescript
      elixir
      javascript
-     ;;php
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
@@ -44,6 +44,7 @@ values."
      ;; ----------------------------------------------------------------
      helm
      auto-completion
+
 
      better-defaults
      emacs-lisp
@@ -134,7 +135,7 @@ values."
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(   spacemacs-dark tsdh-dark
+   dotspacemacs-themes '(tsdh-dark  spacemacs-dark
                          spacemacs-light)
    ;; If non nil the cursor color matches the state color in GUI Emacs.
    dotspacemacs-colorize-cursor-according-to-state t
@@ -352,7 +353,7 @@ you should place your code here."
 
 
   (global-set-key (kbd "<f8>")    'switch-file-term)
-  (set-evil-all-state-key (kbd "C-x C-k")    'ido-kill-buffer )
+  (set-evil-all-state-key (kbd "C-x C-k")    'kill-buffer )
   (set-evil-all-state-key "\C-^"  'helm-mini )
   (set-evil-all-state-key "\C-]"  'spacemacs/jump-to-definition )
   (set-evil-normal-state-key "Y"  'copy-region-or-whole-line )
@@ -360,6 +361,7 @@ you should place your code here."
 
   (define-key company-active-map  (kbd  "C-n")   'company-select-next )
   (define-key company-active-map  (kbd  "C-p")   'company-select-previous )
+
 
 
   ;;(require 'auto-complete)

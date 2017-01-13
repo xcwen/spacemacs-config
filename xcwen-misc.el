@@ -25,7 +25,82 @@
   "doc ,line like:
 localhost:~/site-lisp/config$"
   )
+(require 'cl)
 
+(defun  multi-term-goto-last-term ()
+  "DOCSTRING"
+  (interactive)
+  (let (find-flag opt-file-name find-path-str init-cmd  line-txt)
+    (setq opt-file-name (buffer-file-name)   )
+
+    ;;go to file location dir
+    (message "1111")
+    (if (and  opt-file-name  (file-exists-p opt-file-name ) )
+        (setq file-path-str (file-name-directory opt-file-name ) )
+      (setq file-path-str (concat  (getenv "HOME") "/" )))
+
+    (message "1.1")
+    (dolist  ( opt-buffer (buffer-list) )
+
+      (message "1.1.1")
+      (let (check-free-term)
+        (with-current-buffer opt-buffer
+          (setq check-free-term
+                (and
+                 ;;term-mode
+                 (string= "term-mode" major-mode)
+                 ;;本地，处于命令行完成状态
+                 (string-match term-local-cmd-start-line-regex-str (buffer-substring-no-properties (line-beginning-position) (line-end-position )))
+                 ;;同一个目录
+                 (string= file-path-str default-directory )
+                     )))
+
+        (when check-free-term
+          (switch-to-buffer opt-buffer)
+          (setq find-flag t)
+          (return )
+        )))
+
+    (message "1.2")
+    (let (check-free-term)
+      (unless  find-flag
+        (dolist  ( opt-buffer (buffer-list) )
+          (message "1.2.1 %s " opt-buffer )
+          (with-current-buffer opt-buffer
+            (setq check-free-term
+                  (and
+                   ;;term-mode
+                   (string= "term-mode" major-mode)
+                   ;;本地，处于命令行完成状态
+                   (string-match term-local-cmd-start-line-regex-str (buffer-substring-no-properties (line-beginning-position) (line-end-position )))
+
+                   )))
+
+          (when check-free-term
+            (switch-to-buffer opt-buffer)
+            (setq find-flag t)
+            (message "1.2.2: %s" opt-buffer)
+            (return ))
+          )))
+
+
+    (message "222")
+    (unless find-flag
+      (multi-term  ))
+
+
+    (setq line-txt (buffer-substring-no-properties
+                    (line-beginning-position)
+                    (line-end-position )))
+
+    ;;(message "===%s %s" default-directory file-path-str )
+    ;;进入当前文件所在文件夹
+    (when (and  (not (string= file-path-str default-directory ))
+                (string-match term-local-cmd-start-line-regex-str line-txt ) ;;本地，处于命令行完成状态
+                )
+      (setq init-cmd  (concat "cd " file-path-str  " # goto file location   \r" ) )
+      (term-send-raw-string init-cmd ))
+    ))
 
 
 ;;   fix test
@@ -964,83 +1039,7 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
     )
   (kill-region start-pos end-pos)))))
 
-(defun  multi-term-goto-last-term ()
-  "DOCSTRING"
-  (interactive)
-  (let (find-flag opt-file-name find-path-str init-cmd  line-txt)
-    (setq opt-file-name (buffer-file-name)   )
 
-    ;;go to file location dir
-    (message "1111")
-    (if (and  opt-file-name  (file-exists-p opt-file-name ) )
-        (setq file-path-str (file-name-directory opt-file-name ) )
-      (setq file-path-str (concat  (getenv "HOME") "/" )))
-
-    (message "1.1")
-    (dolist  ( opt-buffer (buffer-list) )
-
-      (message "1.1.1")
-      (let (check-free-term)
-        (with-current-buffer opt-buffer
-          (setq check-free-term
-                (and
-                 ;;term-mode
-                 (string= "term-mode" major-mode)
-                 ;;本地，处于命令行完成状态
-                 (string-match term-local-cmd-start-line-regex-str (buffer-substring-no-properties (line-beginning-position) (line-end-position )))
-                 ;;同一个目录
-                 (string= file-path-str default-directory )
-                     )))
-
-        (when check-free-term
-          (switch-to-buffer opt-buffer)
-          (setq find-flag t)
-          (return )
-        )))
-
-    (message "1.2")
-    (unless  find-flag
-      (dolist  ( opt-buffer (buffer-list) )
-        (message "1.2.1 %s " opt-buffer )
-        (let (check-free-term)
-          (with-current-buffer opt-buffer
-            (setq check-free-term
-                  (and
-                   ;;term-mode
-                   (string= "term-mode" major-mode)
-                   ;;本地，处于命令行完成状态
-                   (string-match term-local-cmd-start-line-regex-str (buffer-substring-no-properties (line-beginning-position) (line-end-position )))
-
-                   )))
-
-          (when check-free-term
-            (switch-to-buffer opt-buffer)
-            (setq find-flag t)
-            (message "1.2.2: %s" opt-buffer)
-            (return )
-            ))))
-
-
-    (message "222")
-    (unless find-flag
-      (multi-term  ))
-
-    ;;(evil-local-mode 0)
-    ;;(undo-tree-mode -1 )
-
-
-    (setq line-txt (buffer-substring-no-properties
-                    (line-beginning-position)
-                    (line-end-position )))
-
-    ;;(message "===%s %s" default-directory file-path-str )
-    ;;进入当前文件所在文件夹
-    (when (and  (not (string= file-path-str default-directory ))
-                (string-match term-local-cmd-start-line-regex-str line-txt ) ;;本地，处于命令行完成状态
-                )
-      (setq init-cmd  (concat "cd " file-path-str  " # goto file location   \r" ) )
-      (term-send-raw-string init-cmd ))
-    ))
 
 (defun switch-file-term ()
   " 交换终端和文件"
