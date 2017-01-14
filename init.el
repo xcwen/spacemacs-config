@@ -31,6 +31,7 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
+     erlang
      phpplus
      go
      html
@@ -314,10 +315,14 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
+  (load  (expand-file-name "php-align.el" dotspacemacs-directory) )
+  (load  (expand-file-name "js2-align.el" dotspacemacs-directory) )
+  (load  (expand-file-name "ts-align.el" dotspacemacs-directory) )
   (dolist (mode (list
                  'emacs-lisp-mode
                  'php-mode
                  'js2-mode
+                 'markdown-mode
                  'typescript-mode
                  'web-mode
                  'org-mode
@@ -337,19 +342,25 @@ you should place your code here."
 
 
 
- ;; (add-hook 'php-mode-hook '(lambda ()
- ;;                              (auto-complete-mode t)
- ;;                              (require 'ac-php)
- ;;                              (setq ac-sources  '(ac-source-php ) )
- ;;                              (yas-global-mode 1)
- ;;                              ))
-
 
   (add-hook 'php-mode-hook '(lambda ( )
                               (when (s-matches-p "\\.blade\\.php" (buffer-name))
                                 (web-mode )
                                 )
                               ))
+  (add-hook 'php-mode-hook '(lambda ( )
+                              (require 'php-align)
+                              (php-align-setup)
+                              ))
+  (add-hook 'js2-mode-hook '(lambda ( )
+                              (require 'js2-align)
+                              (js2-align-setup)
+                              ))
+  (add-hook 'typescript-mode-hook '(lambda ( )
+                                     (require 'ts-align)
+                                     (typescript-align-setup)
+                                     ))
+
 
 
   (global-set-key (kbd "<f8>")    'switch-file-term)
@@ -362,17 +373,6 @@ you should place your code here."
   (define-key company-active-map  (kbd  "C-n")   'company-select-next )
   (define-key company-active-map  (kbd  "C-p")   'company-select-previous )
 
-
-
-  ;;(require 'auto-complete)
-  ;; (define-key ac-completing-map  (kbd  "C-p")   'ac-previous)
-  ;; (define-key ac-completing-map  (kbd  "C-n")   'ac-next)
-  ;; (define-key ac-completing-map "\C-s" 'ac-isearch)
-  ;; (define-key ac-completing-map [f1] nil)
-  ;; (define-key ac-mode-map  [(control tab )] 'auto-complete)
-  ;; (setq ac-use-quick-help t)
-  ;; (setq ac-quick-help-delay 0.5)
-  ;; (setq ac-auto-start nil)
 
 
   (global-set-key (kbd  "C-/"  ) nil)
@@ -391,6 +391,24 @@ you should place your code here."
 
   (global-set-key (kbd "M-w")   'copy-region-or-whole-line)
 ;
+  ;; 等号对齐
+  (define-key evil-visual-state-map (kbd "=")
+    '(lambda( beg end  )
+       (interactive "r")
+
+       ;;"多行注释处理"
+       (if (and mark-active
+                (string-match "\n"
+                              (buffer-substring-no-properties (region-beginning)(region-end))))
+           (progn
+             (mark-region-ex)
+             (setq beg (region-beginning) )
+             (setq end (region-end) )
+             ))
+       (align beg end)
+       ))
+
+
   (define-key evil-normal-state-map [escape] '(lambda()
                                                 (interactive )
                                                 (if (string= major-mode "term-mode" )
@@ -417,6 +435,8 @@ you should place your code here."
 
                                                   )
                                                 ))
+
+  (spacemacs|create-align-repeat-x "my-align" "=>" nil t)
 
   (global-set-key "\M-1" 'delete-other-windows)
   (set-evil-all-state-key  (kbd "<tab>")  'yas-expand-for-vim )
@@ -470,7 +490,6 @@ you should place your code here."
   (add-hook
    'term-mode-hook
    '(lambda()
-      (message "==========term-mode-hook==============")
       (yas-minor-mode -1 )
 
       (define-key evil-insert-state-local-map   (kbd "C-y")  'term-paste )
