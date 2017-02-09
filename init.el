@@ -31,12 +31,13 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
+     lua
      vimscript
      docker
      auto-completion
      yaml
-     erlang+
-     php
+     erlang
+     phpplus
      go
      html
      typescript

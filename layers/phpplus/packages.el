@@ -6,8 +6,7 @@
         php-mode
         ))
 (defun phpplus/post-init-company ()
-  (spacemacs|add-company-hook php-mode)
-  )
+  (spacemacs|add-company-backends :modes php-mode))
 
 
 (defun phpplus/post-init-company-php ()
