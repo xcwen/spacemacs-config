@@ -6,7 +6,13 @@
         php-mode
         ))
 (defun phpplus/post-init-company ()
-  (spacemacs|add-company-backends :modes php-mode))
+  (condition-case nil
+      (spacemacs|add-company-hook php-mode )
+    (error
+     ;; try this one:
+     (spacemacs|add-company-backends :modes php-mode)
+     )))
+
 
 
 (defun phpplus/post-init-company-php ()
