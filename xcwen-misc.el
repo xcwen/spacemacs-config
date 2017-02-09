@@ -1190,6 +1190,12 @@ If FORWARD is nil, search backward, otherwise forward."
   (interactive (find-function-read))
   (xref-push-marker-stack )
   )
+
+(defun my-set-evil-local-map( key fun  )
+  (define-key evil-normal-state-local-map (kbd key ) fun)
+  (define-key evil-insert-state-local-map (kbd key ) fun)
+  (define-key evil-motion-state-local-map (kbd  key) fun)
+  )
 (defun my-jump-set-evil-local-map( jump-fun  &optional back-fun   )
 
   (define-key evil-normal-state-local-map (kbd "C-]")  jump-fun)
@@ -1295,6 +1301,12 @@ If FORWARD is nil, search backward, otherwise forward."
     (unless deal-flag (find-file-at-point))))
 
 
+
+(defadvice edts-find-source-under-point (before  jim-edts-find-source-under-point activate compile)
+  (interactive)
+  (message "xxxx  edts-find-source-under-point ")
+  (xref-push-marker-stack )
+  )
 
 
 (provide 'xcwen-misc)

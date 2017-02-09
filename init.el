@@ -31,8 +31,12 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
-     erlang
-     phpplus
+     vimscript
+     docker
+     auto-completion
+     yaml
+     erlang+
+     php
      go
      html
      typescript
@@ -44,7 +48,6 @@ values."
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
      helm
-     auto-completion
 
 
      better-defaults
@@ -324,9 +327,18 @@ you should place your code here."
                  'js2-mode
                  'markdown-mode
                  'typescript-mode
+                 'fundamental-mode
                  'web-mode
+                 'go-mode
                  'org-mode
+                 'sh-mode
+                 'js2-mode
                  'elixir-mode
+                 'yaml-mode
+                 'nxml-mode
+                 'erlang-mode
+                 'html-mode
+                 'conf-unix-mode
                  ))
     (spacemacs/set-leader-keys-for-major-mode  mode "w" 'save-buffer)
     (spacemacs/set-leader-keys-for-major-mode  mode "u" 'upper-or-lower-whole-word)
@@ -339,6 +351,7 @@ you should place your code here."
   (spacemacs/set-leader-keys-for-major-mode  'php-mode "r" 'ac-php-remake-tags )
   (spacemacs/set-leader-keys-for-major-mode  'php-mode "i" 'ac-php-show-tip)
   (spacemacs/set-leader-keys-for-major-mode  'emacs-lisp-mode "," nil)
+  (setq flycheck-erlang-include-path "/home/jim/ejabberd-src/include" )
 
 
 
@@ -351,6 +364,12 @@ you should place your code here."
   (add-hook 'php-mode-hook '(lambda ( )
                               (require 'php-align)
                               (php-align-setup)
+                              ;; (company-mode  0)
+                              ;; (auto-complete-mode t)
+                              ;; (require 'ac-php)
+                              ;; (setq ac-sources  '(ac-source-php ) )
+                              ;; (yas-global-mode 1)
+                              (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
                               ))
   (add-hook 'js2-mode-hook '(lambda ( )
                               (require 'js2-align)
@@ -363,6 +382,8 @@ you should place your code here."
 
 
 
+
+
   (global-set-key (kbd "<f8>")    'switch-file-term)
   (set-evil-all-state-key (kbd "C-x C-k")    'kill-buffer )
   (set-evil-all-state-key "\C-^"  'helm-mini )
@@ -372,6 +393,14 @@ you should place your code here."
 
   (define-key company-active-map  (kbd  "C-n")   'company-select-next )
   (define-key company-active-map  (kbd  "C-p")   'company-select-previous )
+
+  (when (check-in-linux )
+    (x-send-client-message
+     nil 0 nil "_NET_WM_STATE" 32
+     '(2 "_NET_WM_STATE_MAXIMIZED_HORZ" 0))
+    (x-send-client-message
+     nil 0 nil "_NET_WM_STATE" 32
+     '(2 "_NET_WM_STATE_MAXIMIZED_VERT" 0)) )
 
 
 
@@ -439,7 +468,7 @@ you should place your code here."
   (spacemacs|create-align-repeat-x "my-align" "=>" nil t)
 
   (global-set-key "\M-1" 'delete-other-windows)
-  (set-evil-all-state-key  (kbd "<tab>")  'yas-expand-for-vim )
+
   (set-evil-all-state-key  (kbd "C-<tab>")  '(lambda () (interactive)
                                                (if  (string= major-mode "php-mode")
                                                    (company-complete)
@@ -522,3 +551,9 @@ you should place your code here."
 
 
   )
+(defun dotspacemacs/emacs-custom-settings ()
+  "Emacs custom settings.
+This is an auto-generated function, do not modify its content directly, use
+Emacs customize menu instead.
+This function is called at the very end of Spacemacs initialization."
+)
