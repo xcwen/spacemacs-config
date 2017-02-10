@@ -31,6 +31,7 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
+     windows-scripts
      lua
      vimscript
      docker
@@ -340,6 +341,9 @@ you should place your code here."
                  'erlang-mode
                  'html-mode
                  'conf-unix-mode
+                 'lua-mode
+                 'css-mode
+                 'help-mode
                  ))
     (spacemacs/set-leader-keys-for-major-mode  mode "w" 'save-buffer)
     (spacemacs/set-leader-keys-for-major-mode  mode "u" 'upper-or-lower-whole-word)
@@ -375,6 +379,7 @@ you should place your code here."
   (add-hook 'js2-mode-hook '(lambda ( )
                               (require 'js2-align)
                               (js2-align-setup)
+                              (spacemacs/set-leader-keys-for-major-mode  js2-mode "w" 'save-buffer)
                               ))
   (add-hook 'typescript-mode-hook '(lambda ( )
                                      (require 'ts-align)
@@ -391,6 +396,7 @@ you should place your code here."
   (set-evil-all-state-key "\C-]"  'spacemacs/jump-to-definition )
   (set-evil-normal-state-key "Y"  'copy-region-or-whole-line )
   (set-evil-normal-state-key "D"  'kill-region-or-whole-line )
+  (require 'company)
 
   (define-key company-active-map  (kbd  "C-n")   'company-select-next )
   (define-key company-active-map  (kbd  "C-p")   'company-select-previous )
@@ -487,9 +493,16 @@ you should place your code here."
   (define-key isearch-mode-map (kbd "C-v")  '(lambda()(interactive)
                                                (isearch-yank-string (trim-string (current-kill 0) ))))
 
+  (add-hook 'minibuffer-inactive-mode-hook
+            '(lambda()
+               (message  "  XXXX  minibuffer-inactive-mode-hook ")
+               (define-key   evil-ex-search-keymap  (kbd "C-y")  '(lambda()(interactive)
+                                                                         (insert (trim-string (current-kill 0) ))))
+               (define-key    evil-ex-search-keymap (kbd "C-v")  '(lambda()(interactive)
+                                                                         (insert (trim-string (current-kill 0) ))))
+               ))
 
-  (define-key  minibuffer-inactive-mode-map (kbd "C-y")  '(lambda()(interactive)
-                                                            (insert (trim-string (current-kill 0) ))))
+
   (define-key  minibuffer-inactive-mode-map (kbd "M-p")  'previous-line-or-history-element)
   (define-key  minibuffer-inactive-mode-map (kbd "M-n")  'next-line-or-history-element)
 
