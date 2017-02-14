@@ -495,12 +495,13 @@ you should place your code here."
 
   (add-hook 'minibuffer-inactive-mode-hook
             '(lambda()
-               (message  "  XXXX  minibuffer-inactive-mode-hook ")
-               (define-key   evil-ex-search-keymap  (kbd "C-y")  '(lambda()(interactive)
-                                                                         (insert (trim-string (current-kill 0) ))))
-               (define-key    evil-ex-search-keymap (kbd "C-v")  '(lambda()(interactive)
-                                                                         (insert (trim-string (current-kill 0) ))))
+               ;;(message  "  XXXX  minibuffer-inactive-mode-hook ")
                ))
+  (define-key   evil-ex-search-keymap  (kbd "C-y")  '(lambda()(interactive)
+                                                       (insert (trim-string (current-kill 0) ))))
+  (define-key    evil-ex-search-keymap (kbd "C-v")  '(lambda()(interactive)
+                                                       (insert (trim-string (current-kill 0) ))))
+
 
 
   (define-key  minibuffer-inactive-mode-map (kbd "M-p")  'previous-line-or-history-element)

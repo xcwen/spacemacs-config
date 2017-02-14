@@ -10,15 +10,19 @@
       (spacemacs|add-company-hook php-mode )
     (error
      ;; try this one:
-     (spacemacs|add-company-backends :modes php-mode)
+     (spacemacs|add-company-backends
+       :modes php-mode
+       :variables
+       company-minimum-prefix-length 1000
+       :backends  company-ac-php-backend
+       )
      )))
 
 
+;; (defun phpplus/post-init-company-php ()
 
-(defun phpplus/post-init-company-php ()
-
-  (push 'company-ac-php-backend  company-backends-php-mode)
-  )
+;;   (push 'company-ac-php-backend  company-backends-php-mode)
+;;   )
 
 
 
