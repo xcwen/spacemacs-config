@@ -72,7 +72,7 @@ values."
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
-   dotspacemacs-excluded-packages '( php-extras )
+   dotspacemacs-excluded-packages '( php-extras auto-highlight-symbol )
    ;; Defines the behaviour of Spacemacs when installing packages.
    ;; Possible values are `used-only', `used-but-keep-unused' and `all'.
    ;; `used-only' installs only explicitly used packages and uninstall any
@@ -350,9 +350,9 @@ you should place your code here."
     (spacemacs/set-leader-keys-for-major-mode  mode "l" 'revert-buffer )
     (spacemacs/set-leader-keys-for-major-mode  mode "a" 'switch-file-opt )
     (spacemacs/set-leader-keys-for-major-mode  mode "o" 'other-window )
-
     )
 
+  ;;(define-key evil-motion-state-map (kbd "*") 'evil-ex-search-word-forward)
   (spacemacs/set-leader-keys-for-major-mode  'php-mode "r" 'ac-php-remake-tags )
   (spacemacs/set-leader-keys-for-major-mode  'php-mode "i" 'ac-php-show-tip)
   (spacemacs/set-leader-keys-for-major-mode  'emacs-lisp-mode "," nil)
@@ -388,6 +388,7 @@ you should place your code here."
 
 
 
+  (require 'evil)
 
 
   (global-set-key (kbd "<f8>")    'switch-file-term)
