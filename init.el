@@ -384,6 +384,7 @@ you should place your code here."
   (add-hook 'typescript-mode-hook '(lambda ( )
                                      (require 'ts-align)
                                      (typescript-align-setup)
+                                     (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
                                      ))
 
 
