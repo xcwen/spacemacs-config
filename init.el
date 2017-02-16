@@ -350,6 +350,10 @@ you should place your code here."
     (spacemacs/set-leader-keys-for-major-mode  mode "l" 'revert-buffer )
     (spacemacs/set-leader-keys-for-major-mode  mode "a" 'switch-file-opt )
     (spacemacs/set-leader-keys-for-major-mode  mode "o" 'other-window )
+    (spacemacs/set-leader-keys-for-major-mode  mode "e" '(lambda()
+                                                           (interactive )
+                                                           (goto-line 1)
+                                                           ( flycheck-next-error 1)  )  )
     )
 
   ;;(define-key evil-motion-state-map (kbd "*") 'evil-ex-search-word-forward)
