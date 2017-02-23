@@ -296,7 +296,7 @@ values."
    ;; `trailing' to delete only the whitespace at end of lines, `changed'to
    ;; delete only whitespace for changed lines or `nil' to disable cleanup.
    ;; (default nil)
-   dotspacemacs-whitespace-cleanup 'all
+   dotspacemacs-whitespace-cleanup nil
    ))
 
 (defun dotspacemacs/user-init ()
@@ -346,6 +346,11 @@ you should place your code here."
                  'help-mode
                  ))
     (spacemacs/set-leader-keys-for-major-mode  mode "w" 'save-buffer)
+    (spacemacs/set-leader-keys-for-major-mode  mode "W" '(lambda()
+                                                           (interactive )
+                                                           (whitespace-cleanup)
+                                                           (save-buffer )  )  )
+
     (spacemacs/set-leader-keys-for-major-mode  mode "u" 'upper-or-lower-whole-word)
     (spacemacs/set-leader-keys-for-major-mode  mode "l" 'revert-buffer )
     (spacemacs/set-leader-keys-for-major-mode  mode "a" 'switch-file-opt )
@@ -354,7 +359,19 @@ you should place your code here."
                                                            (interactive )
                                                            (goto-line 1)
                                                            ( flycheck-next-error 1)  )  )
+    (spacemacs/set-leader-keys-for-major-mode  mode "\""
+      '(lambda()
+         (interactive )
+         (cond
+          ((string= major-mode "php-mode")
+           (progn
+             (insert  "\" . \"")
+             (backward-char 4 )
+            ))
+         )))
+
     )
+
 
   ;;(define-key evil-motion-state-map (kbd "*") 'evil-ex-search-word-forward)
   (spacemacs/set-leader-keys-for-major-mode  'php-mode "r" 'ac-php-remake-tags )
