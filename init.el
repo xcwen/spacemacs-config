@@ -31,6 +31,7 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
+     sql
      windows-scripts
      lua
      vimscript
@@ -68,7 +69,7 @@ values."
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '( ac-php js2-mode web-mode typescript-mode  multi-term )
+   dotspacemacs-additional-packages '( ac-php async  js2-mode web-mode typescript-mode  multi-term )
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
@@ -508,6 +509,8 @@ you should place your code here."
   (set-evil-all-state-key  (kbd "M-h") 'backward-kill-word-without-_)
   (set-evil-all-state-key (kbd "C-v") 'yank )
   (set-evil-all-state-key (kbd "C-c") 'copy-region-or-whole-line )
+  (set-evil-all-state-key (kbd "C-S-h") 'multi-term-prev )
+  (set-evil-all-state-key (kbd "C-S-l") 'multi-term-next )
 
   ;;查找时,使用trim-string,去掉前后空格
   (define-key isearch-mode-map (kbd "C-y")  '(lambda()(interactive)
