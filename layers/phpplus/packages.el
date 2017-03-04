@@ -19,10 +19,9 @@
      )))
 
 
-;; (defun phpplus/post-init-company-php ()
-
-;;   (push 'company-ac-php-backend  company-backends-php-mode)
-;;   )
+(defun phpplus/post-init-company-php ()
+  (push 'company-ac-php-backend  company-backends-php-mode)
+)
 
 
 
