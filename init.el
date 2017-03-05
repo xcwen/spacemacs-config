@@ -415,6 +415,7 @@ you should place your code here."
 
 
   (global-set-key (kbd "<f8>")    'switch-file-term)
+  (global-set-key (kbd "s-x")    'helm-M-x )
   (set-evil-all-state-key (kbd "C-x C-k")    'kill-buffer )
   (set-evil-all-state-key "\C-^"  'helm-mini )
   (set-evil-all-state-key "\C-]"  'spacemacs/jump-to-definition )
@@ -450,6 +451,7 @@ you should place your code here."
    '(term-color-red ((t (:background "red3" :foreground "brown")))))
 
   (global-set-key (kbd "M-w")   'copy-region-or-whole-line)
+  (global-set-key (kbd "s-w")   'copy-region-or-whole-line)
 ;
   ;; 等号对齐
   (define-key evil-visual-state-map (kbd "=")
@@ -499,6 +501,7 @@ you should place your code here."
   (spacemacs|create-align-repeat-x "my-align" "=>" nil t)
 
   (global-set-key "\M-1" 'delete-other-windows)
+  (global-set-key  (kbd "s-1") 'delete-other-windows)
 
   (set-evil-all-state-key  (kbd "C-<tab>")  '(lambda () (interactive)
                                                (if  (string= major-mode "php-mode")
@@ -507,6 +510,7 @@ you should place your code here."
                                                ))
   (set-evil-all-state-key  (kbd "M-1")  'delete-other-windows)
   (set-evil-all-state-key  (kbd "M-h") 'backward-kill-word-without-_)
+  (set-evil-all-state-key  (kbd "s-h") 'backward-kill-word-without-_)
   (set-evil-all-state-key (kbd "C-v") 'yank )
   (set-evil-all-state-key (kbd "C-c") 'copy-region-or-whole-line )
   (set-evil-all-state-key (kbd "C-S-h") 'multi-term-prev )
@@ -532,6 +536,10 @@ you should place your code here."
 
   (define-key  minibuffer-inactive-mode-map (kbd "M-p")  'previous-line-or-history-element)
   (define-key  minibuffer-inactive-mode-map (kbd "M-n")  'next-line-or-history-element)
+
+  (define-key  minibuffer-inactive-mode-map (kbd "s-p")  'previous-line-or-history-element)
+  (define-key  minibuffer-inactive-mode-map (kbd "s-n")  'next-line-or-history-element)
+
 
   (define-key  minibuffer-inactive-mode-map (kbd "C-p")  'previous-line-or-history-element)
   (define-key  minibuffer-inactive-mode-map (kbd "C-n")  'next-line-or-history-element)
@@ -564,6 +572,7 @@ you should place your code here."
 
       (define-key evil-insert-state-local-map   (kbd "C-y")  'term-paste )
       (define-key evil-insert-state-local-map   (kbd "C-v")  'term-paste )
+      (define-key evil-insert-state-local-map   (kbd "s-v")  'term-paste )
       (define-key evil-insert-state-local-map   (kbd "C-c")  'copy-region-or-whole-line  )
       (define-key evil-insert-state-local-map   (kbd "C-S-c")  'term-interrupt-subjob   )
 
@@ -572,6 +581,9 @@ you should place your code here."
 
       (add-to-list 'term-bind-key-alist '("M-x" . helm-M-x  ))
       (add-to-list 'term-bind-key-alist '("M-1" .  delete-other-windows ))
+      (add-to-list 'term-bind-key-alist '("s-x" . helm-M-x  ))
+      (add-to-list 'term-bind-key-alist '("s-1" .  delete-other-windows ))
+
       (add-to-list 'term-bind-key-alist '("C-^" . helm-mini ))
 
       ;; C-6 -> C-^
@@ -585,6 +597,7 @@ you should place your code here."
 
       ;;(add-to-list 'term-bind-key-alist '( "C-c".  copy-region-or-whole-line  ))
       (add-to-list 'term-bind-key-alist '( "M-w". copy-region-or-whole-line ))
+      (add-to-list 'term-bind-key-alist '( "s-w". copy-region-or-whole-line ))
       ;;(add-to-list 'term-bind-key-alist '( "C-v". term-paste ))
       ;;(add-to-list 'term-bind-key-alist '( "C-y". term-paste ))
       ;;(add-to-list 'term-bind-key-alist '( "<up>". term-send-raw ))
