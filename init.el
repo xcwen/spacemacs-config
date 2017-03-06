@@ -332,10 +332,12 @@ you should place your code here."
                  'typescript-mode
                  'fundamental-mode
                  'web-mode
+                 'json-mode
                  'go-mode
                  'org-mode
                  'sh-mode
                  'js2-mode
+                 'conf-mode
                  'elixir-mode
                  'yaml-mode
                  'nxml-mode
@@ -501,6 +503,7 @@ you should place your code here."
   (spacemacs|create-align-repeat-x "my-align" "=>" nil t)
 
   (global-set-key "\M-1" 'delete-other-windows)
+  (global-set-key (kbd "s-/") 'hippie-expand)
   (global-set-key  (kbd "s-1") 'delete-other-windows)
 
   (set-evil-all-state-key  (kbd "C-<tab>")  '(lambda () (interactive)
@@ -543,7 +546,14 @@ you should place your code here."
 
   (define-key  minibuffer-inactive-mode-map (kbd "C-p")  'previous-line-or-history-element)
   (define-key  minibuffer-inactive-mode-map (kbd "C-n")  'next-line-or-history-element)
+  (define-key  company-active-map (kbd "s-p")  'company-select-previous)
+  (define-key  company-active-map (kbd "s-n")  'company-select-next)
 
+  (define-key  company-search-map (kbd "s-p")  'company-select-previous)
+  (define-key  company-search-map (kbd "s-n")  'company-select-next)
+
+
+  
 
 
   ;;ex 命令行调整

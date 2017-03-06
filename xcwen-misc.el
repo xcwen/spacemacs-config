@@ -34,15 +34,15 @@ localhost:~/site-lisp/config$"
     (setq opt-file-name (buffer-file-name)   )
 
     ;;go to file location dir
-    (message "1111")
+    ;;(message "1111")
     (if (and  opt-file-name  (file-exists-p opt-file-name ) )
         (setq file-path-str (file-name-directory opt-file-name ) )
       (setq file-path-str (concat  (getenv "HOME") "/" )))
 
-    (message "1.1")
+    ;;(message "1.1")
     (dolist  ( opt-buffer (buffer-list) )
 
-      (message "1.1.1")
+      ;;(message "1.1.1")
       (let (check-free-term)
         (with-current-buffer opt-buffer
           (setq check-free-term
@@ -61,11 +61,11 @@ localhost:~/site-lisp/config$"
           (return )
         )))
 
-    (message "1.2")
+    ;;(message "1.2")
     (let (check-free-term)
       (unless  find-flag
         (dolist  ( opt-buffer (buffer-list) )
-          (message "1.2.1 %s " opt-buffer )
+          ;;(message "1.2.1 %s " opt-buffer )
           (with-current-buffer opt-buffer
             (setq check-free-term
                   (and
@@ -79,26 +79,30 @@ localhost:~/site-lisp/config$"
           (when check-free-term
             (switch-to-buffer opt-buffer)
             (setq find-flag t)
-            (message "1.2.2: %s" opt-buffer)
+            ;;(message "1.2.2: %s" opt-buffer)
             (return ))
           )))
 
 
-    (message "222")
+    ;;(message "222")
     (unless find-flag
       (multi-term  ))
 
 
+    (end-of-buffer)
+    (previous-line)
     (setq line-txt (buffer-substring-no-properties
                     (line-beginning-position)
                     (line-end-position )))
 
     ;;(message "===%s %s" default-directory file-path-str )
+    ;;(message "22 ===%s %s"  term-local-cmd-start-line-regex-str line-txt  )
     ;;进入当前文件所在文件夹
     (when (and  (not (string= file-path-str default-directory ))
                 (string-match term-local-cmd-start-line-regex-str line-txt ) ;;本地，处于命令行完成状态
                 )
       (setq init-cmd  (concat "cd " file-path-str  " # goto file location   \r" ) )
+      ;;(message "send init-cmd :%s " init-cmd )
       (term-send-raw-string init-cmd ))
     ))
 
