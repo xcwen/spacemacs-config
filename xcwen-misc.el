@@ -89,8 +89,8 @@ localhost:~/site-lisp/config$"
       (multi-term  ))
 
 
-    (end-of-buffer)
-    (previous-line)
+    ;;(end-of-buffer)
+    ;;(previous-line)
     (setq line-txt (buffer-substring-no-properties
                     (line-beginning-position)
                     (line-end-position )))
