@@ -332,6 +332,7 @@ you should place your code here."
                  'typescript-mode
                  'fundamental-mode
                  'web-mode
+                 'sql-mode
                  'json-mode
                  'go-mode
                  'org-mode
@@ -388,6 +389,8 @@ you should place your code here."
   ;;(define-key evil-motion-state-map (kbd "*") 'evil-ex-search-word-forward)
   (spacemacs/set-leader-keys-for-major-mode  'php-mode "r" 'ac-php-remake-tags )
   (spacemacs/set-leader-keys-for-major-mode  'php-mode "i" 'ac-php-show-tip)
+  (spacemacs/set-leader-keys-for-major-mode  'php-mode "f" 'ac-php-gen-def )
+
   (spacemacs/set-leader-keys-for-major-mode  'emacs-lisp-mode "," nil)
   (setq flycheck-erlang-include-path "/home/jim/ejabberd-src/include" )
 
