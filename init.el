@@ -42,7 +42,7 @@ values."
      phpplus
      go
      html
-     typescript
+     typescriptplus
      elixir
      javascript
      ;; ----------------------------------------------------------------
@@ -416,12 +416,22 @@ you should place your code here."
                               (require 'js2-align)
                               (js2-align-setup)
                               (spacemacs/set-leader-keys-for-major-mode  js2-mode "w" 'save-buffer)
+                              (setq js2-strict-trailing-comma-warning nil )
                               ))
   (add-hook 'typescript-mode-hook '(lambda ( )
                                      (require 'ts-align)
                                      (typescript-align-setup)
                                      (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
+
                                      ))
+
+
+  (add-hook
+   'web-mode-hook
+   '(lambda ( )
+      (my-set-evil-local-map "\C-]"   'tide-jump-to-definition )
+      ))
+
 
 
 

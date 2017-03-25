@@ -26,7 +26,7 @@
 
 
 (defun phpplus/post-init-flycheck ()
-  (spacemacs/add-flycheck-hook 'php-mode))
+  (spacemacs/enable-flycheck 'php-mode))
 
 
 
