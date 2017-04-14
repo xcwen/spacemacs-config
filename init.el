@@ -348,6 +348,7 @@ you should place your code here."
                  'lua-mode
                  'css-mode
                  'help-mode
+                 'text-mode
                  ))
     (spacemacs/set-leader-keys-for-major-mode  mode "w" 'save-buffer)
     (spacemacs/set-leader-keys-for-major-mode  mode "W" '(lambda()
@@ -440,6 +441,7 @@ you should place your code here."
 
   (global-set-key (kbd "<f8>")    'switch-file-term)
   (global-set-key (kbd "s-x")    'helm-M-x )
+  (global-set-key (kbd "C-:")    'company-files  )
   (set-evil-all-state-key (kbd "C-x C-k")    'kill-buffer )
   (set-evil-all-state-key "\C-^"  'helm-mini )
   (set-evil-all-state-key "\C-]"  'spacemacs/jump-to-definition )
