@@ -332,6 +332,7 @@ you should place your code here."
                  'typescript-mode
                  'fundamental-mode
                  'web-mode
+                 'c-mode
                  'sql-mode
                  'json-mode
                  'go-mode
@@ -349,6 +350,8 @@ you should place your code here."
                  'css-mode
                  'help-mode
                  'text-mode
+                 'makefile-gmake-mode
+                 'conf-space-mode
                  ))
     (spacemacs/set-leader-keys-for-major-mode  mode "w" 'save-buffer)
     (spacemacs/set-leader-keys-for-major-mode  mode "W" '(lambda()
