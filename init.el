@@ -39,7 +39,8 @@ values."
      auto-completion
      yaml
      erlang
-     phpplus
+     ;;phpplus
+     php
      go
      html
      typescriptplus
@@ -585,7 +586,7 @@ you should place your code here."
   (define-key  company-search-map (kbd "s-n")  'company-select-next)
 
 
-  
+
 
 
   ;;ex 命令行调整
@@ -652,4 +653,5 @@ you should place your code here."
 This is an auto-generated function, do not modify its content directly, use
 Emacs customize menu instead.
 This function is called at the very end of Spacemacs initialization."
+
 )

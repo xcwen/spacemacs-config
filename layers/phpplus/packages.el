@@ -40,7 +40,6 @@
     :defer t
     :init
     (progn
-      (require 'ac-php-core)
       (add-hook 'php-mode-hook  'ac-php-core-eldoc-setup  )
       )
     )
