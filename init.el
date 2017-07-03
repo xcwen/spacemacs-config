@@ -41,7 +41,11 @@ values."
      erlang
      ;;phpplus
      php
-     go
+     (go :variables
+         ;go-use-gometalinter t
+         go-tab-width 4
+         gofmt-command "goimports"
+      )
      html
      typescriptplus
      elixir
