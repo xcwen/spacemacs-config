@@ -30,7 +30,7 @@ values."
    dotspacemacs-configuration-layer-path '()
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(
+   '(nginx
      sql
      windows-scripts
      lua
@@ -78,7 +78,7 @@ values."
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
-   dotspacemacs-excluded-packages '( php-extras auto-highlight-symbol )
+   dotspacemacs-excluded-packages '( php-extras auto-highlight-symbol version-control )
    ;; Defines the behaviour of Spacemacs when installing packages.
    ;; Possible values are `used-only', `used-but-keep-unused' and `all'.
    ;; `used-only' installs only explicitly used packages and uninstall any
@@ -313,6 +313,7 @@ executes.
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
   )
+
 (setq configuration-layer--elpa-archives
     '(("melpa-cn" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/")
       ("org-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/org/")
@@ -362,6 +363,7 @@ you should place your code here."
                  'text-mode
                  'makefile-gmake-mode
                  'conf-space-mode
+                 'latex-mode
                  ))
     (spacemacs/set-leader-keys-for-major-mode  mode "w" 'save-buffer)
     (spacemacs/set-leader-keys-for-major-mode  mode "W" '(lambda()
@@ -481,7 +483,7 @@ you should place your code here."
   (global-set-key  (kbd  "C-/"  )   'comment-or-uncomment-region-or-whole-line )
 
 
-  (add-hook 'after-save-hook 'ts2js)
+  ;;(add-hook 'after-save-hook 'ts2js)
 
 
   (custom-set-faces
@@ -611,6 +613,8 @@ you should place your code here."
 
   (setq frame-title-format  '("file: %f "  ))
   (setq yas-snippet-dirs   (list   "~/site-lisp/config/my-yas" )  )
+
+  (add-hook 'buffer-list-update-hook 'set-admin-title  )
 
   (add-hook
    'term-mode-hook

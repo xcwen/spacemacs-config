@@ -1226,6 +1226,21 @@ If FORWARD is nil, search backward, otherwise forward."
     ))
 
 
+(defun set-admin-title ()
+  "DOCSTRING"
+  (interactive)
+  (let ( (admin-work-dir (concat (getenv "HOME") "/admin_yb1v1/"))  )
+    (if (s-prefix-p admin-work-dir (buffer-file-name)   )
+        (progn
+          (if (s-matches-p "git"  (f-canonical   admin-work-dir ) )
+              (setq frame-title-format  '("[ADMIN GIT]: %f [ADMIN GIT] "  ))
+            (setq frame-title-format  '(" [ADMIN 0.6]: %f [ADMIN 0.6] "  ))
+            )
+          )
+      (setq frame-title-format  '("file: %f "  ))
+      )
+    )
+  )
 (defun ts2js ()
   "DOCSTRING"
   (interactive)
