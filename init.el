@@ -372,7 +372,7 @@ you should place your code here."
                                                            (save-buffer )  )  )
 
     (spacemacs/set-leader-keys-for-major-mode  mode "u" 'upper-or-lower-whole-word)
-    (spacemacs/set-leader-keys-for-major-mode  mode "l" 'revert-buffer )
+    (spacemacs/set-leader-keys-for-major-mode  mode "L" 'revert-buffer )
     (spacemacs/set-leader-keys-for-major-mode  mode "a" 'switch-file-opt )
     (spacemacs/set-leader-keys-for-major-mode  mode "o" 'other-window )
     (spacemacs/set-leader-keys-for-major-mode  mode "e" '(lambda()
@@ -611,6 +611,7 @@ you should place your code here."
 
   (message "do user-config" )
 
+  (setq ac-php-project-root-dir-use-truename   nil )
   (setq frame-title-format  '("file: %f "  ))
   (setq yas-snippet-dirs   (list   "~/site-lisp/config/my-yas" )  )
 
