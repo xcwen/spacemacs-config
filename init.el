@@ -377,6 +377,7 @@ you should place your code here."
     (spacemacs/set-leader-keys-for-major-mode  mode "o" 'other-window )
     (spacemacs/set-leader-keys-for-major-mode  mode "e" '(lambda()
                                                            (interactive )
+                                                           (flycheck-buffer)
                                                            (whitespace-cleanup)
                                                            (xref-push-marker-stack)
                                                            (goto-line 1)
@@ -463,6 +464,9 @@ you should place your code here."
   (set-evil-normal-state-key "Y"  'copy-region-or-whole-line )
   (set-evil-normal-state-key "D"  'kill-region-or-whole-line )
   (require 'company)
+  (setq flycheck-check-syntax-automatically 'save )
+  ;;(setq flycheck-check-syntax-automatically 'idle-change )
+  ;;(setq  flycheck-idle-change-delay 800 )
 
   (define-key company-active-map  (kbd  "C-n")   'company-select-next )
   (define-key company-active-map  (kbd  "C-p")   'company-select-previous )
