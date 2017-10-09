@@ -30,7 +30,8 @@ values."
    dotspacemacs-configuration-layer-path '()
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(nginx
+   '(python
+     nginx
      sql
      windows-scripts
      lua
@@ -55,6 +56,7 @@ values."
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
+     ;;ivy 
      helm
 
 
@@ -315,9 +317,9 @@ before packages are loaded. If you are unsure, you should try in setting them in
   )
 
 (setq configuration-layer--elpa-archives
-    '(("melpa-cn" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/")
-      ("org-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/org/")
-      ("gnu-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")))
+   '(("melpa-cn" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/")
+    ("org-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/org/")
+   ("gnu-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")))
 
 (setq custom-file (expand-file-name "custom.el" dotspacemacs-directory))
 (load custom-file )
@@ -361,9 +363,11 @@ you should place your code here."
                  'css-mode
                  'help-mode
                  'text-mode
+                 'python-mode
                  'makefile-gmake-mode
                  'conf-space-mode
                  'latex-mode
+                 'dockerfile-mode
                  ))
     (spacemacs/set-leader-keys-for-major-mode  mode "w" 'save-buffer)
     (spacemacs/set-leader-keys-for-major-mode  mode "W" '(lambda()
@@ -464,7 +468,7 @@ you should place your code here."
   (set-evil-normal-state-key "Y"  'copy-region-or-whole-line )
   (set-evil-normal-state-key "D"  'kill-region-or-whole-line )
   (require 'company)
-  (setq flycheck-check-syntax-automatically 'save )
+  ;;(setq flycheck-check-syntax-automatically 'save )
   ;;(setq flycheck-check-syntax-automatically 'idle-change )
   ;;(setq  flycheck-idle-change-delay 800 )
 
