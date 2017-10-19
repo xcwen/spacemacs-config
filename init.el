@@ -59,6 +59,7 @@ values."
      ;;ivy 
      helm
 
+     protobuf
 
      better-defaults
      emacs-lisp
@@ -76,7 +77,7 @@ values."
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '( ac-php async  js2-mode web-mode typescript-mode  multi-term )
+   dotspacemacs-additional-packages '(   ac-php async  js2-mode web-mode typescript-mode  multi-term )
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
@@ -364,6 +365,7 @@ you should place your code here."
                  'help-mode
                  'text-mode
                  'python-mode
+                 'protobuf-mode
                  'makefile-gmake-mode
                  'conf-space-mode
                  'latex-mode
@@ -572,6 +574,20 @@ you should place your code here."
 
   (define-key isearch-mode-map (kbd "C-v")  '(lambda()(interactive)
                                                (isearch-yank-string (trim-string (current-kill 0) ))))
+  
+  (dolist (mode-hook (list
+                 'sh-mode-hook
+                 'json-mode-hook
+                 'emacs-lisp-mode-hook
+                 ))
+
+    (add-hook mode-hook '(lambda() (interactive )
+                               (flycheck-mode)
+                               (company-mode)
+                               ))
+    )
+
+
 
   (add-hook 'minibuffer-inactive-mode-hook
             '(lambda()
