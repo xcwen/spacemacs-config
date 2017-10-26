@@ -415,7 +415,7 @@ you should place your code here."
   (spacemacs/set-leader-keys-for-major-mode  'php-mode "f" 'ac-php-gen-def )
 
   (spacemacs/set-leader-keys-for-major-mode  'emacs-lisp-mode "," nil)
-  (setq flycheck-erlang-include-path "/home/jim/ejabberd-src/include" )
+  (setq flycheck-erlang-include-path '("/home/jim/ejabberd-17.08/include") )
 
 
 
@@ -450,6 +450,14 @@ you should place your code here."
 
 
   (add-hook
+   'org-mode-hook
+   '(lambda ( )
+      (my-set-evil-local-map (kbd "C-S-j")     'switch-file-term )
+      ))
+
+
+
+  (add-hook
    'web-mode-hook
    '(lambda ( )
       (my-set-evil-local-map "\C-]"   'tide-jump-to-definition )
@@ -462,6 +470,7 @@ you should place your code here."
 
 
   (global-set-key (kbd "<f8>")    'switch-file-term)
+  (global-set-key (kbd "C-S-j")    'switch-file-term)
   (global-set-key (kbd "s-x")    'helm-M-x )
   (global-set-key (kbd "C-:")    'company-files  )
   (set-evil-all-state-key (kbd "C-x C-k")    'kill-buffer )
@@ -651,6 +660,8 @@ you should place your code here."
       (define-key evil-insert-state-local-map   (kbd "s-v")  'term-paste )
       (define-key evil-insert-state-local-map   (kbd "C-c")  'copy-region-or-whole-line  )
       (define-key evil-insert-state-local-map   (kbd "C-S-c")  'term-interrupt-subjob   )
+      (define-key evil-insert-state-local-map   (kbd "C-p")  'term-send-raw)
+      (define-key evil-insert-state-local-map   (kbd "C-n")  'term-send-raw)
 
       (setq term-unbind-key-list  '("C-x"))
       (setq term-bind-key-alist nil)
