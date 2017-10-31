@@ -56,8 +56,8 @@ values."
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
-     ;;ivy 
-     helm
+     ivy
+     ;;helm
 
      protobuf
 
@@ -317,10 +317,11 @@ before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
   )
 
-(setq configuration-layer--elpa-archives
-   '(("melpa-cn" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/")
-    ("org-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/org/")
-   ("gnu-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")))
+
+;; (setq configuration-layer--elpa-archives
+;;    '(("melpa-cn" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/")
+;;     ("org-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/org/")
+;;    ("gnu-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")))
 
 (setq custom-file (expand-file-name "custom.el" dotspacemacs-directory))
 (load custom-file )
@@ -471,10 +472,10 @@ you should place your code here."
 
   (global-set-key (kbd "<f8>")    'switch-file-term)
   (global-set-key (kbd "C-S-j")    'switch-file-term)
-  (global-set-key (kbd "s-x")    'helm-M-x )
+  (global-set-key (kbd "s-x")    'counsel-M-x )
   (global-set-key (kbd "C-:")    'company-files  )
   (set-evil-all-state-key (kbd "C-x C-k")    'kill-buffer )
-  (set-evil-all-state-key "\C-^"  'helm-mini )
+  (set-evil-all-state-key "\C-^"  'ivy-switch-buffer )
   (set-evil-all-state-key "\C-]"  'spacemacs/jump-to-definition )
   (set-evil-normal-state-key "Y"  'copy-region-or-whole-line )
   (set-evil-normal-state-key "D"  'kill-region-or-whole-line )
@@ -583,7 +584,7 @@ you should place your code here."
 
   (define-key isearch-mode-map (kbd "C-v")  '(lambda()(interactive)
                                                (isearch-yank-string (trim-string (current-kill 0) ))))
-  
+
   (dolist (mode-hook (list
                  'sh-mode-hook
                  'json-mode-hook
@@ -666,12 +667,13 @@ you should place your code here."
       (setq term-unbind-key-list  '("C-x"))
       (setq term-bind-key-alist nil)
 
-      (add-to-list 'term-bind-key-alist '("M-x" . helm-M-x  ))
+      (add-to-list 'term-bind-key-alist '("M-x" . counsel-M-x  ))
       (add-to-list 'term-bind-key-alist '("M-1" .  delete-other-windows ))
-      (add-to-list 'term-bind-key-alist '("s-x" . helm-M-x  ))
+      (add-to-list 'term-bind-key-alist '("s-x" . counsel-M-x  ))
       (add-to-list 'term-bind-key-alist '("s-1" .  delete-other-windows ))
 
-      (add-to-list 'term-bind-key-alist '("C-^" . helm-mini ))
+      ;;(add-to-list 'term-bind-key-alist '("C-^" .  helm-mini ))
+      (add-to-list 'term-bind-key-alist '("C-^" .  ivy-switch-buffer ))
 
       ;; C-6 -> C-^
       (add-to-list 'term-bind-key-alist '( "C-6". (lambda() (interactive)  (term-send-raw-string "\C-^" ) ) ))
