@@ -1,0 +1,13 @@
+
+
+keycode  37 = Control_L NoSymbol Control_L
+
+! ~ 
+keycode  49 = grave asciitilde grave asciitilde
+keycode  9 = Escape NoSymbol Escape
+
+!f2 -> ~
+keycode  68 = F2 F2 F2 F2 F2 F2 XF86Switch_VT_2
+
+keycode  51 = backslash bar backslash bar
+keycode  22 = BackSpace BackSpace BackSpace BackSpace
