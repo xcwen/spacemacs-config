@@ -1,6 +1,6 @@
 
-
-keycode  37 = Control_L NoSymbol Control_L
+!keycode  37 = Control_L NoSymbol Control_L
+keycode  66 = Control_L Control_L Control_L Control_L
 
 ! ~ -> Esc 
 keycode  49 = Escape NoSymbol Escape

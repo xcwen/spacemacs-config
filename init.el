@@ -318,10 +318,10 @@ before packages are loaded. If you are unsure, you should try in setting them in
   )
 
 
-;; (setq configuration-layer--elpa-archives
-;;    '(("melpa-cn" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/")
-;;     ("org-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/org/")
-;;    ("gnu-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")))
+ (setq configuration-layer--elpa-archives
+    '(("melpa-cn" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/")
+    ("org-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/org/")
+    ("gnu-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")))
 
 (setq custom-file (expand-file-name "custom.el" dotspacemacs-directory))
 (load custom-file )
@@ -572,6 +572,7 @@ you should place your code here."
                                                ))
   (set-evil-all-state-key  (kbd "M-1")  'delete-other-windows)
   (set-evil-all-state-key  (kbd "M-h") 'backward-kill-word-without-_)
+  (set-evil-all-state-key  (kbd "C-h") 'delete-backward-char)
   (set-evil-all-state-key  (kbd "s-h") 'backward-kill-word-without-_)
   (set-evil-all-state-key (kbd "C-v") 'yank )
   (set-evil-all-state-key (kbd "C-c") 'copy-region-or-whole-line )

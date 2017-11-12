@@ -1,6 +1,7 @@
 
 
-keycode  37 = Control_L NoSymbol Control_L
+!keycode  37 = Control_L NoSymbol Control_L
+keycode  66 = Caps_Lock NoSymbol Caps_Lock
 
 ! ~ 
 keycode  49 = grave asciitilde grave asciitilde
