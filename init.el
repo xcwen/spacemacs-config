@@ -2,6 +2,7 @@
 ;; This file is loaded by Spacemacs at startup.
 ;; It must be stored in your home directory.
 
+;;; Code:
 (defun dotspacemacs/layers ()
   "Configuration Layers declaration.
 You should not put any user code in this function besides modifying the variable
@@ -30,7 +31,8 @@ values."
    dotspacemacs-configuration-layer-path '()
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(python
+   '(csv
+     python
      nginx
      sql
      windows-scripts
@@ -158,7 +160,7 @@ values."
    ;; quickly tweak the mode-line size to make separators look not too crappy.
    ;;(if (string= (system-name) "jim-MacBookPro") 48 24  )
   dotspacemacs-default-font (list  "XHei Mono.Ubuntu"  ;;"Source Code Pro"
-                                   :size  (if (string= (system-name) "jim-MacBookPro")  48 24  )
+                                   :size  (if (string= (system-name) "jim-PC")  48 24  )
                                    :weight 'normal
                                    :width 'normal
                                    :powerline-scale 1.1)
@@ -315,13 +317,15 @@ executes.
  This function is mostly useful for variables that need to be set
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
-  )
 
-
- (setq configuration-layer--elpa-archives
+(message "load user-init ===========")
+(setq configuration-layer-elpa-archives
     '(("melpa-cn" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/")
     ("org-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/org/")
     ("gnu-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")))
+  )
+
+
 
 (setq custom-file (expand-file-name "custom.el" dotspacemacs-directory))
 (load custom-file )
