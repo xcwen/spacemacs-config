@@ -91,6 +91,7 @@
 
 (add-hook 'typescript-mode-hook
           '(lambda ( )
+             (message " do typescript-mode-hook hook ")
              (modify-syntax-entry ?_ "w" typescript-mode-syntax-table) ;将 _ 加入 单词中
              ;;(require 'ts-align)
              ;;(typescript-align-setup)
