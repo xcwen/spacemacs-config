@@ -31,7 +31,8 @@ values."
    dotspacemacs-configuration-layer-path '()
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(csv
+   '(react
+     csv
      python
      nginx
      sql
@@ -50,7 +51,8 @@ values."
          gofmt-command "goimports"
       )
      html
-     typescriptplus
+     ;;typescriptplus
+     typescript
      elixir
      javascript
      ;; ----------------------------------------------------------------
@@ -79,7 +81,7 @@ values."
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '(   ac-php async  js2-mode web-mode typescript-mode  multi-term )
+   dotspacemacs-additional-packages '(vue-mode   ac-php async  js2-mode web-mode typescript-mode  multi-term )
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
@@ -160,7 +162,7 @@ values."
    ;; quickly tweak the mode-line size to make separators look not too crappy.
    ;;(if (string= (system-name) "jim-MacBookPro") 48 24  )
   dotspacemacs-default-font (list  "XHei Mono.Ubuntu"  ;;"Source Code Pro"
-                                   :size  (if (string= (system-name) "jim-PC")  48 24  )
+                                   :size  (if (string= (system-name) "jim-MacBookPro" )  48 24  )
                                    :weight 'normal
                                    :width 'normal
                                    :powerline-scale 1.1)
@@ -353,6 +355,7 @@ you should place your code here."
                  'typescript-mode
                  'fundamental-mode
                  'web-mode
+                 'scss-mode
                  'c-mode
                  'sql-mode
                  'json-mode
@@ -442,11 +445,17 @@ you should place your code here."
                               ;; (yas-global-mode 1)
                               (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
                               ))
+  (add-hook 'python-mode-hook '(lambda ( )
+                              (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
+                              (my-set-evil-local-map  "\C-t"      'anaconda-mode-go-back )
+                              ))
+
   (add-hook 'js2-mode-hook '(lambda ( )
                               (require 'js2-align)
                               (js2-align-setup)
                               (spacemacs/set-leader-keys-for-major-mode  js2-mode "w" 'save-buffer)
                               (setq js2-strict-trailing-comma-warning nil )
+                              (setq js2-strict-missing-semi-warning  nil)
                               ))
   (add-hook 'typescript-mode-hook '(lambda ( )
                                      (require 'ts-align)

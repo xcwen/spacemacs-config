@@ -251,6 +251,9 @@ The test for presence of the car of ELT-CONS is done with `equal'."
             (setq file-name ( concat  (nth 1  (s-split "/" cur-path  )) ".php" ) )
             (setq pos-info ( concat "/function[ \t]*" (nth 2  (s-split "/" cur-path  )) ) )
             (setq cur-path (concat (nth 0  (s-split "/public/" (buffer-file-name)) ) "/app/Http/Controllers/" file-name ))
+            (unless (f-exists-p cur-path )
+              (setq cur-path (concat (nth 0  (s-split "/vue/" (buffer-file-name)) ) "/app/Http/Controllers/" file-name ))
+              )
             (message "xxx %s" cur-path)
             ))
         (list cur-path pos-info)
@@ -348,7 +351,6 @@ The test for presence of the car of ELT-CONS is done with `equal'."
       (let ((path-name (buffer-file-name)) ctrl-name action-name tmp-arr )
         (cond
          ((string= major-mode  "php-mode")
-
           (progn
             (setq ctrl-name (f-base  (f-base path-name )) )
             (save-excursion
@@ -360,7 +362,12 @@ The test for presence of the car of ELT-CONS is done with `equal'."
                   (setq action-name (nth 1 tmp-arr) )
                   )))
             (when (and (s-match "/Controllers/" path-name )  (not (string= action-name "__construct")) )
-              (setq  obj-file  (concat "../../../resources/views/" ctrl-name  "/" action-name ".blade.php" ) )
+              (setq  obj-file  (concat "../../../vue/src/views/" ctrl-name  "/" action-name ".html" ) )
+              ;;check vue .php -> .html
+              (unless (and obj-file (f-exists-p  obj-file ) )
+                (setq  obj-file  (concat "../../../resources/views/" ctrl-name  "/" action-name ".blade.php" ) )
+                )
+
               )
             ))
 
@@ -368,17 +375,24 @@ The test for presence of the car of ELT-CONS is done with `equal'."
           (setq tmp-arr (s-match  "/\\([a-zA-Z0-9_-]*\\)/\\([a-zA-Z0-9_-]*\\).blade.php"  path-name ) )
           (when tmp-arr
             (setq  ctrl-name   (nth 1 tmp-arr) )
-            (setq  action-name   (nth 2 tmp-arr) ))
+            (setq  action-name   (nth 2 tmp-arr) )
 
-          (when (s-match "/views/" path-name )
-            (setq  obj-file  (concat"../../../public/page_ts/" ctrl-name  "/" action-name ".ts" ) )
+            (when (s-match "/views/" path-name )
+              (setq  obj-file  (concat"../../../public/page_ts/" ctrl-name  "/" action-name ".ts" ) )
 
+              )
+            (let (js-obj-file)
+              (when ( and (not (f-exists? obj-file )) (s-match "/views/" path-name )   )
+                (setq  js-obj-file  (concat"../../../public/page_js/" ctrl-name  "/" action-name ".js" ) )
+                (when (  f-exists? js-obj-file ) (setq obj-file js-obj-file)  )
+                )))
+          ;;check vue .html -> .ts
+          (setq tmp-arr (s-match  "/\\([a-zA-Z0-9_-]*\\)/\\([a-zA-Z0-9_-]*\\).html"  path-name ) )
+          (when tmp-arr
+            (setq  ctrl-name   (nth 1 tmp-arr) )
+            (setq  action-name   (nth 2 tmp-arr) )
+            (setq  obj-file  (concat"./" action-name ".ts" ) )
             )
-          (let (js-obj-file)
-          (when ( and (not (f-exists? obj-file )) (s-match "/views/" path-name )   )
-            (setq  js-obj-file  (concat"../../../public/page_js/" ctrl-name  "/" action-name ".js" ) )
-            (when (  f-exists? js-obj-file ) (setq obj-file js-obj-file)  )
-            ))
           )
          ((string= major-mode  "jade-mode" )
           (setq tmp-arr (s-match  "/\\([a-zA-Z0-9_-]*\\)/\\([a-zA-Z0-9_-]*\\).jade"  path-name ) )
@@ -445,8 +459,25 @@ The test for presence of the car of ELT-CONS is done with `equal'."
                 )
               ))
 
+          ;;/ vue  .ts -> ../../../../app/Http/Controllers/xxx.php  pos
+          (unless (and obj-file (f-exists? obj-file ) )
+            (setq tmp-arr (s-match  "/views/\\([a-zA-Z0-9_-]*\\)/\\([a-zA-Z0-9_-]*\\).ts"  path-name ) )
+            (when tmp-arr
+              (setq  ctrl-name   (nth 1 tmp-arr) )
+              (setq  action-name   (nth 2 tmp-arr) )
+              (setq  obj-file  (concat "../../../../app/Http/Controllers/" ctrl-name  ".php" ) )
+              (setq pos-info ( concat "/function[ \t]+" action-name "[ \t]*("  ) )
+              )
+            (unless (and obj-file (f-exists? obj-file ) )
+              (setq  obj-file  (concat "./" (file-name-base path-name ) ".html" ) )
+              (setq pos-info nil )
+              )
 
-          ))))
+            )
+
+
+          )
+         )))
 
       (when obj-file
         (unless (f-exists? obj-file)
@@ -1130,7 +1161,7 @@ object satisfying `yas--field-p' to restrict the expansion to."
            ((and (string= major-mode "java-mode")  (eq ?\. c))
             ( auto-complete  ))
            ((and (string= major-mode "python-mode")  (eq ?\. c))
-            (elpy-company-backend  `interactive ))
+            (company-complete  ) )
            ((and (string= major-mode "erlang-mode")  (eq ?\: c))
             ( auto-complete  ))
            ((and (string= major-mode "js2-mode")  (eq ?\. c))
