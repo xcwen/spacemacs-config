@@ -1082,7 +1082,6 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
   ;;(message "%s %s %s" "====" opt-file-name "kkk")
   (if (string= major-mode  "term-mode")
       (evil-buffer nil )
-    (powerline-reset)
     (multi-term-goto-last-term)
     ))
 (defun switch-case-char (&optional arg)
