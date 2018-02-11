@@ -54,6 +54,7 @@ values."
      ;;typescriptplus
      typescript
      elixir
+     java
      javascript
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
@@ -335,7 +336,6 @@ before packages are loaded. If you are unsure, you should try in setting them in
 (load custom-file )
 (load  (expand-file-name "init-syntax-table.el" dotspacemacs-directory) )
 (load  (expand-file-name "xcwen-misc.el" dotspacemacs-directory) )
-;;(require 'xcwenn-misc)
 ;;(defun dotspacemacs/user-config )
 (defun dotspacemacs/user-config ()
   "Configuration function for user code.
@@ -344,6 +344,16 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
+  (setq eclim-eclipse-dirs '("~/eclipse") )
+  (setq
+   ;; Specify the workspace to use by default
+   eclimd-default-workspace "~/eclipse-workspace"
+   ;; wether autostarting eclimd or not (default nil)
+   eclimd-autostart t
+   ;; Whether or not to block emacs until eclimd is ready (default nil)
+   eclimd-wait-for-process t)
+
+
   (load  (expand-file-name "php-align.el" dotspacemacs-directory) )
   (load  (expand-file-name "js2-align.el" dotspacemacs-directory) )
   (load  (expand-file-name "ts-align.el" dotspacemacs-directory) )
@@ -363,6 +373,7 @@ you should place your code here."
                  'org-mode
                  'sh-mode
                  'js2-mode
+                 'java-mode
                  'conf-mode
                  'elixir-mode
                  'yaml-mode
@@ -670,7 +681,7 @@ you should place your code here."
   (setq frame-title-format  '("file: %f "  ))
   (setq yas-snippet-dirs   (list   "~/site-lisp/config/my-yas" )  )
 
-  (add-hook 'buffer-list-update-hook 'set-admin-title  )
+  ;;(add-hook 'buffer-list-update-hook 'set-admin-title  )
 
   (add-hook
    'term-mode-hook
@@ -684,6 +695,8 @@ you should place your code here."
       (define-key evil-insert-state-local-map   (kbd "C-S-c")  'term-interrupt-subjob   )
       (define-key evil-insert-state-local-map   (kbd "C-p")  'term-send-raw)
       (define-key evil-insert-state-local-map   (kbd "C-n")  'term-send-raw)
+      (define-key evil-insert-state-local-map   (kbd "C-a")  'term-send-raw)
+      (define-key evil-insert-state-local-map   (kbd "C-e")  'term-send-raw)
 
       (setq term-unbind-key-list  '("C-x"))
       (setq term-bind-key-alist nil)
