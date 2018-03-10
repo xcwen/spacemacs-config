@@ -361,8 +361,10 @@ you should place your code here."
                  'emacs-lisp-mode
                  'php-mode
                  'js2-mode
+                 'vue-mode
                  'markdown-mode
                  'typescript-mode
+                 'typescript-tsx-mode
                  'fundamental-mode
                  'web-mode
                  'scss-mode
@@ -494,6 +496,7 @@ you should place your code here."
 
 
   (require 'evil)
+  (require 'f)
 
 
   (global-set-key (kbd "<f8>")    'switch-file-term)
