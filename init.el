@@ -39,6 +39,7 @@ values."
      windows-scripts
      lua
      vimscript
+     git
      docker
      auto-completion
      yaml
@@ -52,7 +53,9 @@ values."
       )
      html
      ;;typescriptplus
-     typescript
+
+     (typescript :variables
+                 typescript-fmt-on-save t)
      elixir
      java
      javascript
@@ -352,6 +355,15 @@ you should place your code here."
    eclimd-autostart t
    ;; Whether or not to block emacs until eclimd is ready (default nil)
    eclimd-wait-for-process t)
+
+  ;; google translate
+  (require 'google-translate)
+
+  ;;If google-translate-enable-ido-completion is non-NIL, the input will be read with ido-style completion.
+  (setq-default google-translate-enable-ido-completion t)
+
+  (setq-default google-translate-default-source-language "en")
+  (setq-default google-translate-default-target-language "zh-CN")
 
 
   (load  (expand-file-name "php-align.el" dotspacemacs-directory) )
