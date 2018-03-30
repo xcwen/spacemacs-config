@@ -23,6 +23,8 @@
 * 使用  `rtags` + `clang` 作 `c++` 代码补全
 
 * `rtags` : 基于llvm . 真正实现了能编译，就能补全，跳转 :https://github.com/Andersbakken/rtags/
+*  安装后helm 报错时
+　运行:　./spacemacs-config/reset_helm.sh 
 
 ## 安装 
 
