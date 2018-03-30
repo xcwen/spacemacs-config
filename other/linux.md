@@ -45,7 +45,7 @@
   控制台  输入　函数 回车，
 
   点击　　 控制台 输出　跳转
-![](https://raw.githubusercontent.com/xcwen/spacemacs-config/master/other/2.png**
+![](https://raw.githubusercontent.com/xcwen/spacemacs-config/master/other/2.png)
 
 
 # emacs
