@@ -1,7 +1,5 @@
 # Emacs 配置文件
 
-xcwen jim
-xcwenn@qq.com
 
 **测试过的环境**
 
