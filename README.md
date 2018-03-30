@@ -23,8 +23,6 @@
 * 使用  `rtags` + `clang` 作 `c++` 代码补全
 
 * `rtags` : 基于llvm . 真正实现了能编译，就能补全，跳转 :https://github.com/Andersbakken/rtags/
-*  安装后helm 报错时
-　运行:　./spacemacs-config/reset_helm.sh 
 
 ## 安装 
 
@@ -61,6 +59,11 @@ cp ~/spacemacs-config/other/XHei_Mono.Ubuntu.ttc  ~/.fonts/
 alias vi="emacsclient -n"
 ```
 
+ 安装后helm 报错时
+
+　运行:　~/spacemacs-config/reset_helm.sh , 重启emacs
+
+
 ### multi-term
 屏蔽的大部分的emacs 本身的快捷键
 可在term 中使用vim 
@@ -71,6 +74,8 @@ alias vi="emacsclient -n"
 "M-1"    最大化 
 "C-^"    打开当前文件列表
 "C-6"    发"\C-^"   # C-^  在vim 中有用 ，使用  C-6 代替
+"C-S-j"  进入终端
+
 "C-S-t"  新建终端 
 "C-S-h"  上个终端
 "C-S-l"  下个终端
@@ -80,6 +85,7 @@ alias vi="emacsclient -n"
 "C-v"    黏贴
 "C-y"    黏贴
 ```
+
 
 ###php 补全 
 
@@ -95,6 +101,7 @@ emacs php-mode 快捷键
     C-tab     : 补全
     C-]       : 跳转到定义
     C-t       : 跳转返回
+    ,a        : 切换 control, view, js  对应的文件
     ,i        : 查看定义
     ,u        : 当前词，切换大小写 
     ,e        : 删除多余空格，调整到出错的地方 

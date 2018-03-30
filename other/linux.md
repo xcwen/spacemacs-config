@@ -29,7 +29,7 @@
   sort -k1n 
 ## uniq
  uniq -c
-
+ 
  sort f  | uniq -c  | sort -k1n
 
 ## awk 
@@ -45,6 +45,14 @@
   控制台  输入　函数 回车，
 
   点击　　 控制台 输出　跳转
-![](https://raw.githubusercontent.com/xcwen/spacemacs-config/master/other/2.png)
+![](https://raw.githubusercontent.com/xcwen/spacemacs-config/master/other/2.png**
 
+
+# emacs
+所有的键盘按键都是快捷键 ， 都对应了相应的函数 
+
+## 快捷键：
+
+   M-x:  进入输入命令模式
+   F1 k : 查看快捷键对应的函数
 
