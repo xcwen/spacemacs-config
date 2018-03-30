@@ -37,11 +37,14 @@
 
 # firefox 开发工具
 
+## 安装chrome log 附加组件 , 用于在终端查看对应的代码
+
+
 ## 查看 按钮对应js代码
  查看元素　-> 事件
 ![](https://raw.githubusercontent.com/xcwen/spacemacs-config/master/other/1.png)
  
-## 查看 行数代码的位置 
+## 查看 函数代码的位置 
   控制台  输入　函数 回车，
 
   点击　　 控制台 输出　跳转
