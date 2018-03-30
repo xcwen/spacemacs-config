@@ -1,0 +1,16 @@
+# name: header
+# key: hd
+# --
+/**
+ * ============================================================
+ * @file   `(file-name-nondirectory (buffer-file-name))`
+ * @author `header-user-name` (`header-user-email`)
+ * @date   `(format-time-string "%Y-%m-%d %H:%M:%S")`
+ *
+ * 
+ * @brief  $1
+ * 
+ * ============================================================
+ */
+$0
+

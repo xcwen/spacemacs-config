@@ -1,0 +1,11 @@
+id_start_time.datetimepicker({
+    datepicker:true,
+    timepicker:true,
+    format:'Y-m-d H:i',
+    step:30,
+    onChangeDateTime :function(){
+
+           var end_time= parseInt(strtotime(id_start_time.val() )) + tt;
+           id_end_time.val(  DateFormat(end_time, "hh:mm"));
+   }
+});

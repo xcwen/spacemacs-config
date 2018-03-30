@@ -1,0 +1,6 @@
+# name:rc
+# key:rc
+# --
+row_$1(e:MouseEvent) {
+  var opt_data = this.get_opt_data(e.target);
+}

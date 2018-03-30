@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: ford
+# key: ford
+# --
+//遍历map, 删除符合条件的节点，小心earse写法
+typedef  typeof($2)  _T_$1; _T_$1::iterator $1;
+for (${1:it}=${2:var}.begin(); $1!=$2.end(); ) {
+	if( $0 ) {
+		$2.erase($1++);
+	}else{
+		++$1;
+	}
+}

@@ -1,0 +1,7 @@
+# name: fdoc  doc of function
+# key: fdoc
+# --
+/**
+ *
+ * @return  $0
+ */

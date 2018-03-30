@@ -1,0 +1,21 @@
+/**
+ *
+ */
+public function $1($page_info, $order_by_str, $start_time, $end_time  )
+{
+    $where_arr=[];
+
+
+    $this->where_arr_add_time_range($where_arr, "field_name", $start_time, $end_time);
+    //$this->where_arr_add_int_or_idlist($where_arr,"field_name" , $vaule);
+    $sql=$this->gen_sql_new(
+            "select *  "
+            ." from  %s "
+            ." where  %s "
+            ."  $order_by_str ",
+    				self::DB_TABLE_NAME,
+    				$where_arr);
+
+    return $this->main_get_list_by_page($sql,$page_info);
+}
+

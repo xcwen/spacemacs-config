@@ -694,7 +694,7 @@ you should place your code here."
 
   (setq ac-php-project-root-dir-use-truename   nil )
   (setq frame-title-format  '("file: %f "  ))
-  (setq yas-snippet-dirs   (list   "~/site-lisp/config/my-yas" )  )
+  (setq yas-snippet-dirs   (list  "~/.spacemacs.d/my-yas"   "~/site-lisp/config/my-yas" )  )
 
   ;;(add-hook 'buffer-list-update-hook 'set-admin-title  )
 

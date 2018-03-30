@@ -1,0 +1,27 @@
+# name:dlg
+# key:dlg
+# --
+
+
+var html_node=dlg_need_html_by_id("");
+html_node.find("").html();
+BootstrapDialog.show({
+	title: "",
+	message : html_node ,
+	buttons: [{
+		label: '返回',
+		action: function(dialog) {
+			dialog.close();
+		}
+	}, {
+		label: '确认',
+		cssClass: 'btn-warning',
+		action: function(dialog) {
+
+			//get data from dlg
+			var val=html_node.find("").val();
+        
+			dialog.close();
+		}
+	}]
+});

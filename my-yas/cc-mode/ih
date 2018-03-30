@@ -1,0 +1,4 @@
+# name: #incude <self.hpp>
+# key: ih
+# --
+#include "` (file-name-nondirectory (file-name-sans-extension (buffer-file-name)))`.hpp"

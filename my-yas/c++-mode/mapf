@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: mapf
+# key: mapf
+# --
+typedef  typeof($2)  _T_$1; _T_$1::iterator $1;
+${1:it} = ${2:var}.find($0);
+if ($1 != $2.end()) {
+	return &($1->second);
+}else{
+	return NULL;
+}

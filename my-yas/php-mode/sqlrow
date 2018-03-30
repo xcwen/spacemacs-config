@@ -1,0 +1,5 @@
+$sql=$this->gen_sql("select  $1 from  %s  where  $2  ",
+					 self::DB_TABLE_NAME,
+					 $3 );
+return $this->main_get_row($sql);
+
