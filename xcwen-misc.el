@@ -21,7 +21,7 @@
 
 ;;; Commentary:
 (defvar term-local-cmd-start-line-regex-str
-  "^localhost.*\\$[ \t]*$"
+  "^localhost.*\\$[ \t]*\\((.*)\\)*$"
   "doc ,line like:
 localhost:~/site-lisp/config$"
   )
