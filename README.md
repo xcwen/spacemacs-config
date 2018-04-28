@@ -37,7 +37,7 @@ mv .emacs .emacs.bak
 
 cd $HOME 
 git clone https://github.com/syl20bnr/spacemacs.git
-ln  -n spacemacs .emacs.d
+ln  -s spacemacs .emacs.d
 cd spacemacs 
 #切换到开发版本
 git check develop
@@ -54,9 +54,21 @@ git clone https://github.com/xcwen/spacemacs-config.git
 buntu 字体
 mkdir ~/.fonts
 cp ~/spacemacs-config/other/XHei_Mono.Ubuntu.ttc  ~/.fonts/
+ln -s spacemacs-config .spacemacs.d
 
 # 加上 .bashrc
 alias vi="emacsclient -n"
+
+
+
+function git_branch {
+    ref=$(git symbolic-ref HEAD 2> /dev/null) || return;
+    #echo -e "(\033[0;31m"${ref#refs/heads/}"\033[0m)";
+    echo -e "("${ref#refs/heads/}")";
+}
+
+PS1='localhost:\w$(git_branch)$ '
+
 ```
 
  安装后helm 报错时
