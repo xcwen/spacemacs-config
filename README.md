@@ -51,10 +51,13 @@ cd $HOME
 
 git clone https://github.com/xcwen/spacemacs-config.git
 
-buntu 字体
+ubuntu 字体
 mkdir ~/.fonts
 cp ~/spacemacs-config/other/XHei_Mono.Ubuntu.ttc  ~/.fonts/
-ln -s spacemacs-config .spacemacs.d
+
+//创建  .spacemacs.d
+rm -f ~/.spacemacs.d
+ln -s ~/spacemacs-config ~/.spacemacs.d
 
 # 加上 .bashrc
 alias vi="emacsclient -n"
