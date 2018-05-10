@@ -249,7 +249,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
             (setq file-name-end (point))
             (setq cur-path (buffer-substring-no-properties file-name-begin file-name-end ))
             (setq file-name ( concat  (nth 1  (s-split "/" cur-path  )) ".php" ) )
-            (setq pos-info ( concat "/function[ \t]*" (nth 2  (s-split "/" cur-path  )) ) )
+            (setq pos-info ( concat "/function[ \t]*" (nth 2  (s-split "/" cur-path  ) ) "[ \t]*(" ) )
             (setq cur-path (concat (nth 0  (s-split "/public/" (buffer-file-name)) ) "/app/Http/Controllers/" file-name ))
             (unless (f-exists-p cur-path )
               (setq cur-path (concat (nth 0  (s-split "/vue/" (buffer-file-name)) ) "/app/Http/Controllers/" file-name ))
@@ -362,8 +362,8 @@ The test for presence of the car of ELT-CONS is done with `equal'."
                   (setq action-name (nth 1 tmp-arr) )
                   )))
             (when (and (s-match "/Controllers/" path-name )  (not (string= action-name "__construct")) )
-              (setq  obj-file  (concat "../../../vue/src/views/" ctrl-name  "/" action-name ".html" ) )
-              ;;check vue .php -> .html
+              (setq  obj-file  (concat "../../../vue/src/views/" ctrl-name  "/" action-name ".vue" ) )
+              ;;check vue .php -> .vue
               (unless (and obj-file (f-exists-p  obj-file ) )
                 (setq  obj-file  (concat "../../../resources/views/" ctrl-name  "/" action-name ".blade.php" ) )
                 )
@@ -386,8 +386,9 @@ The test for presence of the car of ELT-CONS is done with `equal'."
                 (setq  js-obj-file  (concat"../../../public/page_js/" ctrl-name  "/" action-name ".js" ) )
                 (when (  f-exists? js-obj-file ) (setq obj-file js-obj-file)  )
                 )))
-          ;;check vue .html -> .ts
-          (setq tmp-arr (s-match  "/\\([a-zA-Z0-9_-]*\\)/\\([a-zA-Z0-9_-]*\\).html"  path-name ) )
+          ;;check vue .vue -> .ts
+          (message "path-name: %s" path-name )
+          (setq tmp-arr (s-match  "/\\([a-zA-Z0-9_-]*\\)/\\([a-zA-Z0-9_-]*\\)\\.vue"  path-name ) )
           (when tmp-arr
             (setq  ctrl-name   (nth 1 tmp-arr) )
             (setq  action-name   (nth 2 tmp-arr) )
@@ -469,7 +470,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
               (setq pos-info ( concat "/function[ \t]+" action-name "[ \t]*("  ) )
               )
             (unless (and obj-file (f-exists? obj-file ) )
-              (setq  obj-file  (concat "./" (file-name-base path-name ) ".html" ) )
+              (setq  obj-file  (concat "./" (file-name-base path-name ) ".vue" ) )
               (setq pos-info nil )
               )
 

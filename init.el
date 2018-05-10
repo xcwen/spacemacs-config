@@ -460,6 +460,10 @@ you should place your code here."
                                 (web-mode )
                                 )
                               ))
+
+  (add-hook 'vue-mode-hook '(lambda ( )
+                                (web-mode )
+                              ))
   (add-hook 'php-mode-hook '(lambda ( )
                               (require 'php-align)
                               (php-align-setup)
