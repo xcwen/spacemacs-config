@@ -41,7 +41,9 @@ values."
      vimscript
      git
      docker
-     auto-completion
+     (auto-completion :variables
+                      auto-completion-enable-help-tooltip t
+      )
      yaml
      erlang
      ;;phpplus
