@@ -692,6 +692,7 @@ you should place your code here."
 
 
   (message "do user-config" )
+  (server-start)
 
   (setq ac-php-project-root-dir-use-truename   nil )
   (setq frame-title-format  '("file: %f "  ))
