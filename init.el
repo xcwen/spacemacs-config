@@ -370,7 +370,7 @@ you should place your code here."
 
   (load  (expand-file-name "php-align.el" dotspacemacs-directory) )
   (load  (expand-file-name "js2-align.el" dotspacemacs-directory) )
-  (load  (expand-file-name "ts-align.el" dotspacemacs-directory) )
+  (load  (expand-file-name "helm-ac-php-apropros.el" dotspacemacs-directory) )
   (dolist (mode (list
                  'emacs-lisp-mode
                  'php-mode
@@ -469,11 +469,8 @@ you should place your code here."
   (add-hook 'php-mode-hook '(lambda ( )
                               (require 'php-align)
                               (php-align-setup)
-                              ;; (company-mode  0)
-                              ;; (auto-complete-mode t)
-                              ;; (require 'ac-php)
-                              ;; (setq ac-sources  '(ac-source-php ) )
-                              ;; (yas-global-mode 1)
+                              (require 'helm-ac-php-apropros)
+
                               (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
                               ))
   (add-hook 'python-mode-hook '(lambda ( )
@@ -489,8 +486,6 @@ you should place your code here."
                               (setq js2-strict-missing-semi-warning  nil)
                               ))
   (add-hook 'typescript-mode-hook '(lambda ( )
-                                     (require 'ts-align)
-                                     (typescript-align-setup)
                                      (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
 
                                      ))
