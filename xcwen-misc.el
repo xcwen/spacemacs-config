@@ -31,7 +31,13 @@ localhost:~/site-lisp/config$"
   "DOCSTRING"
   (interactive)
   (let (find-flag opt-file-name find-path-str init-cmd  line-txt)
-    (setq opt-file-name  (s-replace-regexp ".*:" ""  (buffer-file-name))   )
+
+
+
+    (setq opt-file-name   (buffer-file-name)   )
+    (when opt-file-name
+      (setq opt-file-name  (s-replace-regexp ".*:" ""   opt-file-name )   )
+      )
 
     ;;go to file location dir
     ;;(message "1111")
