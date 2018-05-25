@@ -611,6 +611,7 @@ you should place your code here."
   (global-set-key "\M-1" 'delete-other-windows)
   (global-set-key (kbd "s-/") 'hippie-expand)
   (global-set-key  (kbd "s-1") 'delete-other-windows)
+  (global-set-key  (kbd "C-S-W") 'evil-yank )
 
   (set-evil-all-state-key  (kbd "C-<tab>")  '(lambda () (interactive)
                                                (if  (string= major-mode "php-mode")
