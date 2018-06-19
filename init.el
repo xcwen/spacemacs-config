@@ -91,7 +91,7 @@ values."
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
-   dotspacemacs-excluded-packages '( php-extras auto-highlight-symbol version-control )
+   dotspacemacs-excluded-packages '( php-extras auto-highlight-symbol version-control yasnippet-snippets )
    ;; Defines the behaviour of Spacemacs when installing packages.
    ;; Possible values are `used-only', `used-but-keep-unused' and `all'.
    ;; `used-only' installs only explicitly used packages and uninstall any
@@ -398,6 +398,7 @@ you should place your code here."
                  'html-mode
                  'conf-unix-mode
                  'lua-mode
+                 'nginx-mode
                  'css-mode
                  'help-mode
                  'text-mode
@@ -420,8 +421,8 @@ you should place your code here."
     (spacemacs/set-leader-keys-for-major-mode  mode "o" 'other-window )
     (spacemacs/set-leader-keys-for-major-mode  mode "e" '(lambda()
                                                            (interactive )
-                                                           (flycheck-buffer)
                                                            (whitespace-cleanup)
+                                                           (flycheck-buffer)
                                                            (xref-push-marker-stack)
                                                            (goto-line 1)
                                                            (let ((pos (flycheck-next-error-pos 1 )))
