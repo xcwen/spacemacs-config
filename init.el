@@ -54,7 +54,6 @@ values."
          gofmt-command "goimports"
       )
      html
-     ;;typescriptplus
 
      (typescript :variables
                  typescript-fmt-on-save t)
@@ -366,6 +365,7 @@ you should place your code here."
 
   (setq-default google-translate-default-source-language "en")
   (setq-default google-translate-default-target-language "zh-CN")
+  (require 'font-lock+ )
 
 
   (load  (expand-file-name "php-align.el" dotspacemacs-directory) )
@@ -393,6 +393,7 @@ you should place your code here."
                  'conf-mode
                  'elixir-mode
                  'yaml-mode
+                 'dotenv-mode
                  'nxml-mode
                  'erlang-mode
                  'html-mode
@@ -488,6 +489,7 @@ you should place your code here."
                               ))
   (add-hook 'typescript-mode-hook '(lambda ( )
                                      (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
+                                     (my-set-evil-local-map "\C-]"   'tide-jump-to-definition )
 
                                      ))
 
