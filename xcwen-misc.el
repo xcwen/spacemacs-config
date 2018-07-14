@@ -258,12 +258,13 @@ The test for presence of the car of ELT-CONS is done with `equal'."
             (setq pos-info ( concat "/function[ \t]*" (nth 2  (s-split "/" cur-path  ) ) "[ \t]*(" ) )
             (setq cur-path (concat (nth 0  (s-split "/public/" (buffer-file-name)) ) "/app/Http/Controllers/" file-name ))
             (unless (f-exists-p cur-path )
-              (setq cur-path (concat (nth 0  (s-split "/vue/" (buffer-file-name)) ) "/app/Http/Controllers/" file-name ))
+              (setq cur-path (concat (nth 0  (s-split "/\\(new_\\)?vue/" (buffer-file-name)) ) "/app/Http/Controllers/" file-name ))
+
               )
             (message "xxx %s" cur-path)
             ))
         (list cur-path pos-info)
-    ))
+  ))
 (defun web-get-file-at-point ()
   (interactive)
   (let( cur-path  pos-info)
@@ -368,12 +369,15 @@ The test for presence of the car of ELT-CONS is done with `equal'."
                   (setq action-name (nth 1 tmp-arr) )
                   )))
             (when (and (s-match "/Controllers/" path-name )  (not (string= action-name "__construct")) )
-              (setq  obj-file  (concat "../../../vue/src/views/" ctrl-name  "/" action-name ".vue" ) )
-              ;;check vue .php -> .vue
-              (unless (and obj-file (f-exists-p  obj-file ) )
-                (setq  obj-file  (concat "../../../resources/views/" ctrl-name  "/" action-name ".blade.php" ) )
-                )
 
+              (setq  obj-file  (concat "../../../new_vue/src/views/" ctrl-name  "/" action-name ".vue" ) )
+              (unless  (f-exists-p  obj-file )
+                (setq  obj-file  (concat "../../../vue/src/views/" ctrl-name  "/" action-name ".vue" ) )
+                ;;check vue .php -> .vue
+                (unless (and obj-file (f-exists-p  obj-file ) )
+                  (setq  obj-file  (concat "../../../resources/views/" ctrl-name  "/" action-name ".blade.php" ) )
+                  )
+                )
               )
             ))
 
