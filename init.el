@@ -86,7 +86,7 @@ values."
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '(vue-mode   ac-php async  js2-mode web-mode typescript-mode  multi-term )
+   dotspacemacs-additional-packages '(vue-mode   edts async  js2-mode web-mode typescript-mode  multi-term )
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
@@ -167,7 +167,7 @@ values."
    ;; quickly tweak the mode-line size to make separators look not too crappy.
    ;;(if (string= (system-name) "jim-MacBookPro") 48 24  )
   dotspacemacs-default-font (list  "XHei Mono.Ubuntu"  ;;"Source Code Pro"
-                                   :size  (if (string= (system-name) "jim-MacBookPro" )  48 24  )
+                                   :size  (if (string= (system-name) "jim-PC" )  48 24  )
                                    :weight 'normal
                                    :width 'normal
                                    :powerline-scale 1.1)
@@ -409,6 +409,7 @@ you should place your code here."
                  'conf-space-mode
                  'latex-mode
                  'dockerfile-mode
+                 'gitignore-mode
                  ))
     (spacemacs/set-leader-keys-for-major-mode  mode "w" 'save-buffer)
     (spacemacs/set-leader-keys-for-major-mode  mode "W" '(lambda()
@@ -454,8 +455,20 @@ you should place your code here."
   (spacemacs/set-leader-keys-for-major-mode  'php-mode "f" 'ac-php-gen-def )
 
   (spacemacs/set-leader-keys-for-major-mode  'emacs-lisp-mode "," nil)
-  (setq flycheck-erlang-include-path '("/home/jim/ejabberd-17.08/include") )
+  (setq flycheck-erlang-include-path '(
 
+                                       "/home/jim/ejabberd-17.08/deps/xmpp/include"
+                                       "/home/jim/ejabberd-17.08/deps/fast_xml/include"
+                                       "/home/jim/ejabberd-17.08/deps/lager/include"
+                                       "/home/jim/ejabberd-17.08/deps/cache_tab/include"
+                                       "/home/jim/ejabberd-17.08/deps/p1_utils/include"
+                                       "/home/jim/ejabberd-17.08/include"
+
+                                       ) )
+
+
+  ;;(edts-project-override "~/my-project" (:name "my-project-dev"
+   ;;                                              :node-name "my-project-dev"))
 
 
 
@@ -480,6 +493,11 @@ you should place your code here."
                               (my-set-evil-local-map  "\C-t"      'anaconda-mode-go-back )
                               ))
 
+  (add-hook 'java-mode-hook '(lambda ( )
+                                 (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
+                                 (my-set-evil-local-map  "\C-t"      'meghanada-back-jump )
+                                 ))
+
   (add-hook 'js2-mode-hook '(lambda ( )
                               (require 'js2-align)
                               (js2-align-setup)
@@ -492,6 +510,13 @@ you should place your code here."
                                      (my-set-evil-local-map "\C-]"   'tide-jump-to-definition )
 
                                      ))
+
+
+  (add-hook 'erlang-mode-hook '(lambda ( )
+                                     (my-set-evil-local-map "\C-]"   'edts-find-source-under-point )
+
+                                     ))
+
 
 
   (add-hook
@@ -701,6 +726,8 @@ you should place your code here."
   (setq ac-php-project-root-dir-use-truename   nil )
   (setq frame-title-format  '("file: %f "  ))
   (setq yas-snippet-dirs   (list  "~/.spacemacs.d/my-yas"   "~/site-lisp/config/my-yas" )  )
+
+  (require 'edts-start)
 
   ;;(add-hook 'buffer-list-update-hook 'set-admin-title  )
 

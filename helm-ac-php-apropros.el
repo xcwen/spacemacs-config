@@ -25,7 +25,7 @@
 ;;; Code:
 
 (require 'pcase)
-(require 'ac-php)
+(require 'ac-php-core)
 
 (defun helm-ac-php--init ()
   (with-current-buffer (helm-candidate-buffer 'global)
