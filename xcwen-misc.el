@@ -245,7 +245,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
   (interactive)
   (let( cur-path  pos-info)
         (save-excursion
-          (let (file-name-begin file-name-end file-name  )
+          (let (file-name-begin file-name-end file-name  ctrl-name )
 
             (skip-chars-backward "a-zA-Z0-9._/"   )
             (setq file-name-begin (point))
@@ -254,11 +254,17 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 
             (setq file-name-end (point))
             (setq cur-path (buffer-substring-no-properties file-name-begin file-name-end ))
-            (setq file-name ( concat  (nth 1  (s-split "/" cur-path  )) ".php" ) )
+            (setq ctrl-name (nth 1  (s-split "/" cur-path  )) )
+            (setq file-name ( concat  ctrl-name  ".php" ) )
             (setq pos-info ( concat "/function[ \t]*" (nth 2  (s-split "/" cur-path  ) ) "[ \t]*(" ) )
             (setq cur-path (concat (nth 0  (s-split "/public/" (buffer-file-name)) ) "/app/Http/Controllers/" file-name ))
             (unless (f-exists-p cur-path )
               (setq cur-path (concat (nth 0  (s-split "/\\(new_\\)?vue/" (buffer-file-name)) ) "/app/Http/Controllers/" file-name ))
+              (unless (f-exists? cur-path) 
+
+                (setq  cur-path (concat "../../../../application/cc/admin/" ( s-upper-camel-case ctrl-name )  ".php" ) )
+                )
+
 
               )
             (message "xxx %s" cur-path)
@@ -324,7 +330,21 @@ The test for presence of the car of ELT-CONS is done with `equal'."
     (list opt-file  nil )
     ))
 
-
+;; (switch-cc-to-h ))))
+(defun cleanup-and-goto-error ()
+  "DOCSTRING"
+  (interactive)
+  (whitespace-cleanup)
+  (flycheck-buffer)
+  (xref-push-marker-stack)
+  (goto-char 1)
+  (let ((pos (flycheck-next-error-pos 1 )))
+    (message "find pos : %d" pos)
+    (if pos
+        (goto-char pos)
+      (message "No more Flycheck errors")
+      (xref-pop-marker-stack)))
+  )
 ;; (switch-cc-to-h ))))
 (defun switch-file-opt ()
   "DOCSTRING"
@@ -378,6 +398,11 @@ The test for presence of the car of ELT-CONS is done with `equal'."
                   (setq  obj-file  (concat "../../../resources/views/" ctrl-name  "/" action-name ".blade.php" ) )
                   )
                 )
+              )
+
+            (when (and (s-match "/cc/admin/" path-name )  (not (string= action-name "__construct")) )
+
+              (setq  obj-file  (concat "../../../vue/src/views/" (s-snake-case ctrl-name )   "/" action-name ".vue" ) )
               )
             ))
 
@@ -479,12 +504,23 @@ The test for presence of the car of ELT-CONS is done with `equal'."
               (setq  obj-file  (concat "../../../../app/Http/Controllers/" ctrl-name  ".php" ) )
               (setq pos-info ( concat "/function[ \t]+" action-name "[ \t]*("  ) )
               )
-            (unless (and obj-file (f-exists? obj-file ) )
-              (setq  obj-file  (concat "./" (file-name-base path-name ) ".vue" ) )
-              (setq pos-info nil )
+            )
+
+          (unless (and obj-file (f-exists? obj-file ) )
+            (setq tmp-arr (s-match  "/views/\\([a-zA-Z0-9_-]*\\)/\\([a-zA-Z0-9_-]*\\).ts"  path-name ) )
+            (when tmp-arr
+              (setq  ctrl-name   (nth 1 tmp-arr) )
+              (setq  action-name   (nth 2 tmp-arr) )
+              (setq  obj-file  (concat "../../../../application/cc/admin/" (s-upper-camel-case  ctrl-name)  ".php" ) )
+              (setq pos-info ( concat "/function[ \t]+" action-name "[ \t]*("  ) )
               )
 
             )
+          (unless (and obj-file (f-exists? obj-file ) )
+            (setq  obj-file  (concat "./" (file-name-base path-name ) ".vue" ) )
+            (setq pos-info nil )
+            )
+
 
 
           )

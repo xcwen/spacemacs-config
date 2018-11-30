@@ -421,20 +421,7 @@ you should place your code here."
     (spacemacs/set-leader-keys-for-major-mode  mode "L" 'revert-buffer )
     (spacemacs/set-leader-keys-for-major-mode  mode "a" 'switch-file-opt )
     (spacemacs/set-leader-keys-for-major-mode  mode "o" 'other-window )
-    (spacemacs/set-leader-keys-for-major-mode  mode "e" '(lambda()
-                                                           (interactive )
-                                                           (whitespace-cleanup)
-                                                           (flycheck-buffer)
-                                                           (xref-push-marker-stack)
-                                                           (goto-line 1)
-                                                           (let ((pos (flycheck-next-error-pos 1 )))
-                                                             (if pos
-                                                                 (goto-char pos)
-                                                               (message "No more Flycheck errors")
-                                                               (xref-pop-marker-stack))
-                                                             )
-
-                                                           )  )
+    (spacemacs/set-leader-keys-for-major-mode  mode "e" 'cleanup-and-goto-error)
     (spacemacs/set-leader-keys-for-major-mode  mode "\""
       '(lambda()
          (interactive )
