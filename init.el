@@ -521,6 +521,11 @@ you should place your code here."
       ))
 
 
+  ;;关闭tide warning
+
+  ;;(setq tide-filter-out-warning-completions t)
+  (setq flycheck-navigation-minimum-level 'warning)
+  ;;(setq tide-tsserver-executable  "node_modules/typescript/bin/tsserver" )
 
 
   (require 'evil)

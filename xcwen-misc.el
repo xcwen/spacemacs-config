@@ -27,6 +27,22 @@ localhost:~/site-lisp/config$"
   )
 (require 'cl)
 
+
+(defun my-s-split-words (s)
+  "Split S into list of words."
+  (declare (side-effect-free t))
+  (s-split
+   "[^a-zA-Z0-9]+"
+   (let ((case-fold-search nil))
+     (replace-regexp-in-string
+      "\\([[:lower:]]\\)\\([[:upper:]]\\)" "\\1 \\2"
+      (replace-regexp-in-string "\\([[:upper:]]\\)\\([[:upper:]][0-9[:lower:]]\\)" "\\1 \\2" s)))
+   t))
+(defun my-s-upper-camel-case (s)
+  "Convert S to UpperCamelCase."
+  (declare (side-effect-free t))
+  (s-join "" (mapcar 'capitalize (my-s-split-words s))))
+
 (defun  multi-term-goto-last-term ()
   "DOCSTRING"
   (interactive)
@@ -260,9 +276,9 @@ The test for presence of the car of ELT-CONS is done with `equal'."
             (setq cur-path (concat (nth 0  (s-split "/public/" (buffer-file-name)) ) "/app/Http/Controllers/" file-name ))
             (unless (f-exists-p cur-path )
               (setq cur-path (concat (nth 0  (s-split "/\\(new_\\)?vue/" (buffer-file-name)) ) "/app/Http/Controllers/" file-name ))
-              (unless (f-exists? cur-path) 
+              (unless (f-exists? cur-path)
 
-                (setq  cur-path (concat "../../../../application/cc/admin/" ( s-upper-camel-case ctrl-name )  ".php" ) )
+                (setq  cur-path (concat "../../../../application/cc/admin/" ( my-s-upper-camel-case ctrl-name )  ".php" ) )
                 )
 
 
@@ -334,12 +350,12 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 (defun cleanup-and-goto-error ()
   "DOCSTRING"
   (interactive)
-  (whitespace-cleanup)
-  (flycheck-buffer)
-  (xref-push-marker-stack)
-  (goto-char 1)
-  (let ((pos (flycheck-next-error-pos 1 )))
-    (message "find pos : %d" pos)
+  (let (pos )
+    (whitespace-cleanup)
+    (flycheck-buffer)
+    (xref-push-marker-stack)
+
+    (setq  pos (flycheck-next-error-pos 1 t ))
     (if pos
         (goto-char pos)
       (message "No more Flycheck errors")
@@ -511,7 +527,10 @@ The test for presence of the car of ELT-CONS is done with `equal'."
             (when tmp-arr
               (setq  ctrl-name   (nth 1 tmp-arr) )
               (setq  action-name   (nth 2 tmp-arr) )
-              (setq  obj-file  (concat "../../../../application/cc/admin/" (s-upper-camel-case  ctrl-name)  ".php" ) )
+              (message  "check %s=>%s"  ctrl-name  (my-s-upper-camel-case ctrl-name )  )
+
+              (setq  obj-file  (concat "../../../../application/cc/admin/" (my-s-upper-camel-case  ctrl-name)  ".php" ) )
+              (message  "check %s"  obj-file)
               (setq pos-info ( concat "/function[ \t]+" action-name "[ \t]*("  ) )
               )
 
