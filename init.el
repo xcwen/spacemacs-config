@@ -68,6 +68,10 @@ values."
      ;;ivy
      helm
 
+     (chinese :variables
+              chinese-enable-youdao-dict t
+              )
+
      protobuf
 
      better-defaults
@@ -90,7 +94,10 @@ values."
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
-   dotspacemacs-excluded-packages '( php-extras auto-highlight-symbol version-control yasnippet-snippets )
+   dotspacemacs-excluded-packages '( php-extras auto-highlight-symbol version-control
+                                                yasnippet-snippets
+                                                chinese-pyim
+                                                )
    ;; Defines the behaviour of Spacemacs when installing packages.
    ;; Possible values are `used-only', `used-but-keep-unused' and `all'.
    ;; `used-only' installs only explicitly used packages and uninstall any
@@ -102,6 +109,8 @@ values."
 
 
 (defun dotspacemacs/init ()
+
+
   "Initialization function.
 This function is called at the very startup of Spacemacs initialization
 before layers configuration.
@@ -412,6 +421,7 @@ you should place your code here."
                  'gitignore-mode
                  ))
     (spacemacs/set-leader-keys-for-major-mode  mode "w" 'save-buffer)
+    (spacemacs/set-leader-keys-for-major-mode  mode "d" 'youdao-dictionary-search-at-point-tooltip )
     (spacemacs/set-leader-keys-for-major-mode  mode "W" '(lambda()
                                                            (interactive )
                                                            (whitespace-cleanup)
@@ -544,8 +554,11 @@ you should place your code here."
   (global-set-key (kbd "C-:")    'company-files  )
   (set-evil-all-state-key (kbd "C-x C-k")    'kill-buffer )
   (set-evil-all-state-key "\C-]"  'spacemacs/jump-to-definition )
-  (set-evil-normal-state-key "Y"  'copy-region-or-whole-line )
+  ( set-evil-normal-state-key "Y"  'copy-region-or-whole-line )
+  ( set-evil-virtual-state-key "Y"  'copy-region-or-whole-line )
+  
   (set-evil-normal-state-key "D"  'kill-region-or-whole-line )
+  ( set-evil-virtual-state-key "D" 'kill-region-or-whole-line  )
   (require 'company)
   ;;(setq flycheck-check-syntax-automatically 'save )
   ;;(setq flycheck-check-syntax-automatically 'idle-change )
@@ -592,6 +605,7 @@ you should place your code here."
                               (buffer-substring-no-properties (region-beginning)(region-end))))
            (progn
              (mark-region-ex)
+
              (setq beg (region-beginning) )
              (setq end (region-end) )
              ))

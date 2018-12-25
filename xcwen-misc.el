@@ -233,8 +233,9 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 (defun set-evil-normal-state-key ( key func )
   (define-key evil-normal-state-map key  func )
   )
-(defun set-evil-insert-state-key ( key func )
-  (define-key ((evil-insert-state-map)) key  func )
+
+(defun set-evil-virtual-state-key ( key func )
+  (define-key evil-visual-state-map key  func )
   )
 
 
@@ -924,6 +925,7 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
         (if (string-match "\n"
                           (buffer-substring-no-properties (region-beginning)(region-end)))
             (progn
+
               (setq tmp-mark-pos  (get-mark-pos-ex))
               (funcall do-region-func (car tmp-mark-pos) (cadr tmp-mark-pos)  )
               ) ;-----------
@@ -943,8 +945,11 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
   2:支持复制多行.  如 复制3行是  M-3 C-w
 "
   (interactive "P")
+
+  (message "xxxxxxxxxxxxxxx")
   (opt-region-or-whole-line "copy" arg)
   )
+
 
 ;;;###autoload
 (defun comment-or-uncomment-region-or-whole-line(&optional arg)
