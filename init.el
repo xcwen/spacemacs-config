@@ -97,6 +97,7 @@ values."
    dotspacemacs-excluded-packages '( php-extras auto-highlight-symbol version-control
                                                 yasnippet-snippets
                                                 chinese-pyim
+                                                ace-pinyin
                                                 )
    ;; Defines the behaviour of Spacemacs when installing packages.
    ;; Possible values are `used-only', `used-but-keep-unused' and `all'.
