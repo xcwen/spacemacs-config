@@ -284,7 +284,6 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 
 
               )
-            (message "xxx %s" cur-path)
             ))
         (list cur-path pos-info)
   ))
@@ -439,7 +438,6 @@ The test for presence of the car of ELT-CONS is done with `equal'."
                 (when (  f-exists? js-obj-file ) (setq obj-file js-obj-file)  )
                 )))
           ;;check vue .vue -> .ts
-          (message "path-name: %s" path-name )
           (setq tmp-arr (s-match  "/\\([a-zA-Z0-9_-]*\\)/\\([a-zA-Z0-9_-]*\\)\\.vue"  path-name ) )
           (when tmp-arr
             (setq  ctrl-name   (nth 1 tmp-arr) )
@@ -483,11 +481,9 @@ The test for presence of the car of ELT-CONS is done with `equal'."
               ))
 
           ;; nodejs javascript ts
-          (message "  nodejs javascript ts: %s" path-name)
           (setq tmp-arr (s-match  "/web_public/page_ts/\\([a-zA-Z0-9_-]*\\)/\\([a-zA-Z0-9_-]*\\).ts"  path-name ) )
           (when tmp-arr
 
-            (message " check OK " )
             (setq  ctrl-name   (nth 1 tmp-arr) )
             (setq  action-name   (nth 2 tmp-arr) )
             (setq  obj-file  (concat "../../../routes/" ctrl-name  ".ts" ) )
@@ -528,10 +524,8 @@ The test for presence of the car of ELT-CONS is done with `equal'."
             (when tmp-arr
               (setq  ctrl-name   (nth 1 tmp-arr) )
               (setq  action-name   (nth 2 tmp-arr) )
-              (message  "check %s=>%s"  ctrl-name  (my-s-upper-camel-case ctrl-name )  )
 
               (setq  obj-file  (concat "../../../../application/cc/admin/" (my-s-upper-camel-case  ctrl-name)  ".php" ) )
-              (message  "check %s"  obj-file)
               (setq pos-info ( concat "/function[ \t]+" action-name "[ \t]*("  ) )
               )
 
@@ -548,7 +542,6 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 
       (when obj-file
         (unless (f-exists? obj-file)
-          (message "no find %s" obj-file )
           (setq use-default  nil)
           (setq obj-file nil)
           )
@@ -570,7 +563,6 @@ The test for presence of the car of ELT-CONS is done with `equal'."
                     (setq line-txt (buffer-substring-no-properties
                                     (line-beginning-position)
                                     (line-end-position )))
-                    (message "line-txt:%s" line-txt)
                     (when (s-matches-p (substring-no-properties pos-info 1 ) line-txt  ) ;;同一个区域
                       (setq move-flag nil ))
                     ))
@@ -650,11 +642,9 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
   "*tmp-cmd-info*"
       (setq cmd-name  (trim-string (buffer-substring-no-properties (point-min) (point-max)) ) )
       (kill-buffer  "*tmp-cmd-info*")
-      (message "cmd funcion:%s" cmd-name)
 
       )
     (if  (string= (trim-string cmd-name) "")
-    (message  "nofind cmd:[%s] " obj-tag   )
       (find-tag   cmd-name nil nil))
     )
 
@@ -946,7 +936,6 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
 "
   (interactive "P")
 
-  (message "xxxxxxxxxxxxxxx")
   (opt-region-or-whole-line "copy" arg)
   )
 
