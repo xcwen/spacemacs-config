@@ -170,7 +170,11 @@ apt-get install python-virtualenv
 
 ### go 补全 需要
 ```
-apt-get install golang gocode
+apt-get install golang 
+
+#  安装liteide 的 gocode ,原版的不好 
+wget  https://github.com/visualfc/gocode
+
 ```
 
 
