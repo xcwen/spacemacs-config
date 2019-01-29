@@ -46,7 +46,6 @@ values."
       )
      yaml
      erlang
-     ;;phpplus
      php
      (go :variables
          ;go-use-gometalinter t
@@ -377,6 +376,8 @@ you should place your code here."
   (setq-default google-translate-default-target-language "zh-CN")
   (require 'font-lock+ )
 
+  (setq go-format-before-save t)
+
 
   (load  (expand-file-name "php-align.el" dotspacemacs-directory) )
   (load  (expand-file-name "js2-align.el" dotspacemacs-directory) )
@@ -557,7 +558,7 @@ you should place your code here."
   (set-evil-all-state-key "\C-]"  'spacemacs/jump-to-definition )
   ( set-evil-normal-state-key "Y"  'copy-region-or-whole-line )
   ( set-evil-virtual-state-key "Y"  'copy-region-or-whole-line )
-  
+
   (set-evil-normal-state-key "D"  'kill-region-or-whole-line )
   ( set-evil-virtual-state-key "D" 'kill-region-or-whole-line  )
   (require 'company)
