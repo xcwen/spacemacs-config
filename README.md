@@ -107,8 +107,9 @@ PS1='localhost:\w$(git_branch)$ '
 指定项目所在的根目录,在项目根目录上生成.tags目录
 
 ``` bash
+sudo apt-get install phpmd
+
 cd /project/to/path # 项目根目录
-mkdir .tags
 ```
 emacs php-mode 快捷键 
 ```
