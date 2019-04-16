@@ -45,7 +45,7 @@ values."
                       auto-completion-enable-help-tooltip t
       )
      yaml
-     erlang
+     ;;erlang
      php
      (go :variables
          ;go-use-gometalinter t
@@ -732,6 +732,7 @@ you should place your code here."
   (server-start)
 
   (setq ac-php-project-root-dir-use-truename   nil )
+  (setq flycheck-phpmd-rulesets '(  "unusedcode" ))
   (setq frame-title-format  '("file: %f "  ))
   (setq yas-snippet-dirs   (list  "~/.spacemacs.d/my-yas"   "~/site-lisp/config/my-yas" )  )
 

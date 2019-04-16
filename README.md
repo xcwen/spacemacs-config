@@ -173,7 +173,7 @@ apt-get install python-virtualenv
 apt-get install golang 
 
 #  安装liteide 的 gocode ,原版的不好 
-wget  https://github.com/visualfc/gocode
+git clone  https://github.com/visualfc/gocode
 
 ```
 
