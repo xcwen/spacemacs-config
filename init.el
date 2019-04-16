@@ -732,7 +732,7 @@ you should place your code here."
   (server-start)
 
   (setq ac-php-project-root-dir-use-truename   nil )
-  (setq flycheck-phpmd-rulesets '(  "unusedcode" ))
+  (setq flycheck-phpmd-rulesets (list  (concat (getenv "HOME") "/spacemacs-config/phpmd.xml"  ) ))
   (setq frame-title-format  '("file: %f "  ))
   (setq yas-snippet-dirs   (list  "~/.spacemacs.d/my-yas"   "~/site-lisp/config/my-yas" )  )
 
