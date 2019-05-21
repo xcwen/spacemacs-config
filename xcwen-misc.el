@@ -1310,7 +1310,9 @@ If FORWARD is nil, search backward, otherwise forward."
   (let (var1 pos-start post-end buf)
     (setq pos-start (region-beginning)   )
     (setq pos-end   (region-end) )
-    (setq buf (buffer-substring-no-properties  pos-start pos-end )  )
+    (copy-region-as-kill pos-start pos-end )  
+    (setq buf (nth 0 kill-ring))
+    
     (setq buf (s-replace  "\n" "" buf ) )
     (kill-new buf )
     ))
