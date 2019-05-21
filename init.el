@@ -89,13 +89,14 @@ values."
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '(vue-mode   edts async  js2-mode web-mode typescript-mode  multi-term )
+   dotspacemacs-additional-packages '(vue-mode   edts async  js2-mode web-mode typescript-mode  multi-term xcscope )
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
    dotspacemacs-excluded-packages '( php-extras auto-highlight-symbol version-control
                                                 yasnippet-snippets
                                                 chinese-pyim
+                                                pyim
                                                 ace-pinyin
                                                 )
    ;; Defines the behaviour of Spacemacs when installing packages.
@@ -365,9 +366,12 @@ you should place your code here."
    eclimd-autostart t
    ;; Whether or not to block emacs until eclimd is ready (default nil)
    eclimd-wait-for-process t)
+  (set-buffer-file-coding-system 'utf-8)
+  (add-to-list 'file-coding-system-alist '("\\.php" . utf-8) )
 
   ;; google translate
   (require 'google-translate)
+
 
   ;;If google-translate-enable-ido-completion is non-NIL, the input will be read with ido-style completion.
   (setq-default google-translate-enable-ido-completion t)
