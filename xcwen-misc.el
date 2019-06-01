@@ -1303,6 +1303,45 @@ If FORWARD is nil, search backward, otherwise forward."
     )
 
   )
+(defun core-server--get-project-root-dir ()
+  "Get the project root directory of the curent opened buffer."
+  (ac-php--debug "Lookup for the project root...")
+  (let (project-root-dir tags-file (file-name buffer-file-name))
+
+    ;; 1. Get working directory using `buffer-file-name' or `default-directory'
+    (if file-name
+        (setq project-root-dir (file-name-directory file-name))
+      (setq project-root-dir (expand-file-name default-directory)))
+
+    ;; 3. Scan for the real project root of the opend file
+    ;; We're looking either for the `ac-php-config-file' file
+    ;; or the '.projectile' file, or the 'vendor/autoload.php' file
+    (let (last-dir)
+      (while
+          (not (or
+                (file-exists-p (concat project-root-dir "tars/tars.proto.php"))
+                (string= project-root-dir "/")))
+        (setq last-dir project-root-dir
+              project-root-dir (file-name-directory
+                                (directory-file-name project-root-dir)))
+          (when (string= last-dir project-root-dir)
+            (setq project-root-dir "/"))))
+
+    (when (string= project-root-dir "/")
+      (progn
+        (message "core-server : Unable to resolve project root")
+        (setq project-root-dir nil)))
+
+    project-root-dir))
+
+
+(defun core-server-make()
+    "DOCSTRING"
+  (interactive)
+  (let ((project-dir (core-server--get-project-root-dir )) )
+    (message "====%s" project-dir)
+    (when project-dir
+      (message "%s" (shell-command-to-string (concat project-dir "/proto/gen_proto.sh" )  )))))
 
 (defun my-join-line ()
   "DOCSTRING"
@@ -1310,9 +1349,9 @@ If FORWARD is nil, search backward, otherwise forward."
   (let (var1 pos-start post-end buf)
     (setq pos-start (region-beginning)   )
     (setq pos-end   (region-end) )
-    (copy-region-as-kill pos-start pos-end )  
+    (copy-region-as-kill pos-start pos-end )
     (setq buf (nth 0 kill-ring))
-    
+
     (setq buf (s-replace  "\n" "" buf ) )
     (kill-new buf )
     ))

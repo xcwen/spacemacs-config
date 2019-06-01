@@ -456,6 +456,8 @@ you should place your code here."
   (spacemacs/set-leader-keys-for-major-mode  'php-mode "r" 'ac-php-remake-tags )
   (spacemacs/set-leader-keys-for-major-mode  'php-mode "i" 'ac-php-show-tip)
   (spacemacs/set-leader-keys-for-major-mode  'php-mode "f" 'ac-php-gen-def )
+  (spacemacs/set-leader-keys-for-major-mode  'php-mode "m" 'core-server-make )
+  (spacemacs/set-leader-keys-for-major-mode  'protobuf-mode "m" 'core-server-make )
 
   (spacemacs/set-leader-keys-for-major-mode  'emacs-lisp-mode "," nil)
   (setq flycheck-erlang-include-path '(
