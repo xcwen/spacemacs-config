@@ -48,10 +48,10 @@ values."
      ;;erlang
      php
      (go :variables
-         ;go-use-gometalinter t
          go-tab-width 4
          gofmt-command "goimports"
-      )
+         ;;go-use-gometalinter t
+         )
      html
 
      (typescript :variables

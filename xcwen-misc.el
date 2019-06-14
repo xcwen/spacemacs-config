@@ -28,6 +28,29 @@ localhost:~/site-lisp/config$"
 (require 'cl)
 
 
+(defun my-s-lower-camel-case (s)
+  "Convert S to lowerCamelCase."
+  (declare (side-effect-free t))
+  (s-join "" (s--mapcar-head 'downcase 'capitalize (my-s-split-words s))))
+
+(defun my-s-upper-camel-case (s)
+  "Convert S to UpperCamelCase."
+  (declare (side-effect-free t))
+  (s-join "" (mapcar 'capitalize (my-s-split-words s))))
+
+(defun my-s-upper-camel-case (s)
+  "Convert S to UpperCamelCase."
+  (declare (side-effect-free t))
+  (s-join "" (mapcar 'capitalize (my-s-split-words s))))
+
+(defun my-s-snake-case (s)
+  "Convert S to snake_case."
+  (declare (side-effect-free t))
+  (s-join "_" (mapcar 'downcase (my-s-split-words s))))
+
+
+
+
 (defun my-s-split-words (s)
   "Split S into list of words."
   (declare (side-effect-free t))
@@ -38,10 +61,6 @@ localhost:~/site-lisp/config$"
       "\\([[:lower:]]\\)\\([[:upper:]]\\)" "\\1 \\2"
       (replace-regexp-in-string "\\([[:upper:]]\\)\\([[:upper:]][0-9[:lower:]]\\)" "\\1 \\2" s)))
    t))
-(defun my-s-upper-camel-case (s)
-  "Convert S to UpperCamelCase."
-  (declare (side-effect-free t))
-  (s-join "" (mapcar 'capitalize (my-s-split-words s))))
 
 (defun  multi-term-goto-last-term ()
   "DOCSTRING"
@@ -824,16 +843,66 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
   (let (pos)
     (setq pos (get-whole-word-pos))
     (kill-region (car pos) (cadr pos))))
-(defun upper-or-lower-whole-word (&optional arg)
+(defun upper-or-lower-whole-word (count &optional arg)
   "kill a word  into kill-ring"
-  (interactive)
-  (let (pos cur_char)
+  (interactive "p")
+  (let (pos cur_char word next_word (cur-point (point) ) )
+    (message "xxxxxxxx %d" count)
+
+
     (setq pos (get-whole-word-pos))
-    (setq cur_char (following-char))
-    (if (and (>= cur_char ?a ) (<= cur_char ?z )  )
-  (upcase-region (car pos) (cadr pos))
-      (downcase-region (car pos) (cadr pos))
+    (setq word  (s-trim (buffer-substring-no-properties  (car pos) (cadr pos) ) ) )
+
+    (when (>  (length word  ) 1)
+
+      (if (= count 1)
+          (cond
+           ((s-uppercase?  word ) ;;ONE_TWO => one_two
+            (setq next_word (s-downcase word))
+            )
+           (  (string=  word ( s-snake-case word)  ) ;;one_two => OneTwo
+              (setq next_word (my-s-upper-camel-case word))
+
+              )
+           ((string=  word (my-s-upper-camel-case word) ) ;; OneTwo => oneTwo
+            (setq next_word (my-s-lower-camel-case  word ) )
+            )
+
+           ((string=  word (my-s-lower-camel-case word) )  ;; oneTwo => ONE_TWO
+            (setq next_word (s-upcase (my-s-snake-case word)) )
+            )
+           (t
+            (setq next_word (s-upcase (my-s-snake-case word)) )
+            ))
+        (progn ;;
+          (setq  word (s-upcase (my-s-snake-case word)) )
+          (cond
+           ((= count  2) ;;  one_two
+            (setq next_word  (my-s-snake-case word) )
+            )
+           ((= count  3) ;;  oneTwo
+            (setq next_word (my-s-lower-camel-case  word ) )
+            )
+           ((= count  4) ;;  oneTwo
+            (setq next_word (my-s-upper-camel-case  word ) )
+            )
+           ((= count  5) ;;  ONE_TWO
+            (setq next_word (s-upcase  word) )
+            )
+           )
+
+          )
+
+
+        )
+      (save-excursion
+        (kill-region  (car pos) (cadr pos) )
+        (insert next_word ))
+
+      (goto-char cur-point)
+
       )
+
     ))
 ;;---------------------------------------------------------------------------
 
