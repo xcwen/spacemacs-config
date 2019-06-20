@@ -5,4 +5,4 @@
                      '(("d" "(defun $1 ()\n  \"DOCSTRING\"\n  (interactive)\n  (let (var1)\n    (setq var1 some)\n    $0\n  ))" "defun" nil nil nil "/home/jim/.spacemacs.d/my-yas/emacs-lisp-mode/d" nil nil)))
 
 
-;;; Do not edit! File generated at Tue Nov 27 20:33:47 2018
+;;; Do not edit! File generated at Sun Jun 16 19:03:00 2019

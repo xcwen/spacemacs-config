@@ -458,6 +458,7 @@ you should place your code here."
   (spacemacs/set-leader-keys-for-major-mode  'php-mode "f" 'ac-php-gen-def )
   (spacemacs/set-leader-keys-for-major-mode  'php-mode "m" 'core-server-make )
   (spacemacs/set-leader-keys-for-major-mode  'protobuf-mode "m" 'core-server-make )
+  (spacemacs/set-leader-keys-for-major-mode  'go-mode "m" 'go-core-server-make )
 
   (spacemacs/set-leader-keys-for-major-mode  'emacs-lisp-mode "," nil)
   (setq flycheck-erlang-include-path '(
@@ -493,6 +494,11 @@ you should place your code here."
 
                               (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
                               ))
+  (add-hook 'go-mode-hook '(lambda ( )
+                              (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
+                              ))
+
+
   (add-hook 'python-mode-hook '(lambda ( )
                               (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
                               (my-set-evil-local-map  "\C-t"      'anaconda-mode-go-back )
