@@ -1,7 +1,6 @@
 ;; -*- mode: emacs-lisp -*-
 ;; This file is loaded by Spacemacs at startup.
 ;; It must be stored in your home directory.
-
 ;;; Code:
 (defun dotspacemacs/layers ()
   "Configuration Layers declaration.
@@ -177,7 +176,9 @@ values."
    ;; quickly tweak the mode-line size to make separators look not too crappy.
    ;;(if (string= (system-name) "jim-MacBookPro") 48 24  )
   dotspacemacs-default-font (list  "XHei Mono.Ubuntu"  ;;"Source Code Pro"
-                                   :size  (if (string= (system-name) "jim-PC" )  48 24  )
+                                   ;;:size  (if (string= (system-name) "jim-PC" )  48 24  )
+                                   :size (round(* 24 (string-to-number (shell-command-to-string "grep ScreenScaleFactors  ~/.config/deepin/qt-theme.ini | awk -F= '{print $2}' ") )))
+
                                    :weight 'normal
                                    :width 'normal
                                    :powerline-scale 1.1)
