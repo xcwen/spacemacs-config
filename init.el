@@ -369,6 +369,7 @@ you should place your code here."
    eclimd-wait-for-process t)
   (set-buffer-file-coding-system 'utf-8)
   (add-to-list 'file-coding-system-alist '("\\.php" . utf-8) )
+  (add-to-list 'file-coding-system-alist '("\\.go" . utf-8) )
 
   ;; google translate
   (require 'google-translate)
