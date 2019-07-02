@@ -768,6 +768,13 @@ you should place your code here."
       (define-key evil-insert-state-local-map   (kbd "C-n")  'term-send-raw)
       (define-key evil-insert-state-local-map   (kbd "C-a")  'term-send-raw)
       (define-key evil-insert-state-local-map   (kbd "C-e")  'term-send-raw)
+      (define-key evil-insert-state-local-map   (kbd "C-h")  'term-send-raw)
+      (define-key evil-insert-state-local-map   (kbd "C-l")  'term-send-raw)
+      (define-key evil-insert-state-local-map   (kbd "C-k")  'term-send-raw)
+      (define-key evil-insert-state-local-map   (kbd "C-u")  'term-send-raw)
+      (define-key evil-insert-state-local-map   (kbd "C-w")  'term-send-raw)
+      (define-key evil-insert-state-local-map   (kbd "C-d")  'term-send-raw)
+      (define-key evil-insert-state-local-map   (kbd "C-t")  'term-send-raw)
 
       (setq term-unbind-key-list  '("C-x"))
       (setq term-bind-key-alist nil)
