@@ -68,4 +68,4 @@
                        ("ass" "assert($0);" "assert" nil nil nil "/home/jim/.spacemacs.d/my-yas/c++-mode/assert" nil nil)))
 
 
-;;; Do not edit! File generated at Sun Jun 16 19:02:59 2019
+;;; Do not edit! File generated at Sat Jun 29 15:48:11 2019

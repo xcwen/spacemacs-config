@@ -2,7 +2,8 @@
 ;;; Snippet definitions:
 ;;;
 (yas-define-snippets 'go-mode
-                     '(("test" "func Test${1:Feature}(t *testing.T) {\n	$0\n}\n" "test {}" nil nil nil "/home/jim/.spacemacs.d/my-yas/go-mode/test" nil nil)
+                     '(("u" "utils.$0" "u" nil nil nil "/home/jim/.spacemacs.d/my-yas/go-mode/u" nil nil)
+                       ("test" "func Test${1:Feature}(t *testing.T) {\n	$0\n}\n" "test {}" nil nil nil "/home/jim/.spacemacs.d/my-yas/go-mode/test" nil nil)
                        ("struct" "type ${1:StructName} struct {\n  ${2:VariableName}	${3:Type}\n	$0\n}\n" "struct" nil nil nil "/home/jim/.spacemacs.d/my-yas/go-mode/struct" nil nil)
                        ("select" "select {\ncase ${1:channel} <- ${2:message}:\n	${3:body}\n$0\n}\n" "select" nil nil nil "/home/jim/.spacemacs.d/my-yas/go-mode/select" nil nil)
                        ("printf" "fmt.Printf(\"$0\")" "printf" nil nil nil "/home/jim/.spacemacs.d/my-yas/go-mode/printf" nil nil)
@@ -16,7 +17,8 @@
                        ("helloworld" "package main\n\nimport \"fmt\"\n\nfunc main() {\n	fmt.Printf(\"Hello, 世界\\n\")\n}\n$0\n" "helloworld" nil nil nil "/home/jim/.spacemacs.d/my-yas/go-mode/helloworld" nil nil)
                        ("func" "func ${1:name}(${2:arguments}) ${3:returntype} {\n	$0\n}\n" "func" nil nil nil "/home/jim/.spacemacs.d/my-yas/go-mode/func" nil nil)
                        ("for" "for ${1:elements} {\n	$0\n}\n" "for" nil nil nil "/home/jim/.spacemacs.d/my-yas/go-mode/for" nil nil)
+                       ("dd" "utils.DD($0)" "dd" nil nil nil "/home/jim/.spacemacs.d/my-yas/go-mode/dd" nil nil)
                        ("bench" "func Benchmark${1:Feature}(b *testing.B) {\n	$0\n}\n" "bench" nil nil nil "/home/jim/.spacemacs.d/my-yas/go-mode/bench" nil nil)))
 
 
-;;; Do not edit! File generated at Sun Jun 16 19:03:00 2019
+;;; Do not edit! File generated at Sat Jun 29 15:48:12 2019
