@@ -177,7 +177,7 @@ values."
    ;;(if (string= (system-name) "jim-MacBookPro") 48 24  )
   dotspacemacs-default-font (list  "XHei Mono.Ubuntu"  ;;"Source Code Pro"
                                    ;;:size  (if (string= (system-name) "jim-PC" )  48 24  )
-                                   :size (max (round(* 24 (string-to-number (shell-command-to-string "grep ScreenScaleFactors  ~/.config/deepin/qt-theme.ini | awk -F= '{print $2}' ") ))) 24 )
+                                   :size (max (round(* 30 (string-to-number (shell-command-to-string "grep ScreenScaleFactors  ~/.config/deepin/qt-theme.ini | awk -F= '{print $2}' ") ))) 30 )
 
                                    :weight 'normal
                                    :width 'normal
@@ -439,7 +439,9 @@ you should place your code here."
     (spacemacs/set-leader-keys-for-major-mode  mode "L" 'revert-buffer )
     (spacemacs/set-leader-keys-for-major-mode  mode "a" 'switch-file-opt )
     (spacemacs/set-leader-keys-for-major-mode  mode "o" 'other-window )
-    (spacemacs/set-leader-keys-for-major-mode  mode "e" 'cleanup-and-goto-error)
+    (unless (string= 'go-mode 'go-mode)
+      (spacemacs/set-leader-keys-for-major-mode  mode "e" 'cleanup-and-goto-error)
+        )
     (spacemacs/set-leader-keys-for-major-mode  mode "\""
       '(lambda()
          (interactive )
@@ -497,7 +499,10 @@ you should place your code here."
                               (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
                               ))
   (add-hook 'go-mode-hook '(lambda ( )
+
                               (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
+
+                              (spacemacs/set-leader-keys-for-major-mode  'go-mode "e" 'cleanup-and-goto-error)
                               ))
 
 
