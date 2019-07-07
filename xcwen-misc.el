@@ -1242,6 +1242,21 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
       )
     ))
 
+(defun get-cur-pkg()
+  (save-excursion
+    (let ( start-pos ( end-pos (point) ) tmp-arr txt)
+    (backward-word)
+    (setq start-pos (point) )
+    (setq txt (buffer-substring-no-properties start-pos end-pos ) )
+    (message "=======[%s]" txt)
+
+    (setq tmp-arr (s-match  "\\([a-zA-Z0-9_]+\\)" txt) )
+
+    (when tmp-arr
+      (nth 1 tmp-arr)
+      )
+    )))
+
 
 (defun yas-expand-for-vim(&optional field)
   "Expand a snippet before point.
@@ -1301,7 +1316,14 @@ object satisfying `yas--field-p' to restrict the expansion to."
 
 
            ((and (string= major-mode "go-mode")  (eq ?\. c))
-            ( company-complete ))
+            (unless ( company-complete )
+              (let ( go-pkg )
+
+                (setq go-pkg (replace-regexp-in-string "^[\"']\\|[\"']$" "" (completing-read "Package: " (go-packages) nil t  (get-cur-pkg )  )))
+                (go-import-add nil  go-pkg)
+                ;;re company-complete
+                (company-complete)
+                )))
 
            ((and (string= major-mode "java-mode")  (eq ?\. c))
             ( auto-complete  ))
