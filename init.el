@@ -502,6 +502,9 @@ you should place your code here."
                               ))
   (add-hook 'go-mode-hook '(lambda ( )
 
+
+                             (setq go-packages-function  'go-packages-native)
+                             (setq go-packages-function   'go-packages-go-list)
                               (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
 
                               (spacemacs/set-leader-keys-for-major-mode  'go-mode "e" 'cleanup-and-goto-error)
