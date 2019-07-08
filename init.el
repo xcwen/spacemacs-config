@@ -49,7 +49,8 @@ values."
      (go :variables
          go-tab-width 4
          gofmt-command "goimports"
-         godoc-at-point-function 'godoc-gogetdoc
+         ;;godoc-at-point-function 'godoc-gogetdoc
+         godoc-at-point-function nil
          ;;go-use-gometalinter t
          )
      html
