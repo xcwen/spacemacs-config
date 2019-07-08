@@ -49,8 +49,7 @@ values."
      (go :variables
          go-tab-width 4
          gofmt-command "goimports"
-         ;;godoc-at-point-function 'godoc-gogetdoc
-         godoc-at-point-function nil
+         godoc-at-point-function 'godoc-gogetdoc
          ;;go-use-gometalinter t
          )
      html
@@ -99,6 +98,7 @@ values."
                                                 chinese-pyim
                                                 pyim
                                                 ace-pinyin
+                                                go-eldoc
                                                 )
    ;; Defines the behaviour of Spacemacs when installing packages.
    ;; Possible values are `used-only', `used-but-keep-unused' and `all'.

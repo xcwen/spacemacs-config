@@ -856,26 +856,29 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
     (when (>  (length word  ) 1)
 
       (if (= count 1)
-          (if (s-match "_" word )
-              (cond
-               ((s-uppercase?  word ) ;;ONE_TWO => one_two
-                (setq next_word (s-downcase word))
-                )
-               (  (string=  word ( s-snake-case word)  )   ;;one_two => OneTwo
 
-                  (setq next_word (my-s-upper-camel-case word))
+          (if (s-match "_" ( s-snake-case word) )
+              (progn
 
+                (cond
+                 ((s-uppercase?  word ) ;;ONE_TWO => one_two
+                  (setq next_word (s-downcase word))
                   )
-               ((string=  word (my-s-upper-camel-case word) ) ;; OneTwo => oneTwo
-                (setq next_word (my-s-lower-camel-case  word ) )
-                )
+                 (  (string=  word ( s-snake-case word)  )   ;;one_two => OneTwo
 
-               ((string=  word (my-s-lower-camel-case word) )  ;; oneTwo => ONE_TWO
-                (setq next_word (s-upcase (my-s-snake-case word)) )
-                )
-               (t
-                (setq next_word (s-upcase (my-s-snake-case word)) )
-                ))
+                    (setq next_word (my-s-upper-camel-case word))
+
+                    )
+                 ((string=  word (my-s-upper-camel-case word) ) ;; OneTwo => oneTwo
+                  (setq next_word (my-s-lower-camel-case  word ) )
+                  )
+
+                 ((string=  word (my-s-lower-camel-case word) )  ;; oneTwo => ONE_TWO
+                  (setq next_word (s-upcase (my-s-snake-case word)) )
+                  )
+                 (t
+                  (setq next_word (s-upcase (my-s-snake-case word)) )
+                  )))
             (cond
              ((s-uppercase?  word ) ;;ONE => one
               (setq next_word (s-downcase word))
@@ -1232,7 +1235,7 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
     ))
 (defun my-go-packages-gopkgs ()
   "Return a list of all Go packages, using `gopkgs'."
-  
+
   (sort (process-lines "gopkgs"  (concat "-workDir=" (go-core-server--get-project-root-dir ) ) ) #'string<))
 
 (defun switch-case-char (&optional arg)
