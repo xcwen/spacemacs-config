@@ -1230,6 +1230,11 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
       (evil-buffer nil )
     (multi-term-goto-last-term)
     ))
+(defun my-go-packages-gopkgs ()
+  "Return a list of all Go packages, using `gopkgs'."
+  
+  (sort (process-lines "gopkgs"  (concat "-workDir=" (go-core-server--get-project-root-dir ) ) ) #'string<))
+
 (defun switch-case-char (&optional arg)
   ""
   (interactive)
