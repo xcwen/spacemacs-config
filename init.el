@@ -2,6 +2,11 @@
 ;; This file is loaded by Spacemacs at startup.
 ;; It must be stored in your home directory.
 ;;; Code:
+
+(setq-default  my-font-size 24 )
+
+(load "~/spacemacs-config/init-ex.el" t t  t nil )
+
 (defun dotspacemacs/layers ()
   "Configuration Layers declaration.
 You should not put any user code in this function besides modifying the variable
@@ -180,7 +185,7 @@ values."
    ;;(if (string= (system-name) "jim-MacBookPro") 48 24  )
   dotspacemacs-default-font (list  "XHei Mono.Ubuntu"  ;;"Source Code Pro"
                                    ;;:size  (if (string= (system-name) "jim-PC" )  48 24  )
-                                   :size (max (round(* 24 (string-to-number (shell-command-to-string "grep ScreenScaleFactors  ~/.config/deepin/qt-theme.ini | awk -F= '{print $2}' ") ))) 24 )
+                                   :size (max (round(* my-font-size (string-to-number (shell-command-to-string "grep ScreenScaleFactors  ~/.config/deepin/qt-theme.ini | awk -F= '{print $2}' ") ))) my-font-size )
 
                                    :weight 'normal
                                    :width 'normal
@@ -828,3 +833,14 @@ Emacs customize menu instead.
 This function is called at the very end of Spacemacs initialization."
 
 )
+
+
+
+(defun dotspacemacs/user-env ()
+  "Environment variables setup.
+This function defines the environment variables for your Emacs session. By
+default it calls `spacemacs/load-spacemacs-env' which loads the environment
+variables declared in `~/.spacemacs.env' or `~/.spacemacs.d/.spacemacs.env'.
+See the header of this file for more information."
+  (spacemacs/load-spacemacs-env)
+  )
