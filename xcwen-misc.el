@@ -1464,10 +1464,12 @@ If FORWARD is nil, search backward, otherwise forward."
 (defun go-core-server-make()
   "DOCSTRING"
   (interactive)
-  (let ((project-dir (go-core-server--get-project-root-dir )) )
-    (message "====%s" project-dir)
+  (let ((project-dir (go-core-server--get-project-root-dir )  )  cmd)
+
+    (setq cmd (concat project-dir "/restart.sh " ) )
+    (message "cmd:%s"  cmd)
     (when project-dir
-      (message "%s" (shell-command-to-string (concat project-dir "/restart.sh" )  )))))
+      (message "%s" (shell-command-to-string cmd  )))))
 
 
 (defun my-join-line ()
