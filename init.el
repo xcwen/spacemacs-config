@@ -50,6 +50,7 @@ values."
      (go :variables
          go-tab-width 4
          gofmt-command "goimports"
+         godoc-at-point-function 'godoc-gogetdoc
          ;;go-use-gometalinter t
          )
      html
@@ -98,6 +99,7 @@ values."
                                                 chinese-pyim
                                                 pyim
                                                 ace-pinyin
+                                                go-eldoc
                                                 )
    ;; Defines the behaviour of Spacemacs when installing packages.
    ;; Possible values are `used-only', `used-but-keep-unused' and `all'.
@@ -178,7 +180,7 @@ values."
    ;;(if (string= (system-name) "jim-MacBookPro") 48 24  )
   dotspacemacs-default-font (list  "XHei Mono.Ubuntu"  ;;"Source Code Pro"
                                    ;;:size  (if (string= (system-name) "jim-PC" )  48 24  )
-                                   :size (max (round(* 28 (string-to-number (shell-command-to-string "grep ScreenScaleFactors  ~/.config/deepin/qt-theme.ini | awk -F= '{print $2}' ") ))) 28 )
+                                   :size (max (round(* 24 (string-to-number (shell-command-to-string "grep ScreenScaleFactors  ~/.config/deepin/qt-theme.ini | awk -F= '{print $2}' ") ))) 24 )
 
                                    :weight 'normal
                                    :width 'normal
@@ -501,6 +503,9 @@ you should place your code here."
                               ))
   (add-hook 'go-mode-hook '(lambda ( )
 
+
+                             (setq go-packages-function  'go-packages-native)
+                             (setq go-packages-function   'my-go-packages-gopkgs)
                               (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
 
                               (spacemacs/set-leader-keys-for-major-mode  'go-mode "e" 'cleanup-and-goto-error)
