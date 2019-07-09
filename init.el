@@ -5,7 +5,7 @@
 
 (setq-default  my-font-size 24 )
 
-(load "~/spacemacs-config/init-ex.el" t t  t nil )
+(load  (expand-file-name "init-ex.el" dotspacemacs-directory) t t  t nil )
 
 (defun dotspacemacs/layers ()
   "Configuration Layers declaration.
@@ -599,13 +599,14 @@ you should place your code here."
   (define-key company-active-map  (kbd  "C-n")   'company-select-next )
   (define-key company-active-map  (kbd  "C-p")   'company-select-previous )
 
-  (when (check-in-linux )
-    (x-send-client-message
-     nil 0 nil "_NET_WM_STATE" 32
-     '(2 "_NET_WM_STATE_MAXIMIZED_HORZ" 0))
-    (x-send-client-message
-     nil 0 nil "_NET_WM_STATE" 32
-     '(2 "_NET_WM_STATE_MAXIMIZED_VERT" 0)) )
+
+  ;; (when (check-in-linux )
+  ;;   (x-send-client-message
+  ;;    nil 0 nil "_NET_WM_STATE" 32
+  ;;    '(2 "_NET_WM_STATE_MAXIMIZED_HORZ" 0))
+  ;;   (x-send-client-message
+  ;;    nil 0 nil "_NET_WM_STATE" 32
+  ;;    '(2 "_NET_WM_STATE_MAXIMIZED_VERT" 0)) )
 
 
 
