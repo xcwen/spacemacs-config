@@ -276,6 +276,25 @@ The test for presence of the car of ELT-CONS is done with `equal'."
   )
 
 
+(defun ts-get-file-at-point ()
+  (interactive)
+  (let( cur-path  pos-info)
+        (save-excursion
+          (let (file-name-begin file-name-end file-name  ctrl-name )
+
+            (message "11111111")
+            (skip-chars-backward "a-zA-Z0-9._/"   )
+            (setq file-name-begin (point))
+
+            (skip-chars-forward "a-zA-Z0-9._/"   )
+            (message "333333")
+
+            (setq file-name-end (point))
+            (setq cur-path (buffer-substring-no-properties file-name-begin file-name-end ))
+            (get-url-path-goto-info cur-path)
+            ))
+        ))
+
 
 (defun js-get-file-at-point ()
   (interactive)
@@ -380,17 +399,87 @@ The test for presence of the car of ELT-CONS is done with `equal'."
       (message "No more Flycheck errors")
       (xref-pop-marker-stack)))
   )
+(defun switch-file-opt-ts-url ()
+
+  (let(url )
+    (setq url (s-trim
+               (s-replace
+                "\"" ""
+                (shell-command-to-string
+                 (concat "grep 'url[ \t]*=' "  (s-replace ".ts" ".vue" (buffer-file-name))  " |awk -F= '{print $2}'"  )
+                 )) ))
+    url
+    ))
+(defun get-url-path-get-fix-path-from-env  (  env-key )
+  (s-trim (s-replace  "\"" ""  (shell-command-to-string (concat "grep "  env-key  "  "  (go-core-server--get-project-root-dir ) ".env |awk -F= '{print $2}' "  )  ))
+  ))
+(defun get-url-path-goto-info(url)
+  (let (obj-file pos-info  arr arr-len ctrl-name action-name (server-type "php") server-type-str )
+    (setq  arr (s-split "/" url  ) )
+    ;;("" "gocore" "more_call" "test" "teacher_list")
+    (setq arr-len (length arr) )
+    (if  (>=  arr-len 3 )
+        (progn
+          (setq ctrl-name (nth (- arr-len  2)  arr))
+          (setq action-name (nth (- arr-len  1)  arr))
+          (message "===len %d "  arr-len)
+          (when (>  arr-len 3)
+            (setq server-type-str (nth 1 arr ) )
+            (message "===%s" server-type-str)
+            (cond
+             ((string= server-type-str "core")
+              (setq server-type "phpcore")
+              )
+             ((string= server-type-str "gocore")
+              (setq server-type "gocore")
+              )
+             ))))
+    (cond
+     ((string= server-type  "php" )
+      (setq  obj-file  (concat "../../../../application/cc/admin/" (my-s-upper-camel-case  ctrl-name)  ".php" ) )
+      (setq pos-info ( concat "/function[ \t]+" action-name "[ \t]*("  ) )
+      )
+
+     ((string= server-type  "gocore" )
+      (setq  obj-file  (concat (get-url-path-get-fix-path-from-env  "GOCORE_CONTROLLERS_DIR" ) "/" ctrl-name  ".go" ) )
+      (setq pos-info ( concat "/func[ \t]+.*" action-name "[ \t]*("  ) )
+      )
+     ((string= server-type  "phpcore" )
+      (setq  obj-file  (concat (get-url-path-get-fix-path-from-env  "PHPCORE_CONTROLLERS_DIR" ) "/" ctrl-name  ".php" ) )
+      (setq pos-info ( concat "/function[ \t]+" action-name "[ \t]*("  ) )
+      )
+
+     )
+
+    (list  obj-file  pos-info )
+
+    ))
+;;(get-url-path-goto-info "/gocore/more_call/test/teacher_list")
+;;(get-url-path-goto-info "/test/teacher_list")
+;;(get-url-path-goto-info "/core/test/teacher_list")
+
 ;; (switch-cc-to-h ))))
 (defun switch-file-opt ()
   "DOCSTRING"
   (interactive)
-  (let (  line-txt  opt-file  file-list obj-file check-file-name file-name file-name-fix  (use-default t) pos-info )
+  (let (  line-txt  opt-file  file-list obj-file check-file-name file-name file-name-fix  (use-default t) pos-info  (goto-gocore-flag nil)  (goto-phpcore-flag nil ) (switch-flag) )
     (save-excursion
-      (goto-char (point-min))
-      (when (search-forward "SWITCH-TO:" nil t  )
+      (setq switch-flag (search-backward "SWITCH-TO:" nil t  ))
+      (unless switch-flag 
+        (goto-char (point-min))
+        (setq switch-flag  (search-forward "SWITCH-TO:" nil t  ) )
+        )
+
+      (when switch-flag
         (setq line-txt (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
-        (if (string-match   "SWITCH-TO:[ \t]*\\([^ \t]*\\)[ \t]*"   line-txt)
-            (setq  opt-file (match-string  1 line-txt)))))
+        (when (string-match   "SWITCH-TO:[ \t]*\\([^ \t]*\\)[ \t]*"   line-txt)
+          (setq  opt-file (match-string  1 line-txt))
+
+           (unless (f-exists-p  (concat  opt-file) )
+             (setq opt-file  (concat (get-url-path-get-fix-path-from-env "VUE_VIEW_DIR") "/"  opt-file ))
+           )
+
+          )))
 
     (if (and opt-file   (file-directory-p  opt-file) )
         (progn ;;目录
@@ -408,7 +497,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
                  )
                 (setq obj-file  (concat opt-file "/" check-file-name) ))))
       (setq obj-file opt-file))
-   ;;check for   php html js
+    ;;check for   php html js
     (unless obj-file
       (let ((path-name (buffer-file-name)) ctrl-name action-name tmp-arr )
         (cond
@@ -423,6 +512,13 @@ The test for presence of the car of ELT-CONS is done with `equal'."
                 (when tmp-arr
                   (setq action-name (nth 1 tmp-arr) )
                   )))
+            ;;phpcore tars
+            (when (and (s-match "/app/Controllers/" path-name )  (not (string= action-name "__construct")) )
+              (setq  obj-file  (concat (get-url-path-get-fix-path-from-env "VUE_VIEW_DIR")  ctrl-name  "/" action-name ".vue" ) )
+              (message "========%s"  obj-file )
+              )
+
+            ;;larverl
             (when (and (s-match "/Controllers/" path-name )  (not (string= action-name "__construct")) )
 
               (setq  obj-file  (concat "../../../new_vue/src/views/" ctrl-name  "/" action-name ".vue" ) )
@@ -435,11 +531,33 @@ The test for presence of the car of ELT-CONS is done with `equal'."
                 )
               )
 
+            ;;
             (when (and (s-match "/cc/admin/" path-name )  (not (string= action-name "__construct")) )
 
               (setq  obj-file  (concat "../../../vue/src/views/" (s-snake-case ctrl-name )   "/" action-name ".vue" ) )
               )
             ))
+         ((string= major-mode  "go-mode")
+          (progn
+            (setq ctrl-name   (s-snake-case (f-base  (f-base path-name ))) )
+            (save-excursion
+              (let (line-txt  )
+                (beginning-of-defun)
+                (setq line-txt (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
+                (setq tmp-arr (s-match  ".*func[ \t]+([^)]+)[ \t]*\\([a-zA-Z0-9_]*\\)"  line-txt ) )
+                (when tmp-arr
+                  (setq action-name (s-snake-case (nth 1 tmp-arr)) )
+                  )))
+            (when (and (s-match "/controllers/" path-name )   )
+              (let (view-dir)
+                (setq view-dir (get-url-path-get-fix-path-from-env "VUE_VIEW_DIR") )
+
+                (setq  obj-file  (concat   view-dir "/" ctrl-name  "/" action-name ".vue" ))
+                )
+
+
+              )))
+
 
          ((string= major-mode  "web-mode" )
           (setq tmp-arr (s-match  "/\\([a-zA-Z0-9_-]*\\)/\\([a-zA-Z0-9_-]*\\).blade.php"  path-name ) )
@@ -477,77 +595,20 @@ The test for presence of the car of ELT-CONS is done with `equal'."
           )
 
 
-         ((string= major-mode  "js2-mode" )
-          (setq tmp-arr (s-match  "page_js/\\([a-zA-Z0-9_-]*\\)/\\([a-zA-Z0-9_-]*\\).js"  path-name ) )
-          (when tmp-arr
-            (setq  ctrl-name   (nth 1 tmp-arr) )
-            (setq  action-name   (nth 2 tmp-arr) ))
-          (when (s-match "/public/page_js/" path-name )
-            (setq  obj-file  (concat"../../../app/Http/Controllers/" ctrl-name  ".php" ) )
-            (setq pos-info ( concat "/function[ \t]+" action-name "[ \t]*("  ) )
-
-            ))
          ((string= major-mode  "typescript-mode" )
-          (setq tmp-arr (s-match  "/public/page_ts/\\([a-zA-Z0-9_-]*\\)/\\([a-zA-Z0-9_-]*\\).ts"  path-name ) )
-          ;; php ts
-          (when tmp-arr
-            (setq  ctrl-name   (nth 1 tmp-arr) )
-            (setq  action-name   (nth 2 tmp-arr) )
-            (when (s-match "/public/page_ts/" path-name )
-              (setq  obj-file  (concat"../../../app/Http/Controllers/" ctrl-name  ".php" ) )
-              (setq pos-info ( concat "/function[ \t]+" action-name "[ \t]*("  ) )
-
-              ))
-
-          ;; nodejs javascript ts
-          (setq tmp-arr (s-match  "/web_public/page_ts/\\([a-zA-Z0-9_-]*\\)/\\([a-zA-Z0-9_-]*\\).ts"  path-name ) )
-          (when tmp-arr
-
-            (setq  ctrl-name   (nth 1 tmp-arr) )
-            (setq  action-name   (nth 2 tmp-arr) )
-            (setq  obj-file  (concat "../../../routes/" ctrl-name  ".ts" ) )
-            (setq pos-info ( concat "/public[ \t]+" action-name "[ \t]*("  ) )
-
-            )
-          ;; nodejs  ts
-
-          (when (s-match "/routes/" path-name )
-            (progn
-              (setq ctrl-name (f-base  (f-base path-name )) )
-              (save-excursion
-                (let (line-txt  )
-                  (re-search-backward "[ \t]*public[ \t]+"  0 t 1 )
-                  (setq line-txt (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
-                  (setq tmp-arr (s-match  ".*public[ \t]+\\([a-zA-Z0-9_]*\\)"  line-txt ) )
-                  (when tmp-arr
-                    (setq action-name (nth 1 tmp-arr) )
-                    )))
-              (when (and   (not (string= action-name "constructor")) )
-                (setq  obj-file  (concat "../views/" ctrl-name  "/" action-name ".jade" ) )
+          (let (url file-info)
+            (setq tmp-arr (s-match  "/views/\\([a-zA-Z0-9_-]*\\)/\\([a-zA-Z0-9_-]*\\).ts"  path-name ) )
+            (when tmp-arr
+              (setq  ctrl-name   (nth 1 tmp-arr) )
+              (setq  action-name   (nth 2 tmp-arr) )
+              (setq url (switch-file-opt-ts-url ) )
+              (when (string=  url "")
+                (setq url (concat "/" ctrl-name "/" action-name ) )
                 )
-              ))
-
-          ;;/ vue  .ts -> ../../../../app/Http/Controllers/xxx.php  pos
-          (unless (and obj-file (f-exists? obj-file ) )
-            (setq tmp-arr (s-match  "/views/\\([a-zA-Z0-9_-]*\\)/\\([a-zA-Z0-9_-]*\\).ts"  path-name ) )
-            (when tmp-arr
-              (setq  ctrl-name   (nth 1 tmp-arr) )
-              (setq  action-name   (nth 2 tmp-arr) )
-              (setq  obj-file  (concat "../../../../app/Http/Controllers/" ctrl-name  ".php" ) )
-              (setq pos-info ( concat "/function[ \t]+" action-name "[ \t]*("  ) )
               )
-            )
-
-          (unless (and obj-file (f-exists? obj-file ) )
-            (setq tmp-arr (s-match  "/views/\\([a-zA-Z0-9_-]*\\)/\\([a-zA-Z0-9_-]*\\).ts"  path-name ) )
-            (when tmp-arr
-              (setq  ctrl-name   (nth 1 tmp-arr) )
-              (setq  action-name   (nth 2 tmp-arr) )
-
-              (setq  obj-file  (concat "../../../../application/cc/admin/" (my-s-upper-camel-case  ctrl-name)  ".php" ) )
-              (setq pos-info ( concat "/function[ \t]+" action-name "[ \t]*("  ) )
-              )
-
+            (setq file-info  ( get-url-path-goto-info url ) )
+            (setq  obj-file (nth 0 file-info) )
+            (setq  pos-info (nth 1 file-info) )
             )
           (unless (and obj-file (f-exists? obj-file ) )
             (setq  obj-file  (concat "./" (file-name-base path-name ) ".vue" ) )
@@ -559,41 +620,42 @@ The test for presence of the car of ELT-CONS is done with `equal'."
           )
          )))
 
-      (when obj-file
-        (unless (f-exists? obj-file)
-          (setq use-default  nil)
-          (setq obj-file nil)
-          )
+    (when obj-file
+      (unless (f-exists? obj-file)
+        (setq use-default  nil)
+        (setq obj-file nil)
         )
+      )
 
-      (if obj-file
-          (let(line-txt (move-flag t ))
-            (find-file obj-file)
-            (when pos-info
-              (when (string=(substring-no-properties pos-info 0 1 )  "/")
+    (if obj-file
+        (let(line-txt (move-flag t ))
+          (find-file obj-file)
+          (when pos-info
+            (when (string=(substring-no-properties pos-info 0 1 )  "/")
 
 
-                (when (> (line-number-at-pos )  2)
-                  (save-excursion
-                    (if (string= major-mode "typescript-mode" )
-                        (re-search-backward "[ \t]*public[ \t]+" 0 t 1 )
-                      ( evil-backward-section-begin)
-                      )
-                    (setq line-txt (buffer-substring-no-properties
-                                    (line-beginning-position)
-                                    (line-end-position )))
-                    (when (s-matches-p (substring-no-properties pos-info 1 ) line-txt  ) ;;同一个区域
-                      (setq move-flag nil ))
-                    ))
-                (when move-flag
-                  (goto-char (point-min))
-                  (re-search-forward  (substring-no-properties pos-info 1 ) )
-                  (next-line))
-                )
-              ))
+              (when (> (line-number-at-pos )  2)
+                (save-excursion
+                  (if (string= major-mode "typescript-mode" )
+                      (re-search-backward "[ \t]*public[ \t]+" 0 t 1 )
+                    ( evil-backward-section-begin)
+                    )
+                  (setq line-txt (buffer-substring-no-properties
+                                  (line-beginning-position)
+                                  (line-end-position )))
+                  (when (s-matches-p (substring-no-properties pos-info 1 ) line-txt  ) ;;同一个区域
+                    (setq move-flag nil ))
+                  ))
+              (when move-flag
+                (goto-char (point-min))
+                (re-search-forward  (substring-no-properties pos-info 1 ) )
+                (next-line))
+              )
+            ))
 
-        (when use-default (switch-cc-to-h))
+      (when use-default (switch-cc-to-h))
       )))
+;;XXX
 
 
 
@@ -1588,7 +1650,9 @@ If FORWARD is nil, search backward, otherwise forward."
        (setq file-info (js-get-file-at-point) ))
 
      (when (string= "typescript-mode" major-mode)
-       (setq file-info (js-get-file-at-point) ))
+       (setq file-info (ts-get-file-at-point) )
+       (message "file-info %S" file-info )
+       )
 
 
 
