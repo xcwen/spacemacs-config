@@ -442,7 +442,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 
      ((string= server-type  "gocore" )
       (setq  obj-file  (concat (get-url-path-get-fix-path-from-env  "GOCORE_CONTROLLERS_DIR" ) "/" ctrl-name  ".go" ) )
-      (setq pos-info ( concat "/func[ \t]+.*" action-name "[ \t]*("  ) )
+      (setq pos-info ( concat "/func[ \t]+.*" (my-s-upper-camel-case action-name) "[ \t]*("  ) )
       )
      ((string= server-type  "phpcore" )
       (setq  obj-file  (concat (get-url-path-get-fix-path-from-env  "PHPCORE_CONTROLLERS_DIR" ) "/" ctrl-name  ".php" ) )
@@ -606,9 +606,11 @@ The test for presence of the car of ELT-CONS is done with `equal'."
                 (setq url (concat "/" ctrl-name "/" action-name ) )
                 )
               )
-            (setq file-info  ( get-url-path-goto-info url ) )
-            (setq  obj-file (nth 0 file-info) )
-            (setq  pos-info (nth 1 file-info) )
+            (when url 
+              (setq file-info  ( get-url-path-goto-info url ) )
+              (setq  obj-file (nth 0 file-info) )
+              (setq  pos-info (nth 1 file-info) )
+              )
             )
           (unless (and obj-file (f-exists? obj-file ) )
             (setq  obj-file  (concat "./" (file-name-base path-name ) ".vue" ) )
