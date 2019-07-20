@@ -458,17 +458,32 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 ;;(get-url-path-goto-info "/test/teacher_list")
 ;;(get-url-path-goto-info "/core/test/teacher_list")
 
-;; (switch-cc-to-h ))))
+(defun get-action-switch-to(action )
+  (let ( switch-flag   (fix (concat "ACTION-SWITCH-TO:"  action ":" )) opt-file line-txt )
+    (save-excursion
+      (goto-char (point-min))
+      (setq switch-flag  (search-forward  fix nil t  ) )
+
+      (when switch-flag
+        (setq line-txt (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
+
+        (when (string-match   (concat fix "[ \t]*\\([^ \t]*\\)[ \t]*")   line-txt)
+          (setq  opt-file (match-string  1 line-txt))
+
+          (unless (f-exists-p  (concat  opt-file) )
+            (setq opt-file  (concat (get-url-path-get-fix-path-from-env "VUE_VIEW_DIR") "/"  opt-file ))
+            )
+          )))
+    opt-file
+    ))
+
 (defun switch-file-opt ()
   "DOCSTRING"
   (interactive)
   (let (  line-txt  opt-file  file-list obj-file check-file-name file-name file-name-fix  (use-default t) pos-info  (goto-gocore-flag nil)  (goto-phpcore-flag nil ) (switch-flag) )
     (save-excursion
-      (setq switch-flag (search-backward "SWITCH-TO:" nil t  ))
-      (unless switch-flag 
-        (goto-char (point-min))
-        (setq switch-flag  (search-forward "SWITCH-TO:" nil t  ) )
-        )
+      (goto-char (point-min))
+      (setq switch-flag  (search-forward-regexp "[^-]SWITCH-TO:" nil t  ) )
 
       (when switch-flag
         (setq line-txt (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
@@ -514,19 +529,24 @@ The test for presence of the car of ELT-CONS is done with `equal'."
                   )))
             ;;phpcore tars
             (when (and (s-match "/app/Controllers/" path-name )  (not (string= action-name "__construct")) )
-              (setq  obj-file  (concat (get-url-path-get-fix-path-from-env "VUE_VIEW_DIR")  ctrl-name  "/" action-name ".vue" ) )
+              (setq obj-file  (get-action-switch-to action-name ) )
+              (unless  (f-exists-p  obj-file )
+                (setq  obj-file  (concat (get-url-path-get-fix-path-from-env "VUE_VIEW_DIR")  ctrl-name  "/" action-name ".vue" ) )
+                )
               (message "========%s"  obj-file )
               )
 
-            ;;larverl
-            (when (and (s-match "/Controllers/" path-name )  (not (string= action-name "__construct")) )
+            (unless  (f-exists-p  obj-file )
+              ;;larverl
+              (when (and (s-match "/Controllers/" path-name )  (not (string= action-name "__construct")) )
 
-              (setq  obj-file  (concat "../../../new_vue/src/views/" ctrl-name  "/" action-name ".vue" ) )
-              (unless  (f-exists-p  obj-file )
-                (setq  obj-file  (concat "../../../vue/src/views/" ctrl-name  "/" action-name ".vue" ) )
-                ;;check vue .php -> .vue
-                (unless (and obj-file (f-exists-p  obj-file ) )
-                  (setq  obj-file  (concat "../../../resources/views/" ctrl-name  "/" action-name ".blade.php" ) )
+                (setq  obj-file  (concat "../../../new_vue/src/views/" ctrl-name  "/" action-name ".vue" ) )
+                (unless  (f-exists-p  obj-file )
+                  (setq  obj-file  (concat "../../../vue/src/views/" ctrl-name  "/" action-name ".vue" ) )
+                  ;;check vue .php -> .vue
+                  (unless (and obj-file (f-exists-p  obj-file ) )
+                    (setq  obj-file  (concat "../../../resources/views/" ctrl-name  "/" action-name ".blade.php" ) )
+                    )
                   )
                 )
               )
@@ -538,7 +558,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
               )
             ))
          ((string= major-mode  "go-mode")
-          (progn
+          (let ( go-action-name )
             (setq ctrl-name   (s-snake-case (f-base  (f-base path-name ))) )
             (save-excursion
               (let (line-txt  )
@@ -546,13 +566,17 @@ The test for presence of the car of ELT-CONS is done with `equal'."
                 (setq line-txt (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
                 (setq tmp-arr (s-match  ".*func[ \t]+([^)]+)[ \t]*\\([a-zA-Z0-9_]*\\)"  line-txt ) )
                 (when tmp-arr
-                  (setq action-name (s-snake-case (nth 1 tmp-arr)) )
+                  (setq go-action-name (nth 1 tmp-arr) )
+                  (setq action-name (s-snake-case go-action-name ) )
                   )))
             (when (and (s-match "/controllers/" path-name )   )
               (let (view-dir)
                 (setq view-dir (get-url-path-get-fix-path-from-env "VUE_VIEW_DIR") )
 
-                (setq  obj-file  (concat   view-dir "/" ctrl-name  "/" action-name ".vue" ))
+                (setq obj-file  (get-action-switch-to go-action-name ) )
+                (unless  (f-exists-p  obj-file )
+                  (setq  obj-file  (concat   view-dir "/" ctrl-name  "/" action-name ".vue" ))
+                )
                 )
 
 
@@ -606,7 +630,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
                 (setq url (concat "/" ctrl-name "/" action-name ) )
                 )
               )
-            (when url 
+            (when url
               (setq file-info  ( get-url-path-goto-info url ) )
               (setq  obj-file (nth 0 file-info) )
               (setq  pos-info (nth 1 file-info) )
