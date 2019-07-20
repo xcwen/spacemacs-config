@@ -536,7 +536,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
               (message "========%s"  obj-file )
               )
 
-            (unless  (f-exists-p  obj-file )
+            (unless (and  obj-file (f-exists-p  obj-file ) )
               ;;larverl
               (when (and (s-match "/Controllers/" path-name )  (not (string= action-name "__construct")) )
 
