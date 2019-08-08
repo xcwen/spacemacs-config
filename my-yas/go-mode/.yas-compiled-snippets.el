@@ -17,8 +17,8 @@
                        ("helloworld" "package main\n\nimport \"fmt\"\n\nfunc main() {\n	fmt.Printf(\"Hello, 世界\\n\")\n}\n$0\n" "helloworld" nil nil nil "/home/jim/.spacemacs.d/my-yas/go-mode/helloworld" nil nil)
                        ("func" "func ${1:name}(${2:arguments}) ${3:returntype} {\n	$0\n}\n" "func" nil nil nil "/home/jim/.spacemacs.d/my-yas/go-mode/func" nil nil)
                        ("for" "for ${1:elements} {\n	$0\n}\n" "for" nil nil nil "/home/jim/.spacemacs.d/my-yas/go-mode/for" nil nil)
-                       ("dd" "utils.DD($0)" "dd" nil nil nil "/home/jim/.spacemacs.d/my-yas/go-mode/dd" nil nil)
+                       ("dd" "dd.DD($0)" "dd" nil nil nil "/home/jim/.spacemacs.d/my-yas/go-mode/dd" nil nil)
                        ("bench" "func Benchmark${1:Feature}(b *testing.B) {\n	$0\n}\n" "bench" nil nil nil "/home/jim/.spacemacs.d/my-yas/go-mode/bench" nil nil)))
 
 
-;;; Do not edit! File generated at Sat Jun 29 15:48:12 2019
+;;; Do not edit! File generated at Fri Aug  2 12:24:51 2019

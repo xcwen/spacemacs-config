@@ -16,4 +16,4 @@
                        ("c" "\\App\\Helper\\Common::$0\n" "c" nil nil nil "/home/jim/.spacemacs.d/my-yas/php-mode/c" nil nil)))
 
 
-;;; Do not edit! File generated at Sat Jun 29 15:48:12 2019
+;;; Do not edit! File generated at Fri Aug  2 12:24:51 2019

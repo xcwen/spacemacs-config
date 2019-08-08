@@ -449,6 +449,7 @@ you should place your code here."
     (spacemacs/set-leader-keys-for-major-mode  mode "o" 'other-window )
     (unless (string= mode 'go-mode)
       (spacemacs/set-leader-keys-for-major-mode  mode "e" 'cleanup-and-goto-error)
+
         )
     (spacemacs/set-leader-keys-for-major-mode  mode "\""
       '(lambda()
@@ -514,6 +515,11 @@ you should place your code here."
                               (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
 
                               (spacemacs/set-leader-keys-for-major-mode  'go-mode "e" 'cleanup-and-goto-error)
+                              (spacemacs/set-leader-keys-for-major-mode  'go-mode "r" '(lambda()
+                                                                                     (interactive )
+                                                                                     (shell-command "killall -9 gocode" )
+                                                                                     ))
+
                               ))
 
 
