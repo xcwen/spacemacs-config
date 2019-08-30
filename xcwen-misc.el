@@ -142,7 +142,7 @@ localhost:~/site-lisp/config$"
     (when (and  (not (string= file-path-str default-directory ))
                 (string-match term-local-cmd-start-line-regex-str line-txt ) ;;本地，处于命令行完成状态
                 )
-      (setq init-cmd  (concat "cd " file-path-str  " # goto file location   \r" ) )
+      (setq init-cmd  (concat "cd '" file-path-str  "' # goto file location   \r" ) )
       ;;(message "send init-cmd :%s " init-cmd )
       (term-send-raw-string init-cmd ))
     ))
