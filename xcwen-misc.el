@@ -530,7 +530,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
             ;;phpcore tars
             (when (and (s-match "/app/Controllers/" path-name )  (not (string= action-name "__construct")) )
               (setq obj-file  (get-action-switch-to action-name ) )
-              (unless  (f-exists-p  obj-file )
+              (unless  (and  obj-file (f-exists-p  obj-file ) )
                 (setq  obj-file  (concat (get-url-path-get-fix-path-from-env "VUE_VIEW_DIR")  ctrl-name  "/" action-name ".vue" ) )
                 )
               (message "========%s"  obj-file )
@@ -574,7 +574,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
                 (setq view-dir (get-url-path-get-fix-path-from-env "VUE_VIEW_DIR") )
 
                 (setq obj-file  (get-action-switch-to go-action-name ) )
-                (unless  (f-exists-p  obj-file )
+                (unless  (and  obj-file  (f-exists-p  obj-file ) )
                   (setq  obj-file  (concat   view-dir "/" ctrl-name  "/" action-name ".vue" ))
                 )
                 )
