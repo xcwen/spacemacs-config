@@ -62,7 +62,7 @@ values."
 
      (typescript :variables
                  typescript-fmt-on-save t)
-     elixir
+     ;; elixir
      java
      javascript
      ;; ----------------------------------------------------------------
