@@ -95,7 +95,7 @@ values."
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '(vue-mode   edts async  js2-mode web-mode typescript-mode  multi-term xcscope )
+   dotspacemacs-additional-packages '(vue-mode   async  js2-mode web-mode typescript-mode  multi-term xcscope )
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
@@ -416,11 +416,11 @@ you should place your code here."
                  'js2-mode
                  'java-mode
                  'conf-mode
-                 'elixir-mode
+                 ;'elixir-mode
                  'yaml-mode
                  'dotenv-mode
                  'nxml-mode
-                 'erlang-mode
+                 ;;'erlang-mode
                  'html-mode
                  'conf-unix-mode
                  'lua-mode
@@ -474,16 +474,16 @@ you should place your code here."
   (spacemacs/set-leader-keys-for-major-mode  'go-mode "m" 'go-core-server-make )
 
   (spacemacs/set-leader-keys-for-major-mode  'emacs-lisp-mode "," nil)
-  (setq flycheck-erlang-include-path '(
-
-                                       "/home/jim/ejabberd-17.08/deps/xmpp/include"
-                                       "/home/jim/ejabberd-17.08/deps/fast_xml/include"
-                                       "/home/jim/ejabberd-17.08/deps/lager/include"
-                                       "/home/jim/ejabberd-17.08/deps/cache_tab/include"
-                                       "/home/jim/ejabberd-17.08/deps/p1_utils/include"
-                                       "/home/jim/ejabberd-17.08/include"
-
-                                       ) )
+;  (setq flycheck-erlang-include-path '(
+;
+;                                       "/home/jim/ejabberd-17.08/deps/xmpp/include"
+;                                       "/home/jim/ejabberd-17.08/deps/fast_xml/include"
+;                                       "/home/jim/ejabberd-17.08/deps/lager/include"
+;                                       "/home/jim/ejabberd-17.08/deps/cache_tab/include"
+;                                       "/home/jim/ejabberd-17.08/deps/p1_utils/include"
+;                                       "/home/jim/ejabberd-17.08/include"
+;
+;                                       ) )
 
 
   ;;(edts-project-override "~/my-project" (:name "my-project-dev"
@@ -773,7 +773,7 @@ you should place your code here."
   (setq frame-title-format  '("file: %f "  ))
   (setq yas-snippet-dirs   (list  "~/.spacemacs.d/my-yas"  )  )
 
-  (require 'edts-start)
+  ;;(require 'edts-start)
 
   ;;(add-hook 'buffer-list-update-hook 'set-admin-title  )
 
