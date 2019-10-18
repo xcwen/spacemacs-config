@@ -1569,6 +1569,22 @@ If FORWARD is nil, search backward, otherwise forward."
 
     project-root-dir))
 
+(defun php-mode-make()
+  "DOCSTRING"
+  (interactive)
+  (let ((project-dir (core-server--get-project-root-dir )) )
+    (if (s-matches-p "/tests/" (buffer-file-name))
+        (progn ;; phpunit-current-test
+          (phpunit-current-test)
+          )
+      (progn ;; core-server
+        (message "====%s" project-dir)
+        (when project-dir
+          (message "%s" (shell-command-to-string (concat project-dir "/proto/gen_proto.sh" )  )))
+        )
+      )
+    ))
+
 
 
 (defun core-server-make()
