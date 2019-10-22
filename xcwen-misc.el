@@ -413,6 +413,22 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 (defun get-url-path-get-fix-path-from-env  (  env-key )
   (s-trim (s-replace  "\"" ""  (shell-command-to-string (concat "grep '^"  env-key  "'  "  (go-core-server--get-project-root-dir ) ".env |awk -F= '{print $2}' "  )  ))
   ))
+
+(defun get-route-jump-file-name  (  sub-path  route-config-str )
+  (let ((match_path "/" ) route  path)
+    (dolist  ( item  (s-split ";" route-config-str))
+      (setq kv (s-split ":" item))
+      (when (=  2 (length kv ))
+        (setq route (s-trim (nth 0 kv)) )
+        (setq path (s-trim (nth 1 kv)) )
+        (when (s-starts-with-p route  sub-path   )
+          (setq match_path  path)
+          (return)
+          )))
+    (concat  match_path  sub-path )
+    ))
+
+
 (defun get-url-path-goto-info(url)
   (let (obj-file pos-info  arr arr-len ctrl-name action-name (server-type "php") server-type-str )
     (setq  arr (s-split "/" url  ) )
@@ -470,12 +486,13 @@ The test for presence of the car of ELT-CONS is done with `equal'."
         (when (string-match   (concat fix "[ \t]*\\([^ \t]*\\)[ \t]*")   line-txt)
           (setq  opt-file (match-string  1 line-txt))
 
-          (unless (f-exists-p  (concat  opt-file) )
-            (setq opt-file  (concat (get-url-path-get-fix-path-from-env "VUE_VIEW_DIR") "/"  opt-file ))
+          (unless (f-exists-p  opt-file )
+            (setq opt-file ( get-route-jump-file-name (concat "/"  opt-file ) (get-url-path-get-fix-path-from-env "VUE_VIEW_DIR") ))
             )
           )))
     opt-file
     ))
+
 
 (defun switch-file-opt ()
   "DOCSTRING"
@@ -490,8 +507,8 @@ The test for presence of the car of ELT-CONS is done with `equal'."
         (when (string-match   "SWITCH-TO:[ \t]*\\([^ \t]*\\)[ \t]*"   line-txt)
           (setq  opt-file (match-string  1 line-txt))
 
-           (unless (f-exists-p  (concat  opt-file) )
-             (setq opt-file  (concat (get-url-path-get-fix-path-from-env "VUE_VIEW_DIR") "/"  opt-file ))
+           (unless (f-exists-p  opt-file )
+             (setq opt-file ( get-route-jump-file-name (concat "/"  opt-file ) (get-url-path-get-fix-path-from-env "VUE_VIEW_DIR") ))
            )
 
           )))
@@ -531,7 +548,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
             (when (and (s-match "/app/Controllers/" path-name )  (not (string= action-name "__construct")) )
               (setq obj-file  (get-action-switch-to action-name ) )
               (unless  (and  obj-file (f-exists-p  obj-file ) )
-                (setq  obj-file  (concat (get-url-path-get-fix-path-from-env "VUE_VIEW_DIR")  ctrl-name  "/" action-name ".vue" ) )
+                (setq obj-file ( get-route-jump-file-name (concat "/" ctrl-name  "/" action-name ".vue"  ) (get-url-path-get-fix-path-from-env "VUE_VIEW_DIR") ))
                 )
               (message "========%s"  obj-file )
               )
@@ -571,11 +588,10 @@ The test for presence of the car of ELT-CONS is done with `equal'."
                   )))
             (when (and (s-match "/controllers/" path-name )   )
               (let (view-dir)
-                (setq view-dir (get-url-path-get-fix-path-from-env "VUE_VIEW_DIR") )
 
                 (setq obj-file  (get-action-switch-to go-action-name ) )
                 (unless  (and  obj-file  (f-exists-p  obj-file ) )
-                  (setq  obj-file  (concat   view-dir "/" ctrl-name  "/" action-name ".vue" ))
+                  (setq obj-file ( get-route-jump-file-name (concat "/" ctrl-name  "/" action-name ".vue"  ) (get-url-path-get-fix-path-from-env "VUE_VIEW_DIR") ))
                 )
                 )
 
