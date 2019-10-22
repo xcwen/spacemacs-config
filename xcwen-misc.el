@@ -411,7 +411,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
     url
     ))
 (defun get-url-path-get-fix-path-from-env  (  env-key )
-  (s-trim (s-replace  "\"" ""  (shell-command-to-string (concat "grep "  env-key  "  "  (go-core-server--get-project-root-dir ) ".env |awk -F= '{print $2}' "  )  ))
+  (s-trim (s-replace  "\"" ""  (shell-command-to-string (concat "grep '^"  env-key  "'  "  (go-core-server--get-project-root-dir ) ".env |awk -F= '{print $2}' "  )  ))
   ))
 (defun get-url-path-goto-info(url)
   (let (obj-file pos-info  arr arr-len ctrl-name action-name (server-type "php") server-type-str )
