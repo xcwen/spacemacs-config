@@ -42,6 +42,9 @@ values."
      nginx
      sql
      windows-scripts
+     (dart
+      :variables dart-server-sdk-path  (concat (getenv "HOME") "/bin/cache/dart-sdk/")
+      )
      lua
      vimscript
      git
@@ -56,6 +59,7 @@ values."
          go-tab-width 4
          gofmt-command "goimports"
          godoc-at-point-function 'godoc-gogetdoc
+         go-backend 'go-mode
          ;;go-use-gometalinter t
          )
      html
@@ -410,6 +414,7 @@ you should place your code here."
                  'c-mode
                  'sql-mode
                  'json-mode
+                 'dart-mode
                  'go-mode
                  'org-mode
                  'sh-mode
@@ -472,6 +477,7 @@ you should place your code here."
   (spacemacs/set-leader-keys-for-major-mode  'php-mode "m" 'php-mode-make)
   (spacemacs/set-leader-keys-for-major-mode  'protobuf-mode "m" 'core-server-make )
   (spacemacs/set-leader-keys-for-major-mode  'go-mode "m" 'go-core-server-make )
+  (spacemacs/set-leader-keys-for-major-mode  'dart-mode "m" 'flutter-run-or-hot-reload )
 
   (spacemacs/set-leader-keys-for-major-mode  'emacs-lisp-mode "," nil)
 ;  (setq flycheck-erlang-include-path '(
