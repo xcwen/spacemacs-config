@@ -43,7 +43,7 @@ values."
      sql
      windows-scripts
      (dart
-      :variables dart-server-sdk-path  (concat (getenv "HOME") "/bin/cache/dart-sdk/")
+      :variables dart-server-sdk-path  (concat (getenv "HOME") "/flutter/bin/cache/dart-sdk/")
       )
      lua
      vimscript
@@ -65,6 +65,7 @@ values."
      html
 
      (typescript :variables
+                 typescript-backend 'tide
                  typescript-fmt-on-save t)
      ;; elixir
      java
@@ -574,6 +575,29 @@ you should place your code here."
       (my-set-evil-local-map "\C-]"   'tide-jump-to-definition )
       ))
 
+
+  ;;关闭 lsp-ui-doc
+  (setq lsp-ui-doc-delay 100000)
+  (setq lsp-ui-sideline-delay 10000 )
+  (setq lsp-eldoc-enable-hover nil)
+  (setq lsp-eldoc-enable-signature-help nil)
+  (setq lsp-enable-symbol-highlighting nil)
+  (setq lsp-enable-xref nil)
+  (setq lsp-enable-indentation nil )
+  (setq lsp-eldoc-prefer-signature-help nil)
+  (setq lsp-enable-on-type-formatting  nil)
+  (setq lsp-eldoc-hook nil )
+  (setq lsp-enable-indentation  nil)
+  (setq lsp-links-check-internal 10000)
+  (setq lsp-enable-links nil)
+  (setq lsp-auto-execute-action nil)
+  (setq lsp-debounce-full-sync-notifications nil)
+  (setq lsp-enable-file-watchers nil)
+  (setq lsp-enable-folding nil)
+  (setq dart-server-enable-analysis-server nil )
+ ;;(setq    nil)
+
+  
 
   ;;关闭tide warning
 
