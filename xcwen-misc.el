@@ -1596,7 +1596,7 @@ If FORWARD is nil, search backward, otherwise forward."
       (progn ;; core-server
         (message "====%s" project-dir)
         (when project-dir
-          (message "%s" (shell-command-to-string (concat project-dir "/proto/gen_proto.sh" )  )))
+          (message "%s" (shell-command-to-string (concat project-dir "/restart.sh" )  )))
         )
       )
     ))
