@@ -35,7 +35,8 @@ values."
    dotspacemacs-configuration-layer-path '()
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(rust
+   '(systemd
+     rust
      react
      csv
      python
@@ -828,6 +829,8 @@ you should place your code here."
       (define-key evil-insert-state-local-map   (kbd "C-w")  'term-send-raw)
       (define-key evil-insert-state-local-map   (kbd "C-d")  'term-send-raw)
       (define-key evil-insert-state-local-map   (kbd "C-t")  'term-send-raw)
+      (define-key evil-insert-state-local-map   (kbd "C-s")  '(lambda() (interactive) ))
+      (define-key evil-insert-state-local-map   (kbd "M-h")  'term-send-backward-kill-word )
 
       (setq term-unbind-key-list  '("C-x"))
       (setq term-bind-key-alist nil)
