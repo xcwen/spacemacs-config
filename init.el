@@ -716,6 +716,18 @@ you should place your code here."
   (global-set-key (kbd "s-/") 'hippie-expand)
   (global-set-key  (kbd "s-1") 'delete-other-windows)
   (global-set-key  (kbd "C-S-W") 'evil-yank )
+  (global-set-key  (kbd "C-x C-e") '(lambda( eval-last-sexp-arg-internal)(interactive "P")
+                                      (cond
+                                       ((string= major-mode "emacs-lisp-mode")
+                                        (eval-last-sexp eval-last-sexp-arg-internal)
+                                       )
+                                       (t (let (line-txt ret)
+
+                                            (setq line-txt (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
+                                            (setq ret (shell-command-to-string  (concat  "echo 'print  " line-txt  "' | python 2>&1" )))
+                                            (message "exec : %s \n=>%s" line-txt ret )
+
+                                          )))))
 
   (set-evil-all-state-key  (kbd "C-<tab>")  '(lambda () (interactive)
                                                (if  (string= major-mode "php-mode")
