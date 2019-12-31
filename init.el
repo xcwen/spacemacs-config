@@ -110,6 +110,8 @@ values."
                                                 chinese-pyim
                                                 pyim
                                                 ace-pinyin
+                                                phpactor
+                                                company-phpactor
                                                 go-eldoc
                                                 )
    ;; Defines the behaviour of Spacemacs when installing packages.
