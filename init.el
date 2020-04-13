@@ -637,8 +637,31 @@ you should place your code here."
   ;;(setq flycheck-check-syntax-automatically 'idle-change )
   ;;(setq  flycheck-idle-change-delay 800 )
 
-  (define-key company-active-map  (kbd  "C-n")   'company-select-next )
-  (define-key company-active-map  (kbd  "C-p")   'company-select-previous )
+  (define-key company-active-map  (kbd  "C-N")   'company-select-next )
+  (define-key company-active-map  (kbd  "C-P")   'company-select-previous )
+  ;;test 
+  (define-key company-active-map  (kbd  "C-1")   '(lambda()
+                                                    (interactive )
+                                                    (describe-key (kbd "C-N" ) )
+                                                    ) )
+
+
+  (define-key evil-insert-state-map  (kbd  "C-P")   '(lambda(&optional arg)
+                                                       (interactive "p")
+                                                       (if (company--active-p)
+                                                           (company-select-previous arg)
+                                                         (evil-complete-previous)
+                                                         )
+                                                        ))
+
+  (define-key evil-insert-state-map  (kbd  "C-N")   '(lambda(&optional arg)
+                                                       (interactive "p")
+                                                       (if (company--active-p)
+                                                           (company-select-next arg)
+                                                         (evil-complete-next arg)
+                                                         )
+                                                       ))
+
 
 
   ;; (when (check-in-linux )
