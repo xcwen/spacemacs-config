@@ -449,6 +449,14 @@ The test for presence of the car of ELT-CONS is done with `equal'."
              ((string= server-type-str "gocore")
               (setq server-type "gocore")
               )
+             ((string= server-type-str "console_php_core")
+              (setq server-type "console_php_core")
+              )
+             ((string= server-type-str "tianji")
+              (setq server-type "console_php_core")
+              )
+
+
              ))))
     (cond
      ((string= server-type  "php" )
@@ -464,6 +472,11 @@ The test for presence of the car of ELT-CONS is done with `equal'."
       (setq  obj-file  (concat (get-url-path-get-fix-path-from-env  "PHPCORE_CONTROLLERS_DIR" ) "/" ctrl-name  ".php" ) )
       (setq pos-info ( concat "/function[ \t]+" action-name "[ \t]*("  ) )
       )
+     ((string= server-type  "console_php_core" )
+      (setq  obj-file  (concat (get-url-path-get-fix-path-from-env  "CONSOLE_PHPCORE_CONTROLLERS_DIR" ) "/" ctrl-name  ".php" ) )
+      (setq pos-info ( concat "/function[ \t]+" action-name "[ \t]*("  ) )
+      )
+
 
      )
 
@@ -1583,6 +1596,7 @@ If FORWARD is nil, search backward, otherwise forward."
         (message "core-server : Unable to resolve project root")
         (setq project-root-dir nil)))
 
+    (ac-php--debug "Lookup for the project root:[%s]"  project-root-dir    )
     project-root-dir))
 
 (defun php-mode-make()

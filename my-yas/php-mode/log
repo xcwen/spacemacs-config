@@ -1,1 +1,1 @@
-\app\Helper\Utils::logger($0);
+\App\Helper\Utils::logger($0);

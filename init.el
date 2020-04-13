@@ -70,6 +70,7 @@ values."
                  typescript-fmt-on-save t)
      ;; elixir
      java
+     ruby
      javascript
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
@@ -425,6 +426,7 @@ you should place your code here."
                  'js2-mode
                  'java-mode
                  'conf-mode
+                 'ruby-mode
                  ;'elixir-mode
                  'yaml-mode
                  'dotenv-mode
