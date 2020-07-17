@@ -455,6 +455,10 @@ The test for presence of the car of ELT-CONS is done with `equal'."
              ((string= server-type-str "tianji")
               (setq server-type "console_php_core")
               )
+             ((string= server-type-str "phone_exchange")
+              (setq server-type "console_php_core")
+              )
+
 
 
              ))))
@@ -1451,7 +1455,7 @@ object satisfying `yas--field-p' to restrict the expansion to."
                 )))
 
            ((and (string= major-mode "java-mode")  (eq ?\. c))
-            ( auto-complete  ))
+            (company-complete  ) )
            ((and (string= major-mode "python-mode")  (eq ?\. c))
             (company-complete  ) )
            ((and (string= major-mode "erlang-mode")  (eq ?\: c))
@@ -1752,6 +1756,27 @@ If FORWARD is nil, search backward, otherwise forward."
   (message "xxxx  edts-find-source-under-point ")
   (xref-push-marker-stack )
   )
+
+(defun java-gen-get-set-code()
+  "DOCSTRING"
+  (interactive)
+  (let (
+        line-txt
+        value
+        (cur-word (ac-php--get-cur-word))
+        (class-name "<...>" )
+        )
+    (setq line-txt (buffer-substring-no-properties
+                    (line-beginning-position)
+                    (line-end-position )))
+    (string-match (concat "\\(\\(public\\)\\|\\(private\\)\\)[ \t]*\\([a-zA-Z].+\\)[ \t]+\\b" cur-word  "\\b"  ) line-txt)
+    (setq class-name  (match-string-no-properties 4 line-txt) )
+    (setq value (s-upper-camel-case  cur-word) )
+    (kill-new (concat
+               "\n\t/**\n\t*/\n\tpublic "class-name " get" value "(){\n\n\t\treturn this."  cur-word ";\n\t}\n"
+               "\n\t/**\n\t*/\n\tpublic void set" value "(" class-name " value ){\n\n\t\tthis."cur-word"=value;\n\t}\n"
+               ) )
+    ))
 
 
 (provide 'xcwen-misc)

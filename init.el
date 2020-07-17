@@ -61,6 +61,7 @@ values."
          gofmt-command "goimports"
          godoc-at-point-function 'godoc-gogetdoc
          go-backend 'go-mode
+         ;;go-use-golangci-lint t
          ;;go-use-gometalinter t
          )
      html
@@ -69,7 +70,7 @@ values."
                  typescript-backend 'tide
                  typescript-fmt-on-save t)
      ;; elixir
-     java
+     (java :variables java-backend 'meghanada)
      ruby
      javascript
      ;; ----------------------------------------------------------------
@@ -109,6 +110,7 @@ values."
    dotspacemacs-excluded-packages '( php-extras auto-highlight-symbol version-control
                                                 yasnippet-snippets
                                                 chinese-pyim
+                                                go-eldoc
                                                 pyim
                                                 ace-pinyin
                                                 phpactor
@@ -425,6 +427,7 @@ you should place your code here."
                  'sh-mode
                  'js2-mode
                  'java-mode
+                 'conf-javaprop-mode
                  'conf-mode
                  'ruby-mode
                  ;'elixir-mode
@@ -485,6 +488,8 @@ you should place your code here."
   (spacemacs/set-leader-keys-for-major-mode  'go-mode "m" 'go-core-server-make )
   (spacemacs/set-leader-keys-for-major-mode  'dart-mode "m" 'flutter-run-or-hot-reload )
 
+  (spacemacs/set-leader-keys-for-major-mode  'java-mode "f" 'java-gen-get-set-code  )
+
   (spacemacs/set-leader-keys-for-major-mode  'emacs-lisp-mode "," nil)
 ;  (setq flycheck-erlang-include-path '(
 ;
@@ -543,6 +548,9 @@ you should place your code here."
   (add-hook 'java-mode-hook '(lambda ( )
                                  (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
                                  (my-set-evil-local-map  "\C-t"      'meghanada-back-jump )
+
+                                 (set (make-local-variable 'company-backends)
+                                      '(company-meghanada ))
                                  ))
 
   (add-hook 'js2-mode-hook '(lambda ( )
@@ -842,6 +850,7 @@ you should place your code here."
   (setq flycheck-phpmd-rulesets (list  (concat (getenv "HOME") "/spacemacs-config/phpmd.xml"  ) ))
   (setq frame-title-format  '("file: %f "  ))
   (setq yas-snippet-dirs   (list  "~/.spacemacs.d/my-yas"  )  )
+
 
   ;;(require 'edts-start)
 
