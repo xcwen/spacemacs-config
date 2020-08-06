@@ -110,12 +110,11 @@ values."
    dotspacemacs-excluded-packages '( php-extras auto-highlight-symbol version-control
                                                 yasnippet-snippets
                                                 chinese-pyim
-                                                go-eldoc
+                                                ;;go-eldoc
                                                 pyim
                                                 ace-pinyin
                                                 phpactor
                                                 company-phpactor
-                                                go-eldoc
                                                 )
    ;; Defines the behaviour of Spacemacs when installing packages.
    ;; Possible values are `used-only', `used-but-keep-unused' and `all'.
