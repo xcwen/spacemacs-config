@@ -9,6 +9,8 @@
         <exclude name="PEAR.Classes.ClassDeclaration"/>
         <exclude name="PSR1.Methods"/>
         <exclude name="Generic.Files.LineEndings"/>
+        <exclude name="Generic.Files.LineLength.TooLong"/>
+        <exclude name="Squiz.Classes"/>
     </rule>
 
 </ruleset>
