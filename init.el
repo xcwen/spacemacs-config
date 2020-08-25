@@ -851,6 +851,18 @@ you should place your code here."
   (setq yas-snippet-dirs   (list  "~/.spacemacs.d/my-yas"  )  )
 
 
+
+  (custom-set-variables
+   '(phpcbf-standard (concat (getenv "HOME") "/spacemacs-config/ruleset.xml" ))
+   '(flycheck-phpcs-standard (concat (getenv "HOME") "/spacemacs-config/ruleset.xml" ))
+  )
+
+  (custom-set-variables
+   '(phpcbf-standard "PSR2" ))
+
+  ;; Auto format on save.
+  (add-hook 'php-mode-hook 'phpcbf-enable-on-save)
+
   ;;(require 'edts-start)
 
   ;;(add-hook 'buffer-list-update-hook 'set-admin-title  )
