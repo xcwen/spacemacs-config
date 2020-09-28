@@ -923,6 +923,16 @@ you should place your code here."
       ;;(add-to-list 'term-bind-key-alist '( "<up>". term-send-raw ))
       ))
 
+  (evilmi-load-plugin-rules '(web-mode
+                              html-mode
+                              nxml-mode
+                              nxhtml-mode
+                              sgml-mode
+                              php-mode
+                              message-mode
+                              mhtml-mode)
+                            '(simple  template html))
+
 
   )
 (defun dotspacemacs/emacs-custom-settings ()
