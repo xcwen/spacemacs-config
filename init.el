@@ -434,6 +434,7 @@ you should place your code here."
                  'dotenv-mode
                  'nxml-mode
                  ;;'erlang-mode
+                 'rust-mode
                  'html-mode
                  'conf-unix-mode
                  'lua-mode
@@ -464,16 +465,28 @@ you should place your code here."
       (spacemacs/set-leader-keys-for-major-mode  mode "e" 'cleanup-and-goto-error)
 
         )
-    (spacemacs/set-leader-keys-for-major-mode  mode "\""
+      (spacemacs/set-leader-keys-for-major-mode  mode "\""
+      ;;(spacemacs/set-leader-keys-for-major-mode 'php-mode  "\""
       '(lambda()
          (interactive )
-         (cond
-          ((string= major-mode "php-mode")
-           (progn
-             (insert  "\" . \"")
-             (backward-char 4 )
-            ))
-         )))
+         (if (ac-php--in-string-or-comment-p)
+             (cond
+              ((string= major-mode "php-mode")
+               (progn
+
+                 (insert  "\" . \"")
+                 (backward-char 4 )
+                 ))
+              )
+           (progn ;;单词加双引号
+             (save-excursion
+                (backward-word)
+                (insert "\"")
+                (forward-word)
+                (insert "\"")
+               )
+            )
+           )))
 
     )
 
@@ -609,7 +622,7 @@ you should place your code here."
   (setq dart-server-enable-analysis-server nil )
  ;;(setq    nil)
 
-  
+
 
   ;;关闭tide warning
 
@@ -635,7 +648,9 @@ you should place your code here."
   (set-evil-all-state-key (kbd "C-x C-k")    'kill-buffer )
   (set-evil-all-state-key "\C-]"  'spacemacs/jump-to-definition )
   ( set-evil-normal-state-key "Y"  'copy-region-or-whole-line )
+  ( set-evil-normal-state-key "F"  'copy-field-list )
   ( set-evil-virtual-state-key "Y"  'copy-region-or-whole-line )
+  ( set-evil-virtual-state-key "F"  'copy-field-list )
 
   (set-evil-normal-state-key "D"  'kill-region-or-whole-line )
   ( set-evil-virtual-state-key "D" 'kill-region-or-whole-line  )
@@ -646,7 +661,7 @@ you should place your code here."
 
   (define-key company-active-map  (kbd  "C-N")   'company-select-next )
   (define-key company-active-map  (kbd  "C-P")   'company-select-previous )
-  ;;test 
+  ;;test
   (define-key company-active-map  (kbd  "C-1")   '(lambda()
                                                     (interactive )
                                                     (describe-key (kbd "C-N" ) )

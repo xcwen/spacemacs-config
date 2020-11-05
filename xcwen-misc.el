@@ -464,8 +464,10 @@ The test for presence of the car of ELT-CONS is done with `equal'."
              ))))
     (cond
      ((string= server-type  "php" )
-      (setq  obj-file  (concat "../../../../application/cc/admin/" (my-s-upper-camel-case  ctrl-name)  ".php" ) )
+      (setq  obj-file  (concat (get-url-path-get-fix-path-from-env  "PHP_CONTROLLERS_DIR" ) "/" ctrl-name  ".php" ) )
       (setq pos-info ( concat "/function[ \t]+" action-name "[ \t]*("  ) )
+
+
       )
 
      ((string= server-type  "gocore" )
@@ -1146,9 +1148,41 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
 "
   (interactive "P")
 
+
   (opt-region-or-whole-line "copy" arg)
   )
 
+
+
+;;;###autoload
+(defun copy-field-list(&optional arg)
+  "有选择区域时：
+  1:复制的内容是跨行的：复制区域所在的所有行的内容。不仅仅是区域内的内容
+  2:复制的内容没有跨行：复制区域中的内内容
+没有选择区域时:
+  1:复制所在的行
+  2:支持复制多行.  如 复制3行是  M-3 C-w
+"
+  (interactive "P")
+
+  (let ( tmp-mark-pos  txt line-list match_arr field_name ret-str )
+    (setq tmp-mark-pos  (get-mark-pos-ex))
+    (setq txt (buffer-substring-no-properties (car tmp-mark-pos) (cadr tmp-mark-pos)) )
+    (setq line-list (s-split "\n" txt))
+    (setq ret-str "")
+    (cond
+     ((s-match "^[ \t]+`[a-z0-9_A-Z]+`"  txt )
+      (dolist  (line  line-list)
+        (setq match_arr  ( s-match "^[ \t]+`\\([a-z0-9_A-Z]+\\)`"  line ))
+        (setq field_name (nth 1 match_arr ) )
+        (when field_name
+          (setq  ret-str  (concat ret-str "\n" field_name) )
+          )
+        ))
+     )
+    (kill-new  ret-str)
+    )
+)
 
 ;;;###autoload
 (defun comment-or-uncomment-region-or-whole-line(&optional arg)
