@@ -10,4 +10,4 @@
                        ("fopen" "FILE  *${1:fp} = fopen( ${2:\"file\"}, \"${3:$$(yas/choose-value '(\"r\" \"w\" \"a\" \"r+\" \"w+\" \"a+\" ))}\" ) ;\n" "FILE *fp = fopen(..., ...);" nil nil nil "/home/jim/.spacemacs.d/my-yas/c-mode/fopen" nil nil)))
 
 
-;;; Do not edit! File generated at Tue Jun 16 11:50:39 2020
+;;; Do not edit! File generated at Mon Dec  7 14:40:17 2020

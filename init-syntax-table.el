@@ -14,6 +14,11 @@
                           (modify-syntax-entry ?_ "w" protobuf-mode-syntax-table) ;将 _ 加入 单词中
                           ) )
 
+(add-hook 'rust-mode-hook '(lambda ( )
+                                 (modify-syntax-entry ?_ "w" rust-mode-syntax-table) ;将 _ 加入 单词中
+                                 ) )
+
+
 
 
 (add-hook 'php-mode-hook '(lambda ( )

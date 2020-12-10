@@ -6,6 +6,7 @@
                        ("u" "\\App\\Helper\\Utils::" "u" nil nil nil "/home/jim/.spacemacs.d/my-yas/php-mode/u" nil nil)
                        ("sqlrow" "$sql=$this->gen_sql(\"select  $1 from  %s  where  $2  \",\n					 self::DB_TABLE_NAME,\n					 $3 );\nreturn $this->main_get_row($sql);\n\n" "sqlrow" nil nil nil "/home/jim/.spacemacs.d/my-yas/php-mode/sqlrow" nil nil)
                        ("sqllist" "$sql=$this->gen_sql(\"select  $1 from  %s  where  $2  \",\n					 self::DB_TABLE_NAME,\n					 $3 );\nreturn $this->main_get_list($sql);\n\n" "sqllist" nil nil nil "/home/jim/.spacemacs.d/my-yas/php-mode/sqllist" nil nil)
+                       ("s" "\\App\\Service\\" "s" nil nil nil "/home/jim/.spacemacs.d/my-yas/php-mode/s" nil nil)
                        ("pagefun" "/**\n *\n */\npublic function $1($page_info, $order_by_str, $start_time, $end_time  )\n{\n    $where_arr=[];\n\n\n    $this->where_arr_add_time_range($where_arr, \"field_name\", $start_time, $end_time);\n    //$this->where_arr_add_int_or_idlist($where_arr,\"field_name\" , $vaule);\n    $sql=$this->gen_sql_new(\n            \"select *  \"\n            .\" from  %s \"\n            .\" where  %s \"\n            .\"  $order_by_str \",\n    				self::DB_TABLE_NAME,\n    				$where_arr);\n\n    return $this->main_get_list_by_page($sql,$page_info);\n}\n\n" "pagefun" nil nil nil "/home/jim/.spacemacs.d/my-yas/php-mode/pagefun" nil nil)
                        ("log" "\\App\\Helper\\Utils::logger($0);\n" "log" nil nil nil "/home/jim/.spacemacs.d/my-yas/php-mode/log" nil nil)
                        ("for" "for (${1:iss = 0}; ${2:i < N}; ${3:++i})\n{\n    $0\n}\n" "for (...; ...; ...) { ... }" nil nil nil "/home/jim/.spacemacs.d/my-yas/php-mode/for" nil nil)
@@ -16,4 +17,4 @@
                        ("c" "\\App\\Helper\\Common::$0\n" "c" nil nil nil "/home/jim/.spacemacs.d/my-yas/php-mode/c" nil nil)))
 
 
-;;; Do not edit! File generated at Tue Jun 16 11:50:39 2020
+;;; Do not edit! File generated at Mon Dec  7 14:40:17 2020

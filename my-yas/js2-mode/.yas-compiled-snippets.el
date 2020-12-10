@@ -10,4 +10,4 @@
                        ("data" "$(\"$1\").data(\"${2}\"${3:,\"\"})$0\n" "data" nil nil nil "/home/jim/.spacemacs.d/my-yas/js2-mode/data" nil nil)))
 
 
-;;; Do not edit! File generated at Tue Jun 16 11:50:39 2020
+;;; Do not edit! File generated at Mon Dec  7 14:40:17 2020
