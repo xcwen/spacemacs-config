@@ -512,6 +512,104 @@ The test for presence of the car of ELT-CONS is done with `equal'."
     opt-file
     ))
 
+(defun switch-file-opt-proto ()
+  "DOCSTRING"
+  (interactive)
+  (let (  line-txt  opt-file  file-list obj-file check-file-name file-name file-name-fix  (use-default t) pos-info  (goto-gocore-flag nil)  (goto-phpcore-flag nil ) (switch-flag) )
+    (save-excursion
+      (goto-char (point-min))
+      (setq switch-flag  (search-forward-regexp "[^-]SWITCH-TO:" nil t  ) )
+
+      (when switch-flag
+        (setq line-txt (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
+        (when (string-match   "SWITCH-TO:[ \t]*\\([^ \t]*\\)[ \t]*"   line-txt)
+          (setq  opt-file (match-string  1 line-txt))
+
+           (unless (f-exists-p  opt-file )
+             (setq opt-file ( get-route-jump-file-name (concat "/"  opt-file ) (get-url-path-get-fix-path-from-env "VUE_VIEW_DIR") ))
+           )
+
+          )))
+
+    (if (and opt-file   (file-directory-p  opt-file) )
+        (progn ;;目录
+          (setq file-name (file-name-nondirectory (buffer-file-name)))
+          (setq file-name-fix (file-name-base  file-name))
+
+          (setq file-list (directory-files opt-file))
+          (while (and file-list (not obj-file) )
+            (setq check-file-name (car file-list) )
+            (setq file-list (cdr file-list) )
+
+            (if (and
+                 (string= (file-name-base check-file-name ) file-name-fix  ) ;;
+                 (not (string= file-name check-file-name   ));;后缀不一样
+                 )
+                (setq obj-file  (concat opt-file "/" check-file-name) ))))
+      (setq obj-file opt-file))
+    ;;check for   php html js
+    (unless obj-file
+      (let ((path-name (buffer-file-name)) ctrl-name action-name tmp-arr )
+        (cond
+         ((string= major-mode  "php-mode")
+          (progn
+            (setq ctrl-name (f-base  (f-base path-name )) )
+            (save-excursion
+              (let (line-txt  )
+                (beginning-of-defun)
+                (setq line-txt (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
+                (setq tmp-arr (s-match  ".*function[ \t]+\\([a-zA-Z0-9_]*\\)"  line-txt ) )
+                (when tmp-arr
+                  (setq action-name (nth 1 tmp-arr) )
+                  )))
+            ;;phpcore tars
+            (when (and (s-match "/app/Controllers/" path-name )  (not (string= action-name "__construct")) )
+              (setq obj-file (concat "../../../proto/src/" ctrl-name "__" action-name ".proto" )  )
+              (message "========%s"  obj-file )
+              )
+
+
+            ;;
+            ))
+
+         )))
+
+    (when obj-file
+      (unless (f-exists? obj-file)
+        (setq use-default  nil)
+        (setq obj-file nil)
+        )
+      )
+
+    (if obj-file
+        (let(line-txt (move-flag t ))
+          (find-file obj-file)
+          (when pos-info
+            (when (string=(substring-no-properties pos-info 0 1 )  "/")
+
+
+              (when (> (line-number-at-pos )  2)
+                (save-excursion
+                  (if (string= major-mode "typescript-mode" )
+                      (re-search-backward "[ \t]*public[ \t]+" 0 t 1 )
+                    ( evil-backward-section-begin)
+                    )
+                  (setq line-txt (buffer-substring-no-properties
+                                  (line-beginning-position)
+                                  (line-end-position )))
+                  (when (s-matches-p (substring-no-properties pos-info 1 ) line-txt  ) ;;同一个区域
+                    (setq move-flag nil ))
+                  ))
+              (when move-flag
+                (goto-char (point-min))
+                (re-search-forward  (substring-no-properties pos-info 1 ) )
+                (next-line))
+              )
+            ))
+
+      (when use-default (switch-cc-to-h))
+      )))
+
 
 (defun switch-file-opt ()
   "DOCSTRING"
@@ -587,11 +685,12 @@ The test for presence of the car of ELT-CONS is done with `equal'."
                 )
               )
 
-            ;;
-            (when (and (s-match "/cc/admin/" path-name )  (not (string= action-name "__construct")) )
 
-              (setq  obj-file  (concat "../../../vue/src/views/" (s-snake-case ctrl-name )   "/" action-name ".vue" ) )
+            (unless (and  obj-file (f-exists-p  obj-file ) ) ;;to protobuf
+
+              (setq obj-file (concat "../../../proto/src/" ctrl-name "__" action-name ".proto" )  )
               )
+
             ))
          ((string= major-mode  "go-mode")
           (let ( go-action-name )
@@ -675,10 +774,21 @@ The test for presence of the car of ELT-CONS is done with `equal'."
             (setq  obj-file  (concat "./" (file-name-base path-name ) ".vue" ) )
             (setq pos-info nil )
             )
-
-
-
           )
+         ((string= major-mode  "protobuf-mode" )
+          (let (url file-info)
+            (message "------------- %s " path-name)
+            (setq tmp-arr (s-match  "/\\([a-zA-Z0-9_-]*\\)__\\([a-zA-Z0-9_-]*\\).proto"  path-name ) )
+            (when tmp-arr
+              (setq  ctrl-name   (nth 1 tmp-arr) )
+              (setq  action-name   (nth 2 tmp-arr) )
+              (setq  obj-file (concat "../../src/app/Controllers/" ctrl-name ".php" ) )
+              (setq pos-info ( concat "/function[ \t]*" action-name "[ \t]*(" ) )
+              )
+            )
+          )
+
+
          )))
 
     (when obj-file

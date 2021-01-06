@@ -461,6 +461,7 @@ you should place your code here."
     (spacemacs/set-leader-keys-for-major-mode  mode "u" 'upper-or-lower-whole-word)
     (spacemacs/set-leader-keys-for-major-mode  mode "L" 'revert-buffer )
     (spacemacs/set-leader-keys-for-major-mode  mode "a" 'switch-file-opt )
+    (spacemacs/set-leader-keys-for-major-mode  mode "A" 'switch-file-opt-proto )
     (spacemacs/set-leader-keys-for-major-mode  mode "o" 'other-window )
     (unless (string= mode 'go-mode)
       (spacemacs/set-leader-keys-for-major-mode  mode "e" 'cleanup-and-goto-error)
@@ -906,6 +907,7 @@ you should place your code here."
       (define-key evil-insert-state-local-map   (kbd "C-t")  'term-send-raw)
       (define-key evil-insert-state-local-map   (kbd "C-s")  '(lambda() (interactive) ))
       (define-key evil-insert-state-local-map   (kbd "M-h")  'term-send-backward-kill-word )
+      (define-key evil-insert-state-local-map   (kbd "s-h")  'term-send-backward-kill-word )
 
       (setq term-unbind-key-list  '("C-x"))
       (setq term-bind-key-alist nil)
