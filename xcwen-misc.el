@@ -712,6 +712,11 @@ The test for presence of the car of ELT-CONS is done with `equal'."
                   (setq obj-file ( get-route-jump-file-name (concat "/" ctrl-name  "/" action-name ".vue"  ) (get-url-path-get-fix-path-from-env "VUE_VIEW_DIR") ))
                 )
                 )
+              (unless (and  obj-file (f-exists-p  obj-file ) ) ;;to protobuf
+
+                (setq obj-file (concat "../../proto/src/" ctrl-name "__" action-name ".proto" )  )
+                )
+
 
 
               )))
@@ -785,6 +790,16 @@ The test for presence of the car of ELT-CONS is done with `equal'."
               (setq  obj-file (concat "../../src/app/Controllers/" ctrl-name ".php" ) )
               (setq pos-info ( concat "/function[ \t]*" action-name "[ \t]*(" ) )
               )
+
+            (unless (and obj-file (f-exists? obj-file ) )
+              (setq  ctrl-name   (nth 1 tmp-arr) )
+              (setq  action-name   (nth 2 tmp-arr) )
+              (setq  obj-file (concat "../../app/controllers/" ctrl-name ".go" ) )
+              (setq pos-info ( concat "/func[ \t]*.*)[ \t]*" (my-s-upper-camel-case  action-name) "[ \t]*(" ) )
+
+              )
+
+
             )
           )
 
