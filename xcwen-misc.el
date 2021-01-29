@@ -610,6 +610,39 @@ The test for presence of the car of ELT-CONS is done with `equal'."
       (when use-default (switch-cc-to-h))
       )))
 
+(defun my-jump-table-sql()
+  "DOCSTRING"
+  (interactive)
+  (let ((tags-data (ac-php-get-tags-data))
+        symbol-ret check-class-list  class-name inherit-map class-map z-class-name class-member-list  file-list  tmp-arr jump-pos )
+
+    (setq inherit-map (ac-php-g--inherit-map tags-data))
+    (setq class-map (ac-php-g--class-map tags-data))
+    (setq symbol-ret (ac-php-find-symbol-at-point-pri tags-data))
+
+    (setq class-name (nth 2 symbol-ret))
+    (setq check-class-list (ac-php--get-check-class-list class-name inherit-map class-map))
+    (setq z-class-name (nth 1 check-class-list ))
+
+
+    (setq class-member-list (gethash z-class-name class-map))
+
+
+
+    (setq tmp-arr (s-split ":" (aref  (aref   class-member-list 0 ) 3 )))
+    (setq file-list (ac-php-g--file-list tags-data))
+    (setq jump-pos
+            (concat
+             (aref file-list (string-to-number (nth 0 tmp-arr )))
+             ":" (nth 1 tmp-arr)))
+
+    (ac-php-location-stack-push)
+    (message "jump-pos :%S" jump-pos)
+      (ac-php-goto-location jump-pos)
+      (re-search-forward  "CREATE TABLE" )
+
+    )
+  )
 
 (defun switch-file-opt ()
   "DOCSTRING"
@@ -1291,6 +1324,8 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
   (interactive "P")
 
   (let ( tmp-mark-pos  txt line-list match_arr field_name ret-str )
+
+    (or arg (setq arg 1))
     (setq tmp-mark-pos  (get-mark-pos-ex))
     (setq txt (buffer-substring-no-properties (car tmp-mark-pos) (cadr tmp-mark-pos)) )
     (setq line-list (s-split "\n" txt))
@@ -1301,7 +1336,10 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
         (setq match_arr  ( s-match "^[ \t]+`\\([a-z0-9_A-Z]+\\)`"  line ))
         (setq field_name (nth 1 match_arr ) )
         (when field_name
-          (setq  ret-str  (concat ret-str "\n" field_name) )
+          (cond
+           (( = arg 2 ) (setq  ret-str  (concat ret-str "\n" "$"  field_name "= $row[\"" field_name "\"];"     ) ))
+           (( = arg 3 ) (setq  ret-str  (concat ret-str "\n"  "\"" field_name "\"=> $row[\"" field_name "\"],"     ) ))
+           (t (setq  ret-str  (concat ret-str "\n" "\"" field_name "\"=> $"  field_name ","   ) ) ))
           )
         ))
      )

@@ -463,6 +463,10 @@ you should place your code here."
     (spacemacs/set-leader-keys-for-major-mode  mode "a" 'switch-file-opt )
     (spacemacs/set-leader-keys-for-major-mode  mode "A" 'switch-file-opt-proto )
     (spacemacs/set-leader-keys-for-major-mode  mode "o" 'other-window )
+    (when  (string= mode 'php-mode)
+      (spacemacs/set-leader-keys-for-major-mode  mode "D" 'my-jump-table-sql )
+      )
+
     (unless (string= mode 'go-mode)
       (spacemacs/set-leader-keys-for-major-mode  mode "e" 'cleanup-and-goto-error)
 
