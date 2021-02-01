@@ -619,6 +619,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
     (setq inherit-map (ac-php-g--inherit-map tags-data))
     (setq class-map (ac-php-g--class-map tags-data))
     (setq symbol-ret (ac-php-find-symbol-at-point-pri tags-data))
+    (message  "KKKK:%S " symbol-ret )
 
     (setq class-name (nth 2 symbol-ret))
     (setq check-class-list (ac-php--get-check-class-list class-name inherit-map class-map))
