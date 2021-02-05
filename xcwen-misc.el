@@ -1760,6 +1760,11 @@ If FORWARD is nil, search backward, otherwise forward."
   (define-key evil-insert-state-local-map (kbd key ) fun)
   (define-key evil-motion-state-local-map (kbd  key) fun)
   )
+(defun my-set-evil-not-insert-local-map( key fun  )
+  (define-key evil-normal-state-local-map (kbd key ) fun)
+  (define-key evil-motion-state-local-map (kbd  key) fun)
+  )
+
 (defun my-jump-set-evil-local-map( jump-fun  &optional back-fun   )
 
   (define-key evil-normal-state-local-map (kbd "C-]")  jump-fun)
