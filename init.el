@@ -541,6 +541,8 @@ you should place your code here."
                               (require 'helm-ac-php-apropros)
 
                               (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
+
+                              (my-set-evil-local-map "g\C-]"   'my-jump-merber-class )
                               ))
   (add-hook 'go-mode-hook '(lambda ( )
 
