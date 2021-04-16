@@ -35,8 +35,9 @@ values."
    dotspacemacs-configuration-layer-path '()
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(systemd
-     rust
+   '(elixir
+     systemd
+     (rust :variables rust-backend 'lsp)
      react
      csv
      python
@@ -370,6 +371,7 @@ before packages are loaded. If you are unsure, you should try in setting them in
 (load custom-file )
 (load  (expand-file-name "init-syntax-table.el" dotspacemacs-directory) )
 (load  (expand-file-name "xcwen-misc.el" dotspacemacs-directory) )
+(load  (expand-file-name "php-cs-fixer.el" dotspacemacs-directory) )
 ;;(defun dotspacemacs/user-config )
 (defun dotspacemacs/user-config ()
   "Configuration function for user code.
@@ -434,6 +436,7 @@ you should place your code here."
                  'yaml-mode
                  'dotenv-mode
                  'nxml-mode
+                 'toml-mode
                  ;;'erlang-mode
                  'rust-mode
                  'html-mode
@@ -875,16 +878,18 @@ you should place your code here."
 
 
 
-  (custom-set-variables
-   '(phpcbf-standard (concat (getenv "HOME") "/spacemacs-config/ruleset.xml" ))
-   '(flycheck-phpcs-standard (concat (getenv "HOME") "/spacemacs-config/ruleset.xml" ))
-  )
+  ;; (custom-set-variables
+  ;;  '(phpcbf-standard (concat (getenv "HOME") "/spacemacs-config/ruleset.xml" ))
+  ;;  '(flycheck-phpcs-standard (concat (getenv "HOME") "/spacemacs-config/ruleset.xml" ))
+  ;; )
 
-  (custom-set-variables
-   '(phpcbf-standard "PSR2" ))
+
+ ;; (custom-set-variables
+ ;;  '(phpcbf-standard "PSR2" ))
 
   ;; Auto format on save.
-  (add-hook 'php-mode-hook 'phpcbf-enable-on-save)
+  ;;(add-hook 'php-mode-hook 'phpcbf-enable-on-save)
+  ;;(add-hook 'before-save-hook 'php-cs-fixer-before-save)
 
   ;;(require 'edts-start)
 

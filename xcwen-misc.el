@@ -22,10 +22,11 @@
 ;;; Commentary:
 (defvar term-local-cmd-start-line-regex-str
   "^localhost.*\\$[ \t]*\\((.*)\\)*$"
-  "doc ,line like:
+  "Doc ,line like:
 localhost:~/site-lisp/config$"
   )
-(require 'cl)
+;;(eval-when-compile (require 'cl))
+
 
 
 (defun my-s-lower-camel-case (s)
@@ -38,10 +39,6 @@ localhost:~/site-lisp/config$"
   (declare (side-effect-free t))
   (s-join "" (mapcar 'capitalize (my-s-split-words s))))
 
-(defun my-s-upper-camel-case (s)
-  "Convert S to UpperCamelCase."
-  (declare (side-effect-free t))
-  (s-join "" (mapcar 'capitalize (my-s-split-words s))))
 
 (defun my-s-snake-case (s)
   "Convert S to snake_case."
@@ -63,9 +60,9 @@ localhost:~/site-lisp/config$"
    t))
 
 (defun  multi-term-goto-last-term ()
-  "DOCSTRING"
+  "Doc  docstring."
   (interactive)
-  (let (find-flag opt-file-name find-path-str init-cmd  line-txt)
+  (let (find-flag opt-file-name find-path-str init-cmd  line-txt file-path-str)
 
 
 
@@ -150,13 +147,16 @@ localhost:~/site-lisp/config$"
 
 ;;   fix test
 (defun  tramp-tramp-file-p  ( file-name )
+  "Doc FILE-NAME  ."
  nil)
 
 ;;; Code:
 (defun check-in-linux ()
+  "Doc FILE-NAME  ."
   (string= system-type "gnu/linux" )
     )
 (defun sudo-save ()
+  "Doc  ."
   (interactive)
   (if (not buffer-file-name)
       (write-file (concat "/sudo:root@localhost:" (ido-read-file-name "File:")))
@@ -185,63 +185,17 @@ The test for presence of the car of ELT-CONS is done with `equal'."
   (interactive)
   (term-send-raw-string "\e"))
 
-(defun set-tags-config-for-cur-file ()
-  "DOCSTRING"
-  (interactive)
-  (let ((tags-dir (get-tags-dir) ) )
-  (message "tags-dir=%s" tags-dir)
-  (if tags-dir
-    (progn
-      (setq  tags-file (concat tags-dir  ".tags/TAGS"  ))
-      (if (string= major-mode  "c++-mode")
-        (progn
-        (setq tags-table-list (list "~/.emacs.d/TAGS" tags-file ))
-        (setq cscope-database-regexps
-            (list
-             ( list "^/"
-                ( list t )
-                ( list (concat  tags-dir ".tags/" ))
-                ))))
-      (setq tags-table-list (list  tags-file))))
-    ;;没有找到
-    (setq tags-table-list '( "~/.emacs.d/TAGS"  ) ))))
-
-(defun cscope-find-functions-calling-this-function-and-set-tags-file (symbol)
-  "Display functions calling a function."
-  (interactive (list
-    (cscope-prompt-for-symbol
-     "Find functions calling this function: " nil)
-    ))
-
-  (set-tags-config-for-cur-file)
-  (let ()
-    (setq cscope-symbol symbol)
-    (cscope-call (format "Finding functions calling: %s" symbol)
-     (list "-3" symbol) nil 'cscope-process-filter
-     'cscope-process-sentinel)
-    ))
 
 
-(defun my-recentf-open ()
 
-  "open recent files.  In ido style if applicable --lgfang"
-  (interactive)
-  (let* ((path-table (mapcar
-                      (lambda (x) (cons (file-name-nondirectory x) x))
-                      recentf-list))
-         (file-list (mapcar (lambda (x) (file-name-nondirectory x))
-                            recentf-list))
-         (complete-fun (if (require 'ido nil t)
-                           'ido-completing-read
-                         'completing-read))
-         (fname (funcall complete-fun "File Name: " file-list)))
-    (find-file (cdr (assoc fname path-table)))))
 
 
 (defun yas-org-very-safe-expand ()
+  "D."
   (let ((yas/fallback-behavior 'return-nil)) (yas-expand)))
 
 (defun set-evil-all-state-key ( key func )
+  "D. KEY FUNC ."
   (define-key evil-insert-state-map key  func)
   (define-key evil-normal-state-map  key  func )
   (define-key evil-visual-state-map key func)
@@ -250,24 +204,30 @@ The test for presence of the car of ELT-CONS is done with `equal'."
   )
 
 (defun set-evil-normal-state-key ( key func )
+  "D. KEY FUNC ."
   (define-key evil-normal-state-map key  func )
   )
 
 (defun set-evil-virtual-state-key ( key func )
+  "D. KEY FUNC ."
   (define-key evil-visual-state-map key  func )
   )
 
 
 (defun set-evil-normal-state-key-on-mode ( mode-map key func )
+  "D. MODE-MAP KEY FUNC ."
   (evil-define-key 'normal  mode-map  key  func )
   )
 
 (defun set-evil-normal-or-insert-state-key-on-mode ( mode-map key func )
+  "D. MODE-MAP KEY FUNC ."
+
   (evil-define-key 'normal  mode-map  key  func )
   (evil-define-key 'insert mode-map  key  func )
   )
 
 (defun set-evil-all-state-key-on-mode ( mode-map key func )
+  "D. MODE-MAP KEY FUNC ."
   (evil-define-key 'normal  mode-map  key  func )
   (evil-define-key 'insert mode-map  key  func )
   (evil-define-key 'motion mode-map  key  func )
@@ -277,6 +237,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 
 
 (defun ts-get-file-at-point ()
+  "D."
   (interactive)
   (let( cur-path  pos-info)
         (save-excursion
@@ -395,7 +356,11 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 
     (setq  pos (flycheck-next-error-pos 1 t ))
     (if pos
-        (goto-char pos)
+        (progn
+          (goto-char pos)
+          (flycheck-explain-error-at-point)
+        )
+
       (message "No more Flycheck errors")
       (xref-pop-marker-stack)))
   )
@@ -506,8 +471,13 @@ The test for presence of the car of ELT-CONS is done with `equal'."
           (setq  opt-file (match-string  1 line-txt))
 
           (unless (f-exists-p  opt-file )
+            (setq opt-file ( get-route-jump-file-name (concat "/"  opt-file ) (get-url-path-get-fix-path-from-env "NEW_VUE_VIEW_DIR") ))
+            )
+
+          (unless (f-exists-p  opt-file )
             (setq opt-file ( get-route-jump-file-name (concat "/"  opt-file ) (get-url-path-get-fix-path-from-env "VUE_VIEW_DIR") ))
             )
+
           )))
     opt-file
     ))
@@ -525,9 +495,14 @@ The test for presence of the car of ELT-CONS is done with `equal'."
         (when (string-match   "SWITCH-TO:[ \t]*\\([^ \t]*\\)[ \t]*"   line-txt)
           (setq  opt-file (match-string  1 line-txt))
 
+          (unless (f-exists-p  opt-file )
+            (setq opt-file ( get-route-jump-file-name (concat "/"  opt-file ) (get-url-path-get-fix-path-from-env "NEW_VUE_VIEW_DIR") ))
+            )
+
            (unless (f-exists-p  opt-file )
              (setq opt-file ( get-route-jump-file-name (concat "/"  opt-file ) (get-url-path-get-fix-path-from-env "VUE_VIEW_DIR") ))
-           )
+             )
+
 
           )))
 
@@ -693,9 +668,14 @@ The test for presence of the car of ELT-CONS is done with `equal'."
         (when (string-match   "SWITCH-TO:[ \t]*\\([^ \t]*\\)[ \t]*"   line-txt)
           (setq  opt-file (match-string  1 line-txt))
 
+          (unless (f-exists-p  opt-file )
+            (setq opt-file ( get-route-jump-file-name (concat "/"  opt-file ) (get-url-path-get-fix-path-from-env "NEW_VUE_VIEW_DIR") ))
+            )
+
            (unless (f-exists-p  opt-file )
              (setq opt-file ( get-route-jump-file-name (concat "/"  opt-file ) (get-url-path-get-fix-path-from-env "VUE_VIEW_DIR") ))
            )
+
 
           )))
 
@@ -733,9 +713,15 @@ The test for presence of the car of ELT-CONS is done with `equal'."
             ;;phpcore tars
             (when (and (s-match "/app/Controllers/" path-name )  (not (string= action-name "__construct")) )
               (setq obj-file  (get-action-switch-to action-name ) )
+
+              (unless  (and  obj-file (f-exists-p  obj-file ) )
+                (setq obj-file ( get-route-jump-file-name (concat "/" ctrl-name  "/" action-name ".vue"  ) (get-url-path-get-fix-path-from-env "NEW_VUE_VIEW_DIR") ))
+                )
+
               (unless  (and  obj-file (f-exists-p  obj-file ) )
                 (setq obj-file ( get-route-jump-file-name (concat "/" ctrl-name  "/" action-name ".vue"  ) (get-url-path-get-fix-path-from-env "VUE_VIEW_DIR") ))
                 )
+
               (message "========%s"  obj-file )
               )
 
@@ -778,8 +764,13 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 
                 (setq obj-file  (get-action-switch-to go-action-name ) )
                 (unless  (and  obj-file  (f-exists-p  obj-file ) )
+                  (setq obj-file ( get-route-jump-file-name (concat "/" ctrl-name  "/" action-name ".vue"  ) (get-url-path-get-fix-path-from-env "NEW_VUE_VIEW_DIR") ))
+                  )
+
+                (unless  (and  obj-file  (f-exists-p  obj-file ) )
                   (setq obj-file ( get-route-jump-file-name (concat "/" ctrl-name  "/" action-name ".vue"  ) (get-url-path-get-fix-path-from-env "VUE_VIEW_DIR") ))
                 )
+
                 )
               (unless (and  obj-file (f-exists-p  obj-file ) ) ;;to protobuf
 
@@ -951,40 +942,6 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
     ))
   )
 ;;
-(defun find-cmd-def ( cmdid )
-  "查找命令号所在调用函数"
-  ;;(interactive  (list (read-string cmdid) "sCMD:"))
-  (interactive (list (read-string  (format "CMD(default %s) :" (proto-get-cur-cmd) ) )) )
-
-
-  ;;(interactive (find-tag-interactive "Find tag: "))
-
-  (let (cmd-name obj-tag )
-    (setq obj-tag (if (string= cmdid "")
-          (proto-get-cur-cmd )
-        cmdid
-        ))
-
-    ;;重置tags 文件
-    (set-tags-config-for-cur-file)
-
-
-
-    (if (get-buffer  "*tmp-cmd-info*") (kill-buffer "*tmp-cmd-info*"))
-    ;;(call-process  "awk"  nil "*tmp-cmd-info*" nil  "-F[,(]"  "{print   substr(tolower(v),0,length(v)-3); } "  (format  "v=%s" cmdid )  "./.tags/bind_all.h"   )
-    (call-process  "awk"  nil "*tmp-cmd-info*" nil  "-F[,(]"  " {cmdid=$2; if ( tolower( substr(cmdid,1,2 )) == \"0x\" ){cmdid=substr(cmdid,3 );} if (tolower(cmdid)==tolower(v) ||  tolower(v)==tolower($3)    ){printf (\"%s\",$3); exit;}  } "  (format  "v=%s" obj-tag )  "./.tags/bind_all.h"   )
-
-    (with-current-buffer
-  "*tmp-cmd-info*"
-      (setq cmd-name  (trim-string (buffer-substring-no-properties (point-min) (point-max)) ) )
-      (kill-buffer  "*tmp-cmd-info*")
-
-      )
-    (if  (string= (trim-string cmd-name) "")
-      (find-tag   cmd-name nil nil))
-    )
-
-  )
 
 ;;------------------------------------------------------------
 (defun show-dict ()
@@ -1359,7 +1316,7 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
 "
   (interactive "P")
 
-  (let ( tmp-mark-pos  txt line-list match_arr field_name ret-str )
+  (let ( tmp-mark-pos  txt line-list match_arr field_name ret-str  field_name_list )
 
     (or arg (setq arg 1))
     (setq tmp-mark-pos  (get-mark-pos-ex))
@@ -1370,15 +1327,26 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
      ((s-match "^[ \t]+`[a-z0-9_A-Z]+`"  txt )
       (dolist  (line  line-list)
         (setq match_arr  ( s-match "^[ \t]+`\\([a-z0-9_A-Z]+\\)`"  line ))
-        (setq field_name (nth 1 match_arr ) )
-        (when field_name
-          (cond
-           (( = arg 2 ) (setq  ret-str  (concat ret-str "\n" "$"  field_name "= $row[\"" field_name "\"];"     ) ))
-           (( = arg 3 ) (setq  ret-str  (concat ret-str "\n"  "\"" field_name "\"=> $row[\"" field_name "\"],"     ) ))
-           (t (setq  ret-str  (concat ret-str "\n" "\"" field_name "\"=> $"  field_name ","   ) ) ))
-          )
+        (setq field_name (nth 1 match_arr )  )
+        (when field_name (setq field_name_list (append   field_name_list (list field_name ) )))
+        ))
+
+     ((s-match "^[ \t]+\\$[a-z0-9_A-Z]+"  txt )
+      (dolist  (line  line-list)
+        (setq match_arr  ( s-match "^[ \t]+\\$\\([a-z0-9_A-Z]+\\)"  line ))
+        (setq field_name (nth 1 match_arr )  )
+        (when field_name (setq field_name_list (append   field_name_list (list field_name ) )))
         ))
      )
+    (message "%S"()  field_name_list)
+
+    (dolist  (field_name field_name_list   )
+      (cond
+       (( = arg 2 ) (setq  ret-str  (concat ret-str "\n" "$"  field_name "= $row[\"" field_name "\"];"     ) ))
+       (( = arg 3 ) (setq  ret-str  (concat ret-str "\n"  "\"" field_name "\"=> $row[\"" field_name "\"],"     ) ))
+       (t (setq  ret-str  (concat ret-str "\n" "\"" field_name "\"=> $"  field_name ","   ) ) ))
+      )
+
     (kill-new  ret-str)
     )
 )
