@@ -11,6 +11,32 @@
     </description>
 
     <!-- Import the entire unused code rule set -->
-    <rule ref="rulesets/unusedcode.xml/UnusedLocalVariable" />
+    <rule name="UnusedLocalVariable"
+          since="0.2"
+          message="Avoid unused local variables such as '{0}'."
+          class="PHPMD\Rule\UnusedLocalVariable"
+          externalInfoUrl="http://phpmd.org/rules/unusedcode.html#unusedlocalvariable">
+        <description>
+            Detects when a local variable is declared and/or assigned, but not used.
+        </description>
+        <priority>3</priority>
+        <properties>
+            <property
+                name="allow-unused-foreach-variables"
+                description="Allow unused variables in foreach language constructs."
+                value="false" />
+        </properties>
+        <example>
+            <![CDATA[
+class Foo {
+    public function doSomething()
+    {
+        $i = 5; // Unused
+    }
+}
+]]>
+        </example>
+    </rule>
+
 
 </ruleset>

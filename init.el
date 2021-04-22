@@ -529,11 +529,6 @@ you should place your code here."
 
 
 
-  (add-hook 'php-mode-hook '(lambda ( )
-                              (when (s-matches-p "\\.blade\\.php" (buffer-name))
-                                (web-mode )
-                                )
-                              ))
 
   (add-hook 'vue-mode-hook '(lambda ( )
                                 (web-mode )
@@ -878,11 +873,11 @@ you should place your code here."
 
 
 
-  ;; (custom-set-variables
-  ;;  '(phpcbf-standard (concat (getenv "HOME") "/spacemacs-config/ruleset.xml" ))
-  ;;  '(flycheck-phpcs-standard (concat (getenv "HOME") "/spacemacs-config/ruleset.xml" ))
-  ;; )
-
+  (flycheck-disable-checker 'php-phpmd  nil)
+  (custom-set-variables
+   '(phpcbf-standard (concat (getenv "HOME") "/spacemacs-config/ruleset.xml" ))
+   '(flycheck-phpcs-standard (concat (getenv "HOME") "/spacemacs-config/ruleset.xml" ))
+  )
 
  ;; (custom-set-variables
  ;;  '(phpcbf-standard "PSR2" ))
