@@ -350,20 +350,28 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 (defun cleanup-and-goto-error ()
   "DOCSTRING"
   (interactive)
-  (let (pos )
+  (let (pos cur-pos )
+    (setq cur-pos (point ) )
     (whitespace-cleanup)
+
+    (when (string= major-mode "php-mode")
+      (phpcbf)
+      )
+
     (flycheck-buffer)
-    (xref-push-marker-stack)
+
 
     (setq  pos (flycheck-next-error-pos 1 t ))
     (if pos
         (progn
+
+          (xref-push-marker-stack)
           (goto-char pos)
           (flycheck-explain-error-at-point)
-        )
+          )
 
-      (message "No more Flycheck errors")
-      (xref-pop-marker-stack)))
+      (message "No more Flycheck errors: pos:%S, %S" cur-pos (point-max))
+      ))
   )
 (defun switch-file-opt-ts-url ()
 
@@ -1983,6 +1991,12 @@ If FORWARD is nil, search backward, otherwise forward."
                "\n\t/**\n\t*/\n\tpublic "class-name " get" value "(){\n\n\t\treturn this."  cur-word ";\n\t}\n"
                "\n\t/**\n\t*/\n\tpublic void set" value "(" class-name " value ){\n\n\t\tthis."cur-word"=value;\n\t}\n"
                ) )
+    ))
+
+(defun check_phpmd_source (source )
+  (let(  )
+    (message "===%S" source)
+    source
     ))
 
 

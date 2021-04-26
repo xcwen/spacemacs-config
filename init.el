@@ -61,7 +61,7 @@ values."
          go-tab-width 4
          gofmt-command "goimports"
          godoc-at-point-function 'godoc-gogetdoc
-         go-backend 'go-mode
+         go-backend 'lsp
          ;;go-use-golangci-lint t
          ;;go-use-gometalinter t
          )
@@ -541,6 +541,8 @@ you should place your code here."
                               (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
 
                               (my-set-evil-not-insert-local-map "g\C-]"   'my-jump-merber-class )
+                              (flycheck-mode)
+                              (flycheck-disable-checker 'php-phpcs  nil)
                               ))
   (add-hook 'go-mode-hook '(lambda ( )
 
@@ -873,7 +875,6 @@ you should place your code here."
 
 
 
-  (flycheck-disable-checker 'php-phpmd  nil)
   (custom-set-variables
    '(phpcbf-standard (concat (getenv "HOME") "/spacemacs-config/ruleset.xml" ))
    '(flycheck-phpcs-standard (concat (getenv "HOME") "/spacemacs-config/ruleset.xml" ))
