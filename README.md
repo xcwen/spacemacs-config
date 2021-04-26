@@ -175,16 +175,11 @@ apt-get install python-virtualenv
 ```bash
 apt-get install golang 
 
-#  安装liteide 的 gocode ,原版的不好 
-#git clone  https://github.com/visualfc/gocode
-
-apt-get remove gocode
-
-#复制 go 编程环境用到的程序 
-cp ./other/gobin/ ~/goprojects/bin/
-
+GO111MODULE=on go get -v golang.org/x/tools/gopls@latest
 
 
 ```
+项目目录不要放到 "$HOME" 下,会报错 , 
 
+但 如放到 "/home/code/xx"  下 就不会报错
 
