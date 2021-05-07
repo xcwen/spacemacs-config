@@ -1714,9 +1714,18 @@ If FORWARD is nil, search backward, otherwise forward."
 
     (evil-search obj-str t t)))
 
+(defun my-show-table-info()
+  "Doc."
+  (interactive)
+  (let ((cur-word (ac-php--get-cur-word)) cmd)
+    ;;(setq  cmd (concat "desc   "  cur-word  ";\n show create table " cur-word ";" ) )
+    (setq  cmd (concat "desc   "  cur-word  ";" ) )
+    (message "==%s" cmd)
+   (lsp-sql-execute-query cmd)
+  ))
 
 (defun yas-reset ()
-    "DOCSTRING"
+    "Doc."
   (interactive)
   (let ()
     (yas-recompile-all)
@@ -1731,6 +1740,7 @@ If FORWARD is nil, search backward, otherwise forward."
   (interactive (find-function-read))
   (xref-push-marker-stack )
   )
+
 
 (defun my-set-evil-local-map( key fun  )
   (define-key evil-normal-state-local-map (kbd key ) fun)

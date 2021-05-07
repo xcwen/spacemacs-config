@@ -42,7 +42,9 @@ values."
      csv
      python
      nginx
-     sql
+     (sql :variables
+          sql-backend 'lsp
+          sql-lsp-sqls-workspace-config-path 'workspace)
      windows-scripts
      (dart
       :variables dart-server-sdk-path  (concat (getenv "HOME") "/flutter/bin/cache/dart-sdk/")
@@ -773,18 +775,35 @@ you should place your code here."
   (global-set-key (kbd "s-/") 'hippie-expand)
   (global-set-key  (kbd "s-1") 'delete-other-windows)
   (global-set-key  (kbd "C-S-W") 'evil-yank )
-  (global-set-key  (kbd "C-x C-e") '(lambda( eval-last-sexp-arg-internal)(interactive "P")
-                                      (cond
-                                       ((string= major-mode "emacs-lisp-mode")
-                                        (eval-last-sexp eval-last-sexp-arg-internal)
-                                       )
-                                       (t (let (line-txt ret)
+  (global-set-key  (kbd "C-x C-e")
+                   '(lambda( eval-last-sexp-arg-internal)(interactive "P")
+                      (cond
+                       ((string= major-mode "emacs-lisp-mode")
+                        (eval-last-sexp eval-last-sexp-arg-internal)
+                        )
+                       ((string= major-mode "sql-mode")
 
-                                            (setq line-txt (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
-                                            (setq ret (shell-command-to-string  (concat  "echo 'print  " line-txt  "' | python 2>&1" )))
-                                            (message "exec : %s \n=>%s" line-txt ret )
 
-                                          )))))
+                        (unless mark-active
+
+                          (beginning-of-line  )
+                          (push-mark  (line-end-position) nil t  )
+                          )
+
+
+                        (if (>  (-  (region-end) (region-beginning)) 2)
+                            (lsp-sql-execute-query)
+                          (message " null ")
+                          )
+                        )
+
+                       (t (let (line-txt ret)
+
+                            (setq line-txt (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
+                            (setq ret (shell-command-to-string  (concat  "echo 'print  " line-txt  "' | python 2>&1" )))
+                            (message "exec : %s \n=>%s" line-txt ret )
+
+                            )))))
 
   (set-evil-all-state-key  (kbd "C-<tab>")  '(lambda () (interactive)
                                                (if  (string= major-mode "php-mode")
@@ -958,6 +977,11 @@ you should place your code here."
                               mhtml-mode)
                             '(simple  template html))
 
+  (setq flycheck-idle-change-delay  2)
+
+  (setq flycheck-check-syntax-automatically '(save
+                                              idle-change
+                                              mode-enabled))
 
   )
 (defun dotspacemacs/emacs-custom-settings ()
