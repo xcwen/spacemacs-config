@@ -373,7 +373,7 @@ before packages are loaded. If you are unsure, you should try in setting them in
 (load custom-file )
 (load  (expand-file-name "init-syntax-table.el" dotspacemacs-directory) )
 (load  (expand-file-name "xcwen-misc.el" dotspacemacs-directory) )
-(load  (expand-file-name "php-cs-fixer.el" dotspacemacs-directory) )
+;;(load  (expand-file-name "php-cs-fixer.el" dotspacemacs-directory) )
 ;;(defun dotspacemacs/user-config )
 (defun dotspacemacs/user-config ()
   "Configuration function for user code.
