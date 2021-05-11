@@ -1334,7 +1334,9 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
     (setq ret-str "")
     (cond
      ((s-match "^[ \t]+`[a-z0-9_A-Z]+`"  txt )
+      (message "KKKKK")
       (dolist  (line  line-list)
+
         (setq match_arr  ( s-match "^[ \t]+`\\([a-z0-9_A-Z]+\\)`"  line ))
         (setq field_name (nth 1 match_arr )  )
         (when field_name (setq field_name_list (append   field_name_list (list field_name ) )))
@@ -1347,12 +1349,13 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
         (when field_name (setq field_name_list (append   field_name_list (list field_name ) )))
         ))
      )
-    (message "%S"()  field_name_list)
+    (message "==== %S" field_name_list)
 
     (dolist  (field_name field_name_list   )
       (cond
        (( = arg 2 ) (setq  ret-str  (concat ret-str "\n" "$"  field_name "= $row[\"" field_name "\"];"     ) ))
        (( = arg 3 ) (setq  ret-str  (concat ret-str "\n"  "\"" field_name "\"=> $row[\"" field_name "\"],"     ) ))
+       (( = arg 4 ) (setq  ret-str  (concat ret-str    field_name "\n"   ) ))
        (t (setq  ret-str  (concat ret-str "\n" "\"" field_name "\"=> $"  field_name ","   ) ) ))
       )
 
