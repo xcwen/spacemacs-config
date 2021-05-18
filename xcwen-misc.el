@@ -346,6 +346,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
     (list opt-file  nil )
     ))
 
+(defvar cleanup-flag t )
 ;; (switch-cc-to-h ))))
 (defun cleanup-and-goto-error ()
   "DOCSTRING"
@@ -355,9 +356,12 @@ The test for presence of the car of ELT-CONS is done with `equal'."
     (whitespace-cleanup)
 
     (when (string= major-mode "php-mode")
-      (phpcbf)
+      (if cleanup-flag (phpcbf) )
+      
+      (setq cleanup-flag  (not cleanup-flag ) )
       )
 
+    (whitespace-cleanup)
     (flycheck-buffer)
 
 
@@ -1227,6 +1231,19 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
   ""
   (interactive "p")
   (join-line 0))
+
+(defun json2php (arg)
+  "D."
+  (interactive "p")
+  (let (txt)
+    (setq txt (buffer-substring-no-properties (region-beginning)(region-end)) )
+
+    (setq txt (s-replace "}" "]" txt  ))
+    (setq txt (s-replace "{" "[" txt  ))
+    (setq txt (s-replace ":" "=>" txt  ))
+    (kill-new  txt)
+    )
+  )
 
 (defun comment-or-uncomment-whole-line(num)
   (save-excursion

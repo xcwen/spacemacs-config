@@ -544,7 +544,6 @@ you should place your code here."
 
                               (my-set-evil-not-insert-local-map "g\C-]"   'my-jump-merber-class )
                               (flycheck-mode)
-                              (flycheck-disable-checker 'php-phpcs  nil)
                               ))
   (add-hook 'go-mode-hook '(lambda ( )
 
@@ -889,6 +888,11 @@ you should place your code here."
 
   (setq ac-php-project-root-dir-use-truename   nil )
   (setq flycheck-phpmd-rulesets (list  (concat (getenv "HOME") "/spacemacs-config/phpmd.xml"  ) ))
+
+  ;;清理检查
+  (setq php-syntax-propertize-functions
+    '())
+
   (setq frame-title-format  '("file: %f "  ))
   (setq yas-snippet-dirs   (list  "~/.spacemacs.d/my-yas"  )  )
 
@@ -977,10 +981,11 @@ you should place your code here."
                               mhtml-mode)
                             '(simple  template html))
 
-  (setq flycheck-idle-change-delay  2)
+  (setq flycheck-idle-change-delay  0.5)
 
   (setq flycheck-check-syntax-automatically '(save
                                               idle-change
+                                              new-line
                                               mode-enabled))
 
   )
