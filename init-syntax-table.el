@@ -28,6 +28,13 @@
 
 
 
+(add-hook 'json-mode-hook '(lambda ( )
+                            (modify-syntax-entry ?_ "w" json-mode-syntax-table) ;将 _ 加入 单词中
+                            ))
+
+
+
+
 
 
 (add-hook 'org-mode-hook '(lambda ( )

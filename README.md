@@ -173,9 +173,10 @@ apt-get install python-virtualenv
 
 ### go 补全 需要
 ```bash
+
 apt-get install golang 
 
-GO111MODULE=on go get -v golang.org/x/tools/gopls@latest
+GO111MODULE=on go get golang.org/x/tools/gopls@latest
 
 
 ```

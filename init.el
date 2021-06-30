@@ -35,7 +35,8 @@ values."
    dotspacemacs-configuration-layer-path '()
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(elixir
+   '(octave
+     elixir
      systemd
      (rust :variables rust-backend 'lsp)
      react
@@ -114,6 +115,7 @@ values."
    dotspacemacs-excluded-packages '( php-extras auto-highlight-symbol version-control
                                                 yasnippet-snippets
                                                 chinese-pyim
+                                                org-contrib
                                                 ;;go-eldoc
                                                 pyim
                                                 ace-pinyin
@@ -417,6 +419,7 @@ you should place your code here."
                  'js2-mode
                  'vue-mode
                  'markdown-mode
+                 'gitconfig-mode
                  'typescript-mode
                  'typescript-tsx-mode
                  'fundamental-mode
@@ -504,7 +507,7 @@ you should place your code here."
 
   ;;(define-key evil-motion-state-map (kbd "*") 'evil-ex-search-word-forward)
   (spacemacs/set-leader-keys-for-major-mode  'php-mode "r" 'ac-php-remake-tags )
-  (spacemacs/set-leader-keys-for-major-mode  'php-mode "i" 'ac-php-show-tip)
+  (spacemacs/set-leader-keys-for-major-mode  'php-mode "i" 'flycheck-display-error-at-point )
   (spacemacs/set-leader-keys-for-major-mode  'php-mode "f" 'ac-php-gen-def )
   (spacemacs/set-leader-keys-for-major-mode  'php-mode "m" 'php-mode-make)
   (spacemacs/set-leader-keys-for-major-mode  'protobuf-mode "m" 'core-server-make )
@@ -983,6 +986,7 @@ you should place your code here."
 
   (setq flycheck-idle-change-delay  0.5)
 
+  (setq flycheck-display-errors-delay  1300000)
   (setq flycheck-check-syntax-automatically '(save
                                               idle-change
                                               new-line
