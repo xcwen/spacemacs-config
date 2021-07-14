@@ -41,7 +41,8 @@ values."
      (rust :variables rust-backend 'lsp)
      react
      csv
-     python
+     ;;(python )
+     (python :variables python-backend 'lsp python-lsp-server 'mspyls)
      nginx
      (sql :variables
           sql-backend 'lsp
@@ -405,6 +406,7 @@ you should place your code here."
 
   (setq-default google-translate-default-source-language "en")
   (setq-default google-translate-default-target-language "zh-CN")
+  (setq lsp-python-ms-python-executable  "/usr/bin/python3")
   (require 'font-lock+ )
 
   (setq go-format-before-save t)
@@ -566,7 +568,7 @@ you should place your code here."
 
   (add-hook 'python-mode-hook '(lambda ( )
                               (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
-                              (my-set-evil-local-map  "\C-t"      'anaconda-mode-go-back )
+                              (my-set-evil-local-map  "\C-t"      'xref-pop-marker-stack )
                               ))
 
   (add-hook 'java-mode-hook '(lambda ( )
