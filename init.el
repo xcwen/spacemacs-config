@@ -42,7 +42,9 @@ values."
      react
      csv
      ;;(python )
-     (python :variables python-backend 'lsp python-lsp-server 'mspyls)
+     (python :variables python-backend 'lsp
+             python-lsp-server 'pyright
+             )
      nginx
      (sql :variables
           sql-backend 'lsp
@@ -842,6 +844,13 @@ you should place your code here."
                                ))
     )
 
+
+  (add-hook 'Info-mode-hook
+            '(lambda()
+
+               (define-key Info-mode-map (kbd "<return>")  'Info-follow-nearest-node )
+
+               ))
 
 
   (add-hook 'minibuffer-inactive-mode-hook

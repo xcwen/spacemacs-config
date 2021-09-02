@@ -5,6 +5,11 @@
 (add-hook 'c-mode-hook '(lambda ( )
               (modify-syntax-entry ?_ "w" c-mode-syntax-table) ;将 _ 加入 单词中
                ) )
+(add-hook 'lua-mode-hook '(lambda ( )
+                          (modify-syntax-entry ?_ "w" lua-mode-syntax-table) ;将 _ 加入 单词中
+                          ) )
+
+
 
 (add-hook 'dotenv-mode-hook '(lambda ( )
                           (modify-syntax-entry ?_ "w" dotenv-mode-syntax-table) ;将 _ 加入 单词中
