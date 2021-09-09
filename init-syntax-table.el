@@ -42,9 +42,8 @@
 
 
 
-(add-hook 'org-mode-hook '(lambda ( )
-               (modify-syntax-entry ?_ "w" org-mode-syntax-table) ;将 _ 加入 单词中
-               ) )
+(require 'org)
+(modify-syntax-entry ?_ "w" org-mode-syntax-table) ;将 _ 加入 单词中
 
 
 
