@@ -13,4 +13,4 @@
                        ("data" "$(\"$1\").data(\"${2}\"${3:,\"\"})$0\n" "data" nil nil nil "/home/jim/.spacemacs.d/my-yas/typescript-mode/data" nil nil)))
 
 
-;;; Do not edit! File generated at Mon Dec  7 14:40:17 2020
+;;; Do not edit! File generated at Fri Sep 10 11:08:28 2021

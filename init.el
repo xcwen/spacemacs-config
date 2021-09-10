@@ -35,7 +35,8 @@ values."
    dotspacemacs-configuration-layer-path '()
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(octave
+   '(clojure
+     octave
      elixir
      systemd
      (rust :variables rust-backend 'lsp)
