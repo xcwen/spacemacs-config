@@ -686,6 +686,14 @@ The test for presence of the car of ELT-CONS is done with `equal'."
         (setq line-txt (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
         (when (string-match   "SWITCH-TO:[ \t]*\\([^ \t]*\\)[ \t]*"   line-txt)
           (setq  opt-file (match-string  1 line-txt))
+          ;;(message "KKKKKKKK %s=> %s" line-txt opt-file )
+          (when (s-matches-p "^[a-z0-9]+$" opt-file  )
+            (setq file-name (file-name-nondirectory (buffer-file-name)))
+            (setq file-name-fix (file-name-base  file-name))
+            (setq opt-file (concat "./" file-name-fix "." opt-file ) )
+            ;;(message "2222 %s"  opt-file )
+
+            )
 
           (unless (f-exists-p  opt-file )
             (setq opt-file ( get-route-jump-file-name (concat "/"  opt-file ) (get-url-path-get-fix-path-from-env "NEW_VUE_VIEW_DIR") ))
