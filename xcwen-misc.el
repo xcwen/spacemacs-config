@@ -156,6 +156,12 @@ localhost:~/site-lisp/config$"
   "Doc FILE-NAME  ."
   (string= system-type "gnu/linux" )
     )
+(defun check-in-mac ()
+  "Doc FILE-NAME  ."
+  (string= system-type "darwin" )
+  )
+
+
 (defun sudo-save ()
   "Doc  ."
   (interactive)
@@ -971,13 +977,21 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
   (interactive)
   (when (check-in-linux)
     (call-process  "fcitx-remote" nil 0 nil  "-c") )
+  (when (check-in-mac)
+    (call-process  "input_switch" nil 0 nil  "-s" "ABC") )
+
   )
 
 (defun fcitx-activate-input-method()
   "fcitx 开启输入法"
   (interactive)
+
   (when (check-in-linux)
-    (call-process  "fcitx-remote" nil 0 nil  "-o")))
+    (call-process  "fcitx-remote" nil 0 nil  "-o"))
+  (when (check-in-mac)
+    (call-process  "input_switch" nil 0 nil  "-s" "搜狗拼音") )
+
+  )
 
 
 (defun proto-show-msg ()
