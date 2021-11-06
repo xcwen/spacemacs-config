@@ -60,6 +60,18 @@ localhost:~/site-lisp/config$"
       (replace-regexp-in-string "\\([[:upper:]]\\)\\([[:upper:]][0-9[:lower:]]\\)" "\\1 \\2" s)))
    t))
 
+(defun ts-fix-code()
+    "Doc  docstring."
+  (interactive)
+  (let (text) 
+
+    (setq  text (buffer-substring-no-properties (- (point) 1) (-  (point) 0 ) ))
+    (if (string= text ":" )
+        (insert "<any>")
+      (insert ":any")
+      )
+  ;;(message "XXX [%s]" text )
+  ))
 (defun  multi-term-goto-last-term ()
   "Doc  docstring."
   (interactive)

@@ -479,6 +479,10 @@ you should place your code here."
     (when  (string= mode 'php-mode)
       (spacemacs/set-leader-keys-for-major-mode  mode "D" 'my-jump-table-sql )
       )
+    (when  (string= mode 'typescript-mode)
+      (spacemacs/set-leader-keys-for-major-mode  mode "," 'ts-fix-code)
+      )
+
 
     (unless (string= mode 'go-mode)
       (spacemacs/set-leader-keys-for-major-mode  mode "e" 'cleanup-and-goto-error)
@@ -541,7 +545,8 @@ you should place your code here."
 
 
   (add-hook 'vue-mode-hook '(lambda ( )
-                                (web-mode )
+                              (web-mode)
+                                (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
                               ))
   (add-hook 'php-mode-hook '(lambda ( )
                               (require 'php-align)
