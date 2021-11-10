@@ -180,7 +180,14 @@ GO111MODULE=on go get golang.org/x/tools/gopls@latest
 
 
 ```
-项目目录不要放到 "$HOME" 下,会报错 , 
+`.spacemacs.d/.spacemacs.env`  文件里要注意 go的环境配置
 
-但 如放到 "/home/code/xx"  下 就不会报错
+```bash
+GOPATH=/Users/jim/goprojects
+GOROOT=/usr/local/go
+GO111MODULE=on
+GOPROXY=https://goproxy.cn
+
+```
+还要注意 当前的项目地址的问题
 

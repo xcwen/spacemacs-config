@@ -60,6 +60,18 @@ localhost:~/site-lisp/config$"
       (replace-regexp-in-string "\\([[:upper:]]\\)\\([[:upper:]][0-9[:lower:]]\\)" "\\1 \\2" s)))
    t))
 
+(defun ts-fix-code()
+    "Doc  docstring."
+  (interactive)
+  (let (text) 
+
+    (setq  text (buffer-substring-no-properties (- (point) 1) (-  (point) 0 ) ))
+    (if (string= text ":" )
+        (insert "<any>")
+      (insert ":any")
+      )
+  ;;(message "XXX [%s]" text )
+  ))
 (defun  multi-term-goto-last-term ()
   "Doc  docstring."
   (interactive)
@@ -156,6 +168,12 @@ localhost:~/site-lisp/config$"
   "Doc FILE-NAME  ."
   (string= system-type "gnu/linux" )
     )
+(defun check-in-mac ()
+  "Doc FILE-NAME  ."
+  (string= system-type "darwin" )
+  )
+
+
 (defun sudo-save ()
   "Doc  ."
   (interactive)
@@ -680,6 +698,14 @@ The test for presence of the car of ELT-CONS is done with `equal'."
         (setq line-txt (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
         (when (string-match   "SWITCH-TO:[ \t]*\\([^ \t]*\\)[ \t]*"   line-txt)
           (setq  opt-file (match-string  1 line-txt))
+          ;;(message "KKKKKKKK %s=> %s" line-txt opt-file )
+          (when (s-matches-p "^[a-z0-9]+$" opt-file  )
+            (setq file-name (file-name-nondirectory (buffer-file-name)))
+            (setq file-name-fix (file-name-base  file-name))
+            (setq opt-file (concat "./" file-name-fix "." opt-file ) )
+            ;;(message "2222 %s"  opt-file )
+
+            )
 
           (unless (f-exists-p  opt-file )
             (setq opt-file ( get-route-jump-file-name (concat "/"  opt-file ) (get-url-path-get-fix-path-from-env "NEW_VUE_VIEW_DIR") ))
@@ -971,13 +997,21 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
   (interactive)
   (when (check-in-linux)
     (call-process  "fcitx-remote" nil 0 nil  "-c") )
+  (when (check-in-mac)
+    (call-process  "input_switch" nil 0 nil  "-s" "ABC") )
+
   )
 
 (defun fcitx-activate-input-method()
   "fcitx 开启输入法"
   (interactive)
+
   (when (check-in-linux)
-    (call-process  "fcitx-remote" nil 0 nil  "-o")))
+    (call-process  "fcitx-remote" nil 0 nil  "-o"))
+  (when (check-in-mac)
+    (call-process  "input_switch" nil 0 nil  "-s" "搜狗拼音") )
+
+  )
 
 
 (defun proto-show-msg ()
