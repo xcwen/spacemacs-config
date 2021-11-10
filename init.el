@@ -35,8 +35,7 @@ values."
    dotspacemacs-configuration-layer-path '()
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(clojure
-     octave
+   '(
      elixir
      systemd
      (rust :variables rust-backend 'lsp)
@@ -850,6 +849,7 @@ you should place your code here."
             '(lambda()
 
                (define-key Info-mode-map (kbd "<return>")  'Info-follow-nearest-node )
+               (define-key Info-mode-map (kbd "P")  'Info-next )
 
                ))
 
