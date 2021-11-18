@@ -63,7 +63,7 @@ localhost:~/site-lisp/config$"
 (defun ts-fix-code()
     "Doc  docstring."
   (interactive)
-  (let (text) 
+  (let (text)
 
     (setq  text (buffer-substring-no-properties (- (point) 1) (-  (point) 0 ) ))
     (if (string= text ":" )
@@ -375,7 +375,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 
     (when (string= major-mode "php-mode")
       (if cleanup-flag (phpcbf) )
-      
+
       (setq cleanup-flag  (not cleanup-flag ) )
       )
 
@@ -1728,14 +1728,12 @@ object satisfying `yas--field-p' to restrict the expansion to."
             ( auto-complete  ))
            ((and (string= major-mode "typescript-mode")  (eq ?\. c))
             ( company-complete ))
-
-
+           ((and (string= major-mode "dart-mode")  (eq ?\. c))
+            ( company-complete ))
            ((and (string= major-mode "elixir-mode")  (eq ?\. c))
             ( company-complete ))
            ((and (string= major-mode "term-mode")  )
             (  term-send-raw-string "\t" ))
-           ((and (string= major-mode "dart-mode")  )
-            ( my-indent-for-tab-command ) )
 
            ((and (string= major-mode "org-mode")  )
             ( org-cycle ))
@@ -1768,16 +1766,16 @@ prefix argument is ignored."
    ((use-region-p)
     (indent-region (region-beginning) (region-end)))
    ((or ;; indent-to-left-margin is only meant for indenting,
-	;; so we force it to always insert a tab here.
-	(eq indent-line-function 'indent-to-left-margin)
-	(and (not tab-always-indent)
-	     (or (> (current-column) (current-indentation))
-		 (eq this-command last-command))))
+  ;; so we force it to always insert a tab here.
+  (eq indent-line-function 'indent-to-left-margin)
+  (and (not tab-always-indent)
+       (or (> (current-column) (current-indentation))
+     (eq this-command last-command))))
     (insert-tab arg))
    (t
     (let ((old-tick (buffer-chars-modified-tick))
           (old-point (point))
-	  (old-indent (current-indentation)))
+    (old-indent (current-indentation)))
 
       ;; Indent the line.
       (or (not (eq (indent--funcall-widened indent-line-function) 'noindent))
@@ -2132,7 +2130,7 @@ If FORWARD is nil, search backward, otherwise forward."
   (let ()
   (switch-to-buffer-other-frame  "*Flutter*" )
   (delete-other-windows)
-  (set-frame-size (selected-frame) 40 60)
+  (set-frame-size (selected-frame) 45 60)
 
   (require 'flutter)
   (if (flutter--running-p)
@@ -2144,6 +2142,17 @@ If FORWARD is nil, search backward, otherwise forward."
 
   ))
 
+(defun tt ()
+"Doc  ."
+(interactive)
+(let ()
+
+  (set (make-local-variable 'completion-at-point-functions ) nil)
+  (set (make-local-variable 'my-completion-at-point-functions ) '(lsp-completion-at-point) )
+  (set (make-local-variable 'company-backends)
+       '(company-my-capf ))
+
+))
 
 (provide 'xcwen-misc)
 

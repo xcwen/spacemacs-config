@@ -391,6 +391,8 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
+
+  (load  (expand-file-name "company-my-capf.el" dotspacemacs-directory) )
   (setq eclim-eclipse-dirs '("~/eclipse") )
   (setq
    ;; Specify the workspace to use by default
@@ -553,17 +555,23 @@ you should place your code here."
                               (web-mode)
                                 (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
                               ))
+  (add-hook 'lsp-completion-mode-hook '(lambda ( )
+                                         (set (make-local-variable 'completion-at-point-functions ) nil)
+                              ))
+
+  ;;
+
   (add-hook 'dart-mode-hook '(lambda ( )
                               (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
+
+
                               (lsp-ui-mode nil)
-
-                              ;; (set (make-local-variable 'flycheck-check-syntax-automatically) '(
-                              ;;                                             idle-change
-                              ;;                                             new-line
-                              ;;                                             mode-enabled))
+                              ;;(lsp-completion--disable )
 
 
-
+                              (set (make-local-variable 'my-completion-at-point-functions ) '(lsp-completion-at-point) )
+                              (set (make-local-variable 'company-backends)
+                                   '(company-my-capf ))
                               ))
 
   (add-hook 'php-mode-hook '(lambda ( )
@@ -1028,6 +1036,7 @@ you should place your code here."
                             '(simple  template html))
 
   (setq flycheck-idle-change-delay  5)
+  (setq company-idle-delay              1000)
 
   (setq flycheck-display-errors-delay  1300000)
   (setq flycheck-check-syntax-automatically '( save
