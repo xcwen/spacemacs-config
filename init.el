@@ -52,6 +52,7 @@ values."
      windows-scripts
      (dart
       :variables dart-server-sdk-path  (concat (getenv "HOME") "/flutter/bin/cache/dart-sdk/")
+      lsp-enable-on-type-formatting nil
       )
      lua
      vimscript
@@ -115,16 +116,19 @@ values."
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
-   dotspacemacs-excluded-packages '( php-extras auto-highlight-symbol version-control
-                                                yasnippet-snippets
-                                                chinese-pyim
-                                                org-contrib
-                                                ;;go-eldoc
-                                                pyim
-                                                ace-pinyin
-                                                phpactor
-                                                company-phpactor
-                                                )
+   dotspacemacs-excluded-packages '( php-extras
+                                     auto-highlight-symbol
+                                     version-control
+                                     git-modes
+                                     yasnippet-snippets
+                                     chinese-pyim
+                                     org-contrib
+                                     ;;go-eldoc
+                                     pyim
+                                     ace-pinyin
+                                     phpactor
+                                     company-phpactor
+                                     )
    ;; Defines the behaviour of Spacemacs when installing packages.
    ;; Possible values are `used-only', `used-but-keep-unused' and `all'.
    ;; `used-only' installs only explicitly used packages and uninstall any
@@ -399,6 +403,8 @@ you should place your code here."
   (add-to-list 'file-coding-system-alist '("\\.php" . utf-8) )
   (add-to-list 'file-coding-system-alist '("\\.go" . utf-8) )
 
+  (setq left-fringe-width 48)
+
   ;; google translate
   (require 'google-translate)
 
@@ -520,7 +526,7 @@ you should place your code here."
   (spacemacs/set-leader-keys-for-major-mode  'php-mode "m" 'php-mode-make)
   (spacemacs/set-leader-keys-for-major-mode  'protobuf-mode "m" 'core-server-make )
   (spacemacs/set-leader-keys-for-major-mode  'go-mode "m" 'go-core-server-make )
-  (spacemacs/set-leader-keys-for-major-mode  'dart-mode "m" 'flutter-run-or-hot-reload )
+  (spacemacs/set-leader-keys-for-major-mode  'dart-mode "m" 'flutter-monitor )
 
   (spacemacs/set-leader-keys-for-major-mode  'java-mode "f" 'java-gen-get-set-code  )
 
@@ -547,6 +553,19 @@ you should place your code here."
                               (web-mode)
                                 (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
                               ))
+  (add-hook 'dart-mode-hook '(lambda ( )
+                              (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
+                              (lsp-ui-mode nil)
+
+                              ;; (set (make-local-variable 'flycheck-check-syntax-automatically) '(
+                              ;;                                             idle-change
+                              ;;                                             new-line
+                              ;;                                             mode-enabled))
+
+
+
+                              ))
+
   (add-hook 'php-mode-hook '(lambda ( )
                               (require 'php-align)
                               (php-align-setup)
@@ -640,7 +659,10 @@ you should place your code here."
   (setq lsp-debounce-full-sync-notifications nil)
   (setq lsp-enable-file-watchers nil)
   (setq lsp-enable-folding nil)
-  (setq dart-server-enable-analysis-server nil )
+
+  (setq dart-indent-trigger-commands
+    '())
+
  ;;(setq    nil)
 
 
@@ -993,6 +1015,8 @@ you should place your code here."
       ;;(add-to-list 'term-bind-key-alist '( "<up>". term-send-raw ))
       ))
 
+  (lsp-ui-mode nil)
+
   (evilmi-load-plugin-rules '(web-mode
                               html-mode
                               nxml-mode
@@ -1003,14 +1027,16 @@ you should place your code here."
                               mhtml-mode)
                             '(simple  template html))
 
-  (setq flycheck-idle-change-delay  0.5)
+  (setq flycheck-idle-change-delay  5)
 
   (setq flycheck-display-errors-delay  1300000)
-  (setq flycheck-check-syntax-automatically '(save
+  (setq flycheck-check-syntax-automatically '( save
                                               idle-change
                                               new-line
                                               mode-enabled))
 
+
+  (setq gc-cons-threshold 200000000)
   )
 (defun dotspacemacs/emacs-custom-settings ()
   "Emacs custom settings.
