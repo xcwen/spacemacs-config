@@ -472,7 +472,7 @@ you should place your code here."
                  'gitignore-mode
                  ))
     (spacemacs/set-leader-keys-for-major-mode  mode "w" 'save-buffer)
-    (spacemacs/set-leader-keys-for-major-mode  mode "d" 'youdao-dictionary-search-at-point-tooltip )
+    ;;(spacemacs/set-leader-keys-for-major-mode  mode "d" 'youdao-dictionary-search-at-point-tooltip )
     (spacemacs/set-leader-keys-for-major-mode  mode "W" '(lambda()
                                                            (interactive )
                                                            (whitespace-cleanup)
@@ -1045,7 +1045,11 @@ you should place your code here."
                                               mode-enabled))
 
 
-  (setq gc-cons-threshold 200000000)
+
+  (set-frame-position (selected-frame) 1920 0)
+  (set-frame-width (selected-frame) 91)
+  (set-frame-height (selected-frame) 91)
+
   )
 (defun dotspacemacs/emacs-custom-settings ()
   "Emacs custom settings.

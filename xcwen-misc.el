@@ -2124,20 +2124,40 @@ If FORWARD is nil, search backward, otherwise forward."
     ))
 
 ;; flutter-monitor 监控
-(defun flutter-monitor()
+(defun flutter-monitor( &optional arg)
   "Doc  ."
-  (interactive)
-  (let ()
+  (interactive "P")
+  (let (cur-frame-count)
+    (when  (and arg ( =  arg 1) )
+      (kill-buffer "*Flutter*" )
+      )
+
+    (setq cur-frame-count  (length ( frame-list)) )
   (switch-to-buffer-other-frame  "*Flutter*" )
   (delete-other-windows)
-  (set-frame-size (selected-frame) 45 60)
+
+  ;;新开的窗口
+  (if (= cur-frame-count 1)
+      (progn
+        (set-frame-size (selected-frame) 45 60)
+        (set-frame-position (selected-frame) 0 0)
+    ))
+
 
   (require 'flutter)
   (if (flutter--running-p)
-      (flutter-hot-reload)
-    (flutter-run "-d  emulator-5554 " ))
-  ;;回到主窗口
+      (if (and arg ( =  arg 2) )
+          (flutter-hot-restart)
+        (flutter-hot-reload))
 
+    (flutter-run "-d  emulator-5554 " ))
+
+
+  ;; 光标移到最后
+  (goto-char (point-max))
+
+
+  ;;回到主窗口
   (select-frame-set-input-focus (next-frame))
 
   ))
