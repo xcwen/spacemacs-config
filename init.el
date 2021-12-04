@@ -7,6 +7,7 @@
 
 (load  (expand-file-name "init-ex.el" dotspacemacs-directory) t t  t nil )
 
+
 (defun dotspacemacs/layers ()
   "Layer configuration:
 This function should only modify configuration layer settings."
@@ -292,8 +293,8 @@ It should only modify the values of Spacemacs settings."
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press `SPC T n' to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(tsdh-dark  spacemacs-dark
-                         spacemacs-light)
+   dotspacemacs-themes '( tsdh-dark spacemacs-dark spacemacs-light)
+   ;;dotspacemacs-themes '( spacemacs-dark spacemacs-light)
 
    ;; Set the theme for the Spaceline. Supported themes are `spacemacs',
    ;; `all-the-icons', `custom', `doom', `vim-powerline' and `vanilla'. The
@@ -795,6 +796,7 @@ you should place your code here."
                               (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
 
 
+                              (my-set-evil-local-map  "\C-t"      'xref-pop-marker-stack )
                               (lsp-ui-mode nil)
                               ;;(lsp-completion--disable )
 
@@ -992,7 +994,9 @@ you should place your code here."
   (custom-set-faces
    '(term-color-blue ((t (:background "blue" :foreground "steel blue"))))
    '(term-color-green ((t (:background "green3" :foreground "lime green"))))
-   '(term-color-red ((t (:background "red3" :foreground "brown")))))
+   '(term-color-red ((t (:background "red3" :foreground "brown"))))
+   '(tooltip ((t (:background "#555555" :foreground "#CCCCCC"))))
+   )
 
   (global-set-key (kbd "M-w")   'copy-region-or-whole-line)
   (global-set-key (kbd "s-w")   'copy-region-or-whole-line)
