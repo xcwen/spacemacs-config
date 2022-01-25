@@ -35,9 +35,11 @@ This function should only modify configuration layer settings."
    dotspacemacs-configuration-layer-path '()
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(
+   '(clojure
      elixir
      systemd
+     (c-c++ :variables c-c++-backend 'lsp-clangd)
+
      (rust :variables rust-backend 'lsp)
      react
      csv
@@ -102,7 +104,7 @@ This function should only modify configuration layer settings."
      helm
       markdown
 
-     multiple-cursors
+     ;;multiple-cursors
       (org
        :variables org-enable-appear-support t)
      ;; (shell :variables
@@ -597,10 +599,10 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
 
 (message "load user-init ===========")
 
- ;; (setq configuration-layer-elpa-archives
- ;;     '(("melpa-cn" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/")
- ;;     ("org-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/org/")
- ;;     ("gnu-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")))
+ (setq configuration-layer-elpa-archives
+     '(("melpa-cn" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/")
+     ("org-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/org/")
+     ("gnu-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")))
 
 )
 

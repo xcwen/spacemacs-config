@@ -1,4 +1,0 @@
-# name:reload
-# key:reload
-# --
-window.location.reload();

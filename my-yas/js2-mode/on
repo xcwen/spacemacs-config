@@ -1,8 +1,0 @@
-# name:on
-# key:on
-# --
-
-$("$1").on("${2:click}",function(){
-	//
-	$0
-});

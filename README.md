@@ -136,32 +136,25 @@ emacs php-mode 快捷键
 npm install typescript -g 
 ```
 
-###c++ 编码需要
-``` bash
-apt-get install fcitx clang cmake g++ libclang-dev libssl-dev libcurses-ocaml-dev cscope
-```
+### c++ 编码需要
+apt-get install clangd
 
+#### 从make/cmake 生成补全配置
+https://edward852.github.io/post/%E7%94%9F%E6%88%90compile_commands.json%E6%96%87%E4%BB%B6/
 
-查看 rtags 说明: https://github.com/Andersbakken/rtags ; 
-安装 rtags: 
+compile_commands.json 文件能够有效提高一些工具(比如说ccls1, vscode2)的代码跳转、补全等功能。
 
-``` bash
-cd ~/ &&  git clone https://github.com/Andersbakken/rtags/
-cd ~/rtags/src &&  git clone https://github.com/Andersbakken/rct
-cd ~/rtags && mkdir build && cd ~/rtags/build/ && cmake ../ && make && sudo make install 
-ln -s ~/rtags/bin/gcc-rtags-wrapper.sh ~/bin/c++
-ln -s ~/rtags/bin/gcc-rtags-wrapper.sh ~/bin/cc
-ln -s ~/rtags/bin/gcc-rtags-wrapper.sh ~/bin/g++
-ln -s ~/rtags/bin/gcc-rtags-wrapper.sh ~/bin/gcc
- #export 放到~/.bashrc
-export PATH=~/bin/:$PATH
-```
+因此，本文将会说明如何生成 compile_commands.json 文件，特别是使用 makefile 的老工程。
 
-启动 rtags 服务:
+不过很多(旧的)工程都是用 makefile 来编译的，没有现成的选项生成 compile_commands.json 文件。
 
-``` bash
-$rdm 
-```
+虽然也可以使用 ctags, gtags 等，但是跳转其实不是很准确。
+
+我们可以通过 Bear 来生成，而且不需要改动代码。
+
+具体Bear的安装这里就不赘述了，按照 官方文档 来即可。
+
+安装之后，执行以下命令即可生成：
 
 
 ###python  补全jedi 需要
