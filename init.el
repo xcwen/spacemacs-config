@@ -56,7 +56,12 @@ This function should only modify configuration layer settings."
       :variables dart-server-sdk-path  (concat (getenv "HOME") "/flutter/bin/cache/dart-sdk/")
       lsp-enable-on-type-formatting nil
       )
-     lua
+     (lua :variables
+          lua-backend 'lsp
+          lua-lsp-server 'emmy
+          lsp-clients-emmy-lua-jar-path "/home/jim/dl/EmmyLua-LS-all.jar" ; default path
+          lsp-clients-emmy-lua-java-path "java") ; default path
+
      vimscript
      git
      docker
@@ -807,6 +812,20 @@ you should place your code here."
                               (set (make-local-variable 'company-backends)
                                    '(company-my-capf ))
                               ))
+  (add-hook 'c-mode-hook '(lambda ( )
+                               (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
+
+
+                               (my-set-evil-local-map  "\C-t"      'xref-pop-marker-stack )
+                               (lsp-ui-mode nil)
+                               ;;(lsp-completion--disable )
+
+
+                               (set (make-local-variable 'my-completion-at-point-functions ) '(lsp-completion-at-point) )
+                               (set (make-local-variable 'company-backends)
+                                    '(company-my-capf ))
+                               ))
+
 
   (add-hook 'php-mode-hook '(lambda ( )
                               (require 'php-align)

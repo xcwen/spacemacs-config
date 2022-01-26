@@ -1688,7 +1688,7 @@ object satisfying `yas--field-p' to restrict the expansion to."
                      ;; ::
                      (and (eq ?: c)
                           (eq ?: (char-before (1- (point)))))))
-            (my-ac-mode-complete  ))
+            (company-complete))
 
            ((and (or
                   (string= major-mode "php-mode")
