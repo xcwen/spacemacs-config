@@ -76,6 +76,7 @@ This function should only modify configuration layer settings."
          gofmt-command "goimports"
          godoc-at-point-function 'godoc-gogetdoc
          go-backend 'lsp
+         go-format-before-save t
          ;;go-use-golangci-lint t
          ;;go-use-gometalinter t
          )
@@ -338,7 +339,7 @@ It should only modify the values of Spacemacs settings."
    dotspacemacs-emacs-leader-key "M-m"
    ;; Major mode leader key is a shortcut key which is the equivalent of
    ;; pressing `<leader> m`. Set it to `nil` to disable it. (default ",")
-   dotspacemacs-major-mode-leader-key ","
+   dotspacemacs-major-mode-leader-key nil
    ;; Major mode leader key accessible in `emacs state' and `insert state'.
    ;; (default "C-M-m" for terminal mode, "<M-return>" for GUI mode).
    ;; Thus M-RET should work as leader key in both GUI and terminal modes.
@@ -617,6 +618,53 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
 (load custom-file )
 (load  (expand-file-name "init-syntax-table.el" dotspacemacs-directory) )
 (load  (expand-file-name "xcwen-misc.el" dotspacemacs-directory) )
+(defun set-main-key()
+  (set-evil-main-state-key "w" 'save-buffer )
+
+  (set-evil-main-state-key "u" 'upper-or-lower-whole-word)
+  (set-evil-main-state-key "L" 'revert-buffer )
+  (set-evil-main-state-key "a" 'switch-file-opt )
+  (set-evil-main-state-key "A" 'switch-file-opt-proto )
+  (set-evil-main-state-key "e" 'cleanup-and-goto-error)
+
+  (set-evil-main-state-key "\""
+  '(lambda()
+     (interactive )
+     (if (ac-php--in-string-or-comment-p)
+         (cond
+          ((string= major-mode "php-mode")
+           (progn
+
+             (insert  "\" . \"")
+             (backward-char 4 )
+             ))
+          )
+       (progn ;;单词加双引号
+         (save-excursion
+           (backward-word)
+           (insert "\"")
+           (forward-word)
+           (insert "\"")
+           )
+         )
+       )))
+
+
+  (set-evil-main-state-key-on-mode php-mode-map "D" 'my-jump-table-sql  )
+
+  (set-evil-main-state-key-on-mode  php-mode-map "r" 'ac-php-remake-tags )
+  (set-evil-main-state-key-on-mode  php-mode-map "i" 'flycheck-display-error-at-point )
+  (set-evil-main-state-key-on-mode  php-mode-map "f" 'ac-php-gen-def )
+  (set-evil-main-state-key-on-mode  php-mode-map "m" 'php-mode-make)
+  (set-evil-main-state-key-on-mode  protobuf-mode-map "m" 'core-server-make )
+  (set-evil-main-state-key-on-mode  go-mode-map "m" 'go-core-server-make )
+  (set-evil-main-state-key-on-mode  dart-mode-map "m" 'flutter-monitor )
+
+  (set-evil-main-state-key-on-mode  java-mode-map "f" 'java-gen-get-set-code  )
+
+
+  )
+
 ;;(load  (expand-file-name "php-cs-fixer.el" dotspacemacs-directory) )
 ;;(defun dotspacemacs/user-config )
 (defun dotspacemacs/user-config ()
@@ -627,15 +675,9 @@ This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
 
-  (load  (expand-file-name "company-my-capf.el" dotspacemacs-directory) )
-  (setq eclim-eclipse-dirs '("~/eclipse") )
-  (setq
-   ;; Specify the workspace to use by default
-   eclimd-default-workspace "~/eclipse-workspace"
-   ;; wether autostarting eclimd or not (default nil)
-   eclimd-autostart t
-   ;; Whether or not to block emacs until eclimd is ready (default nil)
-   eclimd-wait-for-process t)
+  ;; 加载核心 key绑定
+  (set-main-key )
+
   (set-buffer-file-coding-system 'utf-8)
   (add-to-list 'file-coding-system-alist '("\\.php" . utf-8) )
   (add-to-list 'file-coding-system-alist '("\\.go" . utf-8) )
@@ -645,264 +687,15 @@ you should place your code here."
 
   ;; 关闭 生成 .#filename 文件
   (setq create-lockfiles nil)
-  ;; google translate
-  (require 'google-translate)
 
 
-  ;;If google-translate-enable-ido-completion is non-NIL, the input will be read with ido-style completion.
-  (setq-default google-translate-enable-ido-completion t)
-
-  (setq-default google-translate-default-source-language "en")
-  (setq-default google-translate-default-target-language "zh-CN")
   (setq lsp-python-ms-python-executable  "/usr/bin/python3")
   (require 'font-lock+ )
 
-  (setq go-format-before-save t)
 
 
   (load  (expand-file-name "php-align.el" dotspacemacs-directory) )
-  (load  (expand-file-name "js2-align.el" dotspacemacs-directory) )
-  (load  (expand-file-name "helm-ac-php-apropros.el" dotspacemacs-directory) )
-  (dolist (mode (list
-                 'emacs-lisp-mode
-                 'php-mode
-                 'js2-mode
-                 'vue-mode
-                 'markdown-mode
-                 'gitconfig-mode
-                 'typescript-mode
-                 'typescript-tsx-mode
-                 'fundamental-mode
-                 'web-mode
-                 'scss-mode
-                 'c-mode
-                 'sql-mode
-                 'json-mode
-                 'dart-mode
-                 'go-mode
-                 'org-mode
-                 'sh-mode
-                 'js2-mode
-                 'java-mode
-                 'conf-javaprop-mode
-                 'conf-mode
-                 'ruby-mode
-                 ;'elixir-mode
-                 'yaml-mode
-                 'dotenv-mode
-                 'nxml-mode
-                 'toml-mode
-                 ;;'erlang-mode
-                 'rust-mode
-                 'html-mode
-                 'conf-unix-mode
-                 'lua-mode
-                 'nginx-mode
-                 'css-mode
-                 'help-mode
-                 'text-mode
-                 'python-mode
-                 'protobuf-mode
-                 'makefile-gmake-mode
-                 'conf-space-mode
-                 'latex-mode
-                 'dockerfile-mode
-                 'gitignore-mode
-                 ))
-    (spacemacs/set-leader-keys-for-major-mode  mode "w" 'save-buffer)
-    ;;(spacemacs/set-leader-keys-for-major-mode  mode "d" 'youdao-dictionary-search-at-point-tooltip )
-    (spacemacs/set-leader-keys-for-major-mode  mode "W" '(lambda()
-                                                           (interactive )
-                                                           (whitespace-cleanup)
-                                                           (save-buffer )  )  )
 
-    (spacemacs/set-leader-keys-for-major-mode  mode "u" 'upper-or-lower-whole-word)
-    (spacemacs/set-leader-keys-for-major-mode  mode "L" 'revert-buffer )
-    (spacemacs/set-leader-keys-for-major-mode  mode "a" 'switch-file-opt )
-    (spacemacs/set-leader-keys-for-major-mode  mode "A" 'switch-file-opt-proto )
-    (spacemacs/set-leader-keys-for-major-mode  mode "o" 'other-window )
-    (when  (string= mode 'php-mode)
-      (spacemacs/set-leader-keys-for-major-mode  mode "D" 'my-jump-table-sql )
-      )
-    (when  (string= mode 'typescript-mode)
-      (spacemacs/set-leader-keys-for-major-mode  mode "," 'ts-fix-code)
-      )
-
-
-    (unless (string= mode 'go-mode)
-      (spacemacs/set-leader-keys-for-major-mode  mode "e" 'cleanup-and-goto-error)
-
-        )
-      (spacemacs/set-leader-keys-for-major-mode  mode "\""
-      ;;(spacemacs/set-leader-keys-for-major-mode 'php-mode  "\""
-      '(lambda()
-         (interactive )
-         (if (ac-php--in-string-or-comment-p)
-             (cond
-              ((string= major-mode "php-mode")
-               (progn
-
-                 (insert  "\" . \"")
-                 (backward-char 4 )
-                 ))
-              )
-           (progn ;;单词加双引号
-             (save-excursion
-                (backward-word)
-                (insert "\"")
-                (forward-word)
-                (insert "\"")
-               )
-            )
-           )))
-
-    )
-
-
-  ;;(define-key evil-motion-state-map (kbd "*") 'evil-ex-search-word-forward)
-  (spacemacs/set-leader-keys-for-major-mode  'php-mode "r" 'ac-php-remake-tags )
-  (spacemacs/set-leader-keys-for-major-mode  'php-mode "i" 'flycheck-display-error-at-point )
-  (spacemacs/set-leader-keys-for-major-mode  'php-mode "f" 'ac-php-gen-def )
-  (spacemacs/set-leader-keys-for-major-mode  'php-mode "m" 'php-mode-make)
-  (spacemacs/set-leader-keys-for-major-mode  'protobuf-mode "m" 'core-server-make )
-  (spacemacs/set-leader-keys-for-major-mode  'go-mode "m" 'go-core-server-make )
-  (spacemacs/set-leader-keys-for-major-mode  'dart-mode "m" 'flutter-monitor )
-
-  (spacemacs/set-leader-keys-for-major-mode  'java-mode "f" 'java-gen-get-set-code  )
-
-  (spacemacs/set-leader-keys-for-major-mode  'emacs-lisp-mode "," nil)
-;  (setq flycheck-erlang-include-path '(
-;
-;                                       "/home/jim/ejabberd-17.08/deps/xmpp/include"
-;                                       "/home/jim/ejabberd-17.08/deps/fast_xml/include"
-;                                       "/home/jim/ejabberd-17.08/deps/lager/include"
-;                                       "/home/jim/ejabberd-17.08/deps/cache_tab/include"
-;                                       "/home/jim/ejabberd-17.08/deps/p1_utils/include"
-;                                       "/home/jim/ejabberd-17.08/include"
-;
-;                                       ) )
-
-
-  ;;(edts-project-override "~/my-project" (:name "my-project-dev"
-   ;;                                              :node-name "my-project-dev"))
-
-
-
-
-  (add-hook 'vue-mode-hook '(lambda ( )
-                              (web-mode)
-                                (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
-                              ))
-  (add-hook 'lsp-completion-mode-hook '(lambda ( )
-                                         (set (make-local-variable 'completion-at-point-functions ) nil)
-                              ))
-
-  ;;
-
-  (add-hook 'dart-mode-hook '(lambda ( )
-                              (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
-
-
-                              (my-set-evil-local-map  "\C-t"      'xref-pop-marker-stack )
-                              (lsp-ui-mode nil)
-                              ;;(lsp-completion--disable )
-
-
-                              (set (make-local-variable 'my-completion-at-point-functions ) '(lsp-completion-at-point) )
-                              (set (make-local-variable 'company-backends)
-                                   '(company-my-capf ))
-                              ))
-  (add-hook 'c-mode-hook '(lambda ( )
-                               (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
-
-
-                               (my-set-evil-local-map  "\C-t"      'xref-pop-marker-stack )
-                               (lsp-ui-mode nil)
-                               ;;(lsp-completion--disable )
-
-
-                               (set (make-local-variable 'my-completion-at-point-functions ) '(lsp-completion-at-point) )
-                               (set (make-local-variable 'company-backends)
-                                    '(company-my-capf ))
-                               ))
-
-
-  (add-hook 'php-mode-hook '(lambda ( )
-                              (require 'php-align)
-                              (php-align-setup)
-                              (require 'helm-ac-php-apropros)
-
-                              (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
-
-                              (my-set-evil-not-insert-local-map "g\C-]"   'my-jump-merber-class )
-                              (my-set-evil-local-map  "\C-t"      'xref-pop-marker-stack )
-                              (flycheck-mode)
-                              ))
-  (add-hook 'go-mode-hook '(lambda ( )
-
-
-                             (setq go-packages-function  'go-packages-native)
-                             (setq go-packages-function   'my-go-packages-gopkgs)
-                              (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
-
-                              (spacemacs/set-leader-keys-for-major-mode  'go-mode "e" 'cleanup-and-goto-error)
-                              (set (make-local-variable 'my-completion-at-point-functions ) '(lsp-completion-at-point) )
-                              (set (make-local-variable 'company-backends)
-                                   '(company-my-capf ))
-                              (my-set-evil-local-map  "\C-t"      'xref-pop-marker-stack )
-
-
-                              ))
-
-
-  (add-hook 'python-mode-hook '(lambda ( )
-                              (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
-                              (my-set-evil-local-map  "\C-t"      'xref-pop-marker-stack )
-                              ))
-
-  (add-hook 'java-mode-hook '(lambda ( )
-                                 (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
-                                 (my-set-evil-local-map  "\C-t"      'meghanada-back-jump )
-
-                                 (set (make-local-variable 'company-backends)
-                                      '(company-meghanada ))
-                                 ))
-
-  (add-hook 'js2-mode-hook '(lambda ( )
-                              (require 'js2-align)
-                              (js2-align-setup)
-                              (spacemacs/set-leader-keys-for-major-mode  js2-mode "w" 'save-buffer)
-                              (setq js2-strict-trailing-comma-warning nil )
-                              (setq js2-strict-missing-semi-warning  nil)
-                              ))
-  (add-hook 'typescript-mode-hook '(lambda ( )
-                                     (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
-                                     (my-set-evil-local-map "\C-]"   'tide-jump-to-definition )
-                                     (my-set-evil-local-map "\C-t"   'tide-jump-back )
-
-                                     ))
-
-
-  (add-hook 'erlang-mode-hook '(lambda ( )
-                                     (my-set-evil-local-map "\C-]"   'edts-find-source-under-point )
-
-                                     ))
-
-
-
-  (add-hook
-   'org-mode-hook
-   '(lambda ( )
-      (my-set-evil-local-map (kbd "C-S-j")     'switch-file-term )
-      ))
-
-
-
-  (add-hook
-   'web-mode-hook
-   '(lambda ( )
-      (my-set-evil-local-map "\C-]"   'tide-jump-to-definition )
-      ))
 
 
   ;;关闭 lsp-ui-doc
@@ -924,18 +717,13 @@ you should place your code here."
   (setq lsp-enable-file-watchers nil)
   (setq lsp-enable-folding nil)
 
-  (setq dart-indent-trigger-commands
-    '())
+  (setq dart-indent-trigger-commands '())
 
  ;;(setq    nil)
 
 
 
-  ;;关闭tide warning
-
-  ;;(setq tide-filter-out-warning-completions t)
   (setq flycheck-navigation-minimum-level 'warning)
-  ;;(setq tide-tsserver-executable  "node_modules/typescript/bin/tsserver" )
 
 
   (require 'evil)
@@ -945,8 +733,6 @@ you should place your code here."
   (global-set-key (kbd "<f8>")    'switch-file-term)
   (global-set-key (kbd "C-S-j")    'switch-file-term)
 
-  ;;(global-set-key (kbd "s-x")    'counsel-M-x )
-  ;;(set-evil-all-state-key "\C-^"  'ivy-switch-buffer )
 
   (global-set-key (kbd "s-x")    'helm-M-x )
   (set-evil-all-state-key "\C-^"  'helm-mini )
@@ -993,14 +779,6 @@ you should place your code here."
 
 
 
-  ;; (when (check-in-linux )
-  ;;   (x-send-client-message
-  ;;    nil 0 nil "_NET_WM_STATE" 32
-  ;;    '(2 "_NET_WM_STATE_MAXIMIZED_HORZ" 0))
-  ;;   (x-send-client-message
-  ;;    nil 0 nil "_NET_WM_STATE" 32
-  ;;    '(2 "_NET_WM_STATE_MAXIMIZED_VERT" 0)) )
-
 
 
   (global-set-key (kbd  "C-/"  ) nil)
@@ -1008,8 +786,6 @@ you should place your code here."
   (define-key undo-tree-map (kbd "C-/")  nil)
   (global-set-key  (kbd  "C-/"  )   'comment-or-uncomment-region-or-whole-line )
 
-
-  ;;(add-hook 'after-save-hook 'ts2js)
 
 
   (custom-set-faces
@@ -1021,6 +797,24 @@ you should place your code here."
 
   (global-set-key (kbd "M-w")   'copy-region-or-whole-line)
   (global-set-key (kbd "s-w")   'copy-region-or-whole-line)
+
+
+  (add-hook 'go-mode-hook '(lambda ( )
+
+
+                             (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
+
+                             ))
+  (add-hook 'php-mode-hook '(lambda ( )
+                              (require 'php-align)
+                              (php-align-setup)
+
+                              (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
+
+                              (my-set-evil-not-insert-local-map "g\C-]"   'my-jump-merber-class )
+                              ))
+
+
 ;
   ;; 等号对齐
   (define-key evil-visual-state-map (kbd "=")
@@ -1200,9 +994,6 @@ you should place your code here."
   (setq ac-php-project-root-dir-use-truename   nil )
   (setq flycheck-phpmd-rulesets (list  (concat (getenv "HOME") "/spacemacs-config/phpmd.xml"  ) ))
 
-  ;;清理检查
-  (setq php-syntax-propertize-functions
-    '())
 
   (setq frame-title-format  '("file: %f "  ))
   (setq yas-snippet-dirs   (list  "~/.spacemacs.d/my-yas"  )  )
@@ -1216,16 +1007,6 @@ you should place your code here."
    '(flycheck-phpcs-standard (concat (getenv "HOME") "/spacemacs-config/ruleset.xml" ))
   )
 
- ;; (custom-set-variables
- ;;  '(phpcbf-standard "PSR2" ))
-
-  ;; Auto format on save.
-  ;;(add-hook 'php-mode-hook 'phpcbf-enable-on-save)
-  ;;(add-hook 'before-save-hook 'php-cs-fixer-before-save)
-
-  ;;(require 'edts-start)
-
-  ;;(add-hook 'buffer-list-update-hook 'set-admin-title  )
 
   (add-hook
    'term-mode-hook

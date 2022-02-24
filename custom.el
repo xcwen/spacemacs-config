@@ -26,6 +26,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(highlight-parentheses-highlight ((nil (:weight ultra-bold))))
  '(term-color-blue ((t (:background "blue" :foreground "steel blue"))))
  '(term-color-green ((t (:background "green3" :foreground "lime green"))))
  '(term-color-red ((t (:background "red3" :foreground "brown"))))

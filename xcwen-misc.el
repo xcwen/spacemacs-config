@@ -232,6 +232,23 @@ The test for presence of the car of ELT-CONS is done with `equal'."
   (define-key evil-visual-state-map key  func )
   )
 
+(defun set-evil-main-state-key (  key func )
+  (setq key  (concat "," key ))
+  (define-key evil-normal-state-map  key  func )
+  (define-key evil-visual-state-map key  func )
+  (define-key evil-normal-state-map key  func )
+  )
+
+
+(defun set-evil-main-state-key-on-mode ( mode-map  key func )
+  (setq key  (concat "," key ))
+  (evil-define-key 'normal  mode-map  key  func )
+  (evil-define-key 'motion mode-map  key  func )
+  (evil-define-key 'virtual mode-map  key  func )
+  )
+
+
+
 
 (defun set-evil-normal-state-key-on-mode ( mode-map key func )
   "D. MODE-MAP KEY FUNC ."
@@ -1861,9 +1878,15 @@ If FORWARD is nil, search backward, otherwise forward."
   (define-key evil-insert-state-local-map (kbd key ) fun)
   (define-key evil-motion-state-local-map (kbd  key) fun)
   )
+
+
 (defun my-set-evil-not-insert-local-map( key fun  )
   (define-key evil-normal-state-local-map (kbd key ) fun)
   (define-key evil-motion-state-local-map (kbd  key) fun)
+  )
+
+(defun my-set-evil-main-local-map( key fun  )
+  (my-set-evil-not-insert-local-map (concat  "," key ) fun )
   )
 
 (defun my-jump-set-evil-local-map( jump-fun  &optional back-fun   )
