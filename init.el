@@ -650,17 +650,23 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
        )))
 
 
-  (set-evil-main-state-key-on-mode php-mode-map "D" 'my-jump-table-sql  )
 
-  (set-evil-main-state-key-on-mode  php-mode-map "r" 'ac-php-remake-tags )
-  (set-evil-main-state-key-on-mode  php-mode-map "i" 'flycheck-display-error-at-point )
-  (set-evil-main-state-key-on-mode  php-mode-map "f" 'ac-php-gen-def )
-  (set-evil-main-state-key-on-mode  php-mode-map "m" 'php-mode-make)
-  (set-evil-main-state-key-on-mode  protobuf-mode-map "m" 'core-server-make )
-  (set-evil-main-state-key-on-mode  go-mode-map "m" 'go-core-server-make )
-  (set-evil-main-state-key-on-mode  dart-mode-map "m" 'flutter-monitor )
+  (add-hook 'php-mode-hook
+            '(lambda ( )
+               (set-evil-main-state-key-on-mode php-mode-map "D" 'my-jump-table-sql  )
 
-  (set-evil-main-state-key-on-mode  java-mode-map "f" 'java-gen-get-set-code  )
+               (set-evil-main-state-key-on-mode  php-mode-map "r" 'ac-php-remake-tags )
+               (set-evil-main-state-key-on-mode  php-mode-map "i" 'flycheck-display-error-at-point )
+               (set-evil-main-state-key-on-mode  php-mode-map "f" 'ac-php-gen-def )
+               (set-evil-main-state-key-on-mode  php-mode-map "m" 'php-mode-make)
+			         ))
+
+  ;;(set-evil-main-state-key-on-mode  protobuf-mode-map "m" 'core-server-make )
+
+  ;;(set-evil-main-state-key-on-mode  go-mode-map "m" 'go-core-server-make )
+  ;;(set-evil-main-state-key-on-mode  dart-mode-map "m" 'flutter-monitor )
+
+  ;;(set-evil-main-state-key-on-mode  java-mode-map "f" 'java-gen-get-set-code  )
 
 
   )
