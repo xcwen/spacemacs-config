@@ -169,7 +169,7 @@ apt-get install python-virtualenv
 
 apt-get install golang 
 
-GO111MODULE=on go get golang.org/x/tools/gopls@latest
+GO111MODULE=on go install golang.org/x/tools/gopls@latest
 
 
 ```

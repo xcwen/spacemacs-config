@@ -138,6 +138,7 @@ This function should only modify configuration layer settings."
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
    dotspacemacs-excluded-packages '( php-extras
+                                     phpcbf
                                      auto-highlight-symbol
                                      version-control
                                      git-modes
@@ -1092,6 +1093,7 @@ you should place your code here."
                                               new-line
                                               mode-enabled))
 
+  (setq undo-tree-auto-save-history nil)
 
 
   (set-frame-position (selected-frame) 1920 0)
