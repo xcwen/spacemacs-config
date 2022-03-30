@@ -854,6 +854,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
                 (when (  f-exists? js-obj-file ) (setq obj-file js-obj-file)  )
                 )))
           ;;check vue .vue -> .ts
+          (message "----%s" path-name)
           (setq tmp-arr (s-match  "/\\([a-zA-Z0-9_-]*\\)/\\([a-zA-Z0-9_-]*\\)\\.vue"  path-name ) )
           (when tmp-arr
             (setq  ctrl-name   (nth 1 tmp-arr) )

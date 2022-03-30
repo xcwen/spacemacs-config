@@ -138,7 +138,7 @@ This function should only modify configuration layer settings."
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
    dotspacemacs-excluded-packages '( php-extras
-                                     phpcbf
+                                     ;;phpcbf
                                      auto-highlight-symbol
                                      version-control
                                      git-modes
@@ -821,6 +821,16 @@ you should place your code here."
                               (my-set-evil-not-insert-local-map "g\C-]"   'my-jump-merber-class )
                               ))
 
+  (add-hook 'typescript-mode-hook '(lambda ( )
+                              (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
+                              ))
+
+  (add-hook 'java-mode-hook '(lambda ( )
+                                     (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
+                                     ))
+
+
+
 
 ;
   ;; 等号对齐
@@ -949,6 +959,12 @@ you should place your code here."
                (define-key Info-mode-map (kbd "P")  'Info-next )
 
                ))
+
+  (add-hook 'vue-mode-hook
+            '(lambda()
+               (web-mode)
+               ))
+
 
 
   (add-hook 'minibuffer-inactive-mode-hook
