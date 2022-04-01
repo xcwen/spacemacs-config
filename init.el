@@ -829,6 +829,11 @@ you should place your code here."
                                      (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
                                      ))
 
+  (add-hook 'js-mode-hook '(lambda ( )
+                             (typescript-mode)
+                               ))
+
+
 
 
 
