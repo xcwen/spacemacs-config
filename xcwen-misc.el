@@ -1905,7 +1905,7 @@ If FORWARD is nil, search backward, otherwise forward."
   )
 (defun core-server--get-project-root-dir ()
   "Get the project root directory of the curent opened buffer."
-  (ac-php--debug "Lookup for the project root...")
+  ;;(ac-php--debug "Lookup for the project root...")
   (let (project-root-dir tags-file (file-name buffer-file-name))
 
     ;; 1. Get working directory using `buffer-file-name' or `default-directory'
@@ -1936,7 +1936,7 @@ If FORWARD is nil, search backward, otherwise forward."
 
 (defun go-core-server--get-project-root-dir ()
   "Get the project root directory of the curent opened buffer."
-  (ac-php--debug "Lookup for the project root...")
+  ;;(ac-php--debug "Lookup for the project root...")
   (let (project-root-dir tags-file (file-name buffer-file-name))
 
     ;; 1. Get working directory using `buffer-file-name' or `default-directory'
@@ -1963,7 +1963,7 @@ If FORWARD is nil, search backward, otherwise forward."
         (message "core-server : Unable to resolve project root")
         (setq project-root-dir nil)))
 
-    (ac-php--debug "Lookup for the project root:[%s]"  project-root-dir    )
+    ;;(ac-php--debug "Lookup for the project root:[%s]"  project-root-dir    )
     project-root-dir))
 
 (defun php-mode-make()

@@ -68,6 +68,7 @@ This function should only modify configuration layer settings."
      (auto-completion :variables
                       auto-completion-enable-help-tooltip t
       )
+
      yaml
      ;;erlang
      php
@@ -111,6 +112,7 @@ This function should only modify configuration layer settings."
       markdown
 
      ;;multiple-cursors
+      (multiple-cursors :variables multiple-cursors-backend 'evil-mc)
       (org
        :variables org-enable-appear-support t)
      ;; (shell :variables
@@ -131,7 +133,7 @@ This function should only modify configuration layer settings."
    ;; `:location' property: '(your-package :location "~/path/to/your-package/")
    ;; Also include the dependencies as they will not be resolved automatically.
    ;;dotspacemacs-additional-packages '()
-   dotspacemacs-additional-packages '(vue-mode  multi-term )
+   dotspacemacs-additional-packages '(vue-mode  multi-term zencoding-mode )
 
 
    ;; A list of packages that cannot be updated.
@@ -651,6 +653,10 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
        )))
 
 
+  (set-evil-all-state-key (kbd "C-S-j")    'switch-file-term) 
+
+  (add-hook 'html-mode-hook 'zencoding-mode)
+  (add-hook 'vue-mode-hook 'zencoding-mode)
 
   (add-hook 'php-mode-hook
             '(lambda ( )
