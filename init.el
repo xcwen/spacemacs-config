@@ -112,7 +112,7 @@ This function should only modify configuration layer settings."
       markdown
 
      ;;multiple-cursors
-      (multiple-cursors :variables multiple-cursors-backend 'evil-mc)
+      ;;(multiple-cursors :variables multiple-cursors-backend 'evil-mc)
       (org
        :variables org-enable-appear-support t)
      ;; (shell :variables
@@ -658,6 +658,9 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
   (add-hook 'html-mode-hook 'zencoding-mode)
   (add-hook 'vue-mode-hook 'zencoding-mode)
 
+
+
+
   (add-hook 'php-mode-hook
             '(lambda ( )
                (set-evil-main-state-key-on-mode php-mode-map "D" 'my-jump-table-sql  )
@@ -1126,6 +1129,7 @@ you should place your code here."
   (set-frame-position (selected-frame) 1920 0)
   (set-frame-width (selected-frame) 91)
   (set-frame-height (selected-frame) 91)
+  (recentf-load-list)
 
   )
 (defun dotspacemacs/emacs-custom-settings ()
