@@ -4,6 +4,7 @@
 ;;; Code:
 
 (setq-default  my-font-size 24 )
+(setq-default  my-keyboard-input-dev "/dev/input/event7" )
 
 (load  (expand-file-name "init-ex.el" dotspacemacs-directory) t t  t nil )
 
