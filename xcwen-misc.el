@@ -706,6 +706,10 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 (defvar  show-baidu-dict-flag nil
   "")
 
+(defvar  show-baidu-dict-cur-point nil
+  "")
+
+
 (defun show-baidu-dict-close()
   (when  show-baidu-dict-flag
 
@@ -716,10 +720,30 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 (defun show-baidu-dict-at-region()
   "DOCSTRING"
   (interactive)
+  (let ( (cur-evil-visual-state-flag (evil-visual-state-p) )  )
   (setq show-baidu-dict-flag t   )
+  (setq show-baidu-dict-cur-point (point) )
+  (unless  cur-evil-visual-state-flag
+    ;;(save-excursion
+    (evil-backward-word-begin )
+    (evil-visual-state)
+    (evil-forward-word-end )
+    ;;)
+    )
   (shell-command-to-string (concat "/home/jim/desktop/key_send/send_baidu_dict  " my-keyboard-input-dev "  1") )
-  (evil-normal-state)
-  )
+  (if cur-evil-visual-state-flag
+    (evil-normal-state)
+    (progn
+      (run-at-time
+       1 nil
+       '(lambda()
+          (evil-normal-state)
+          (goto-char show-baidu-dict-cur-point)
+          ))
+
+      )
+    )
+  ))
 
 (defun switch-file-opt ()
   "DOCSTRING"
