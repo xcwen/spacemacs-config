@@ -885,37 +885,7 @@ you should place your code here."
                                                       (term-send-esc )
                                                       )
                                                   (fcitx-inactivate-input-method)
-                                                  (evil-force-normal-statesimuate key 29, 1
-simuate key 42, 1
-simuate key 31, 1
-simuate key 31, 0
-simuate key 29, 0
-simuate key 42, 0
-simuate key 29, 1
-simuate key 42, 1
-simuate key 31, 1
-simuate key 31, 0
-simuate key 29, 0
-simuate key 42, 0
-simuate key 29, 1
-simuate key 42, 1
-simuate key 31, 1
-simuate key 31, 0
-simuate key 29, 0
-simuate key 42, 0
-simuate key 29, 1
-simuate key 42, 1
-simuate key 31, 1
-simuate key 31, 0
-simuate key 29, 0
-simuate key 42, 0
-simuate key 29, 1
-simuate key 42, 1
-simuate key 17, 1
-simuate key 17, 0
-simuate key 29, 0
-simuate key 42, 0
-)
+                                                  (evil-force-normal-state)
                                                   )
 
                                                 ))
@@ -1133,7 +1103,7 @@ simuate key 42, 0
       (add-to-list 'term-bind-key-alist '( "C-S-t". (lambda() (interactive) (multi-term)  ) ))
       (add-to-list 'term-bind-key-alist '( "C-S-h". (lambda() (interactive) (multi-term-prev 1 )   ) ))
       (add-to-list 'term-bind-key-alist '( "C-S-l". (lambda() (interactive) ( multi-term-next 1 )   ) ))
-      (add-to-list 'term-bind-key-alist '( "C-S-w". my-join-line  ))
+      (add-to-list 'term-bind-key-alist '( "C-S-D". my-join-line  ))
 
 
       ;;(add-to-list 'term-bind-key-alist '( "C-c".  copy-region-or-whole-line  ))

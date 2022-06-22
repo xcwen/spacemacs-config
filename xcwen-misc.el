@@ -708,7 +708,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 
 (defun show-baidu-dict-close()
   (when  show-baidu-dict-flag
-    (shell-command-to-string "/home/jim/desktop/key_send/send_baidu_dict /dev/input/event7 0" )
+    (shell-command-to-string "/home/jim/desktop/key_send/send_baidu_dict /dev/input/event7 0" ) 
     (setq show-baidu-dict-flag nil)
     )
   )
@@ -716,7 +716,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
   "DOCSTRING"
   (interactive)
   (setq show-baidu-dict-flag t   )
-  (shell-command-to-string "/home/jim/desktop/key_send/send_baidu_dict /dev/input/event7 1" )
+   (shell-command-to-string "/home/jim/desktop/key_send/send_baidu_dict /dev/input/event7 1" )
   (evil-normal-state)
   )
 
