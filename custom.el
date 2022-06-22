@@ -3,6 +3,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   '("bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default))
  '(evil-want-Y-yank-to-eol nil)
  '(flycheck-phpcs-standard (concat (getenv "HOME") "/spacemacs-config/ruleset.xml"))
  '(package-selected-packages
@@ -27,7 +29,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(highlight-parentheses-highlight ((nil (:weight ultra-bold))))
+ '(highlight-parentheses-highlight ((nil (:weight ultra-bold))) t)
  '(term-color-blue ((t (:background "blue" :foreground "steel blue"))))
  '(term-color-green ((t (:background "green3" :foreground "lime green"))))
  '(term-color-red ((t (:background "red3" :foreground "brown"))))
