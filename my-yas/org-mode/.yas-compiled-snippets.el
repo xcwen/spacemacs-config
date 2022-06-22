@@ -39,4 +39,4 @@
                        ("<au" "#+author: $0" "author" nil nil nil "/home/jim/.spacemacs.d/my-yas/org-mode/author" nil nil)))
 
 
-;;; Do not edit! File generated at Tue Jun 21 09:51:15 2022
+;;; Do not edit! File generated at Wed Jun 22 15:51:19 2022
