@@ -152,4 +152,4 @@
                         nil "/home/jim/.spacemacs.d/my-yas/php-mode/__call" nil nil)))
 
 
-;;; Do not edit! File generated at Wed Nov 17 15:46:34 2021
+;;; Do not edit! File generated at Tue Jun 21 09:51:15 2022

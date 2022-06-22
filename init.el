@@ -48,6 +48,8 @@ This function should only modify configuration layer settings."
              python-lsp-server 'pyright
              )
      nginx
+
+     (templates :variables templates-private-directory "~/.spacemacs.d/templates")
      (sql :variables
           sql-backend 'lsp
           sql-lsp-sqls-workspace-config-path 'workspace)
@@ -148,8 +150,8 @@ This function should only modify configuration layer settings."
                                      chinese-pyim
                                      org-contrib
                                      ;;go-eldoc
-				                             hybrid-mode
-				                             evil-unimpaired
+                                     hybrid-mode
+                                     evil-unimpaired
                                      forge
                                      company-go
                                      pyim
@@ -629,6 +631,8 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
   (set-evil-main-state-key "a" 'switch-file-opt )
   (set-evil-main-state-key "A" 'switch-file-opt-proto )
   (set-evil-main-state-key "e" 'cleanup-and-goto-error)
+  (set-evil-main-state-key "d" 'show-baidu-dict-at-region)
+
 
   (set-evil-main-state-key "\""
   '(lambda()
@@ -653,7 +657,7 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
        )))
 
 
-  (set-evil-all-state-key (kbd "C-S-j")    'switch-file-term) 
+  (set-evil-all-state-key (kbd "C-S-j")    'switch-file-term)
 
   (add-hook 'html-mode-hook 'zencoding-mode)
   (add-hook 'vue-mode-hook 'zencoding-mode)
@@ -669,7 +673,7 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
                (set-evil-main-state-key-on-mode  php-mode-map "i" 'flycheck-display-error-at-point )
                (set-evil-main-state-key-on-mode  php-mode-map "f" 'ac-php-gen-def )
                (set-evil-main-state-key-on-mode  php-mode-map "m" 'php-mode-make)
-			         ))
+               ))
 
   ;;(set-evil-main-state-key-on-mode  protobuf-mode-map "m" 'core-server-make )
 
@@ -821,6 +825,10 @@ you should place your code here."
                              (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
 
                              ))
+  (add-hook 'web-mode-hook '(lambda ( )
+                             (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
+                             ))
+
   (add-hook 'php-mode-hook '(lambda ( )
                               (require 'php-align)
                               (php-align-setup)
@@ -833,6 +841,10 @@ you should place your code here."
   (add-hook 'typescript-mode-hook '(lambda ( )
                               (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
                               ))
+
+  (add-hook 'lua-mode-hook '(lambda ( )
+                                     (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
+                                     ))
 
   (add-hook 'java-mode-hook '(lambda ( )
                                      (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
@@ -873,7 +885,37 @@ you should place your code here."
                                                       (term-send-esc )
                                                       )
                                                   (fcitx-inactivate-input-method)
-                                                  (evil-force-normal-state)
+                                                  (evil-force-normal-statesimuate key 29, 1
+simuate key 42, 1
+simuate key 31, 1
+simuate key 31, 0
+simuate key 29, 0
+simuate key 42, 0
+simuate key 29, 1
+simuate key 42, 1
+simuate key 31, 1
+simuate key 31, 0
+simuate key 29, 0
+simuate key 42, 0
+simuate key 29, 1
+simuate key 42, 1
+simuate key 31, 1
+simuate key 31, 0
+simuate key 29, 0
+simuate key 42, 0
+simuate key 29, 1
+simuate key 42, 1
+simuate key 31, 1
+simuate key 31, 0
+simuate key 29, 0
+simuate key 42, 0
+simuate key 29, 1
+simuate key 42, 1
+simuate key 17, 1
+simuate key 17, 0
+simuate key 29, 0
+simuate key 42, 0
+)
                                                   )
 
                                                 ))
@@ -1139,6 +1181,3 @@ Emacs customize menu instead.
 This function is called at the very end of Spacemacs initialization."
 
 )
-
-
-

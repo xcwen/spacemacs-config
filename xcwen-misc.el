@@ -703,6 +703,23 @@ The test for presence of the car of ELT-CONS is done with `equal'."
     )
   )
 
+(defvar  show-baidu-dict-flag nil
+  "")
+
+(defun show-baidu-dict-close()
+  (when  show-baidu-dict-flag
+    (shell-command-to-string "/home/jim/desktop/key_send/send_baidu_dict /dev/input/event7 0" )
+    (setq show-baidu-dict-flag nil)
+    )
+  )
+(defun show-baidu-dict-at-region()
+  "DOCSTRING"
+  (interactive)
+  (setq show-baidu-dict-flag t   )
+  (shell-command-to-string "/home/jim/desktop/key_send/send_baidu_dict /dev/input/event7 1" )
+  (evil-normal-state)
+  )
+
 (defun switch-file-opt ()
   "DOCSTRING"
   (interactive)
@@ -1017,6 +1034,8 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
     (call-process  "fcitx-remote" nil 0 nil  "-c") )
   (when (check-in-mac)
     (call-process  "input_switch" nil 0 nil  "-s" "ABC") )
+
+  (show-baidu-dict-close)
 
   )
 
@@ -1737,6 +1756,8 @@ object satisfying `yas--field-p' to restrict the expansion to."
                 )))
 
            ((and (string= major-mode "java-mode")  (eq ?\. c))
+            (company-complete  ) )
+           ((and (string= major-mode "lua-mode")  (eq ?\. c))
             (company-complete  ) )
            ((and (string= major-mode "python-mode")  (eq ?\. c))
             (company-complete  ) )

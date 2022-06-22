@@ -137,7 +137,7 @@ npm install typescript -g
 ```
 
 ### c++ 编码需要
-apt-get install clangd
+apt-get install clangd-11
 
 #### 从make/cmake 生成补全配置
 https://edward852.github.io/post/%E7%94%9F%E6%88%90compile_commands.json%E6%96%87%E4%BB%B6/
@@ -155,7 +155,7 @@ compile_commands.json 文件能够有效提高一些工具(比如说ccls1, vscod
 具体Bear的安装这里就不赘述了，按照 官方文档 来即可。
 
 安装之后，执行以下命令即可生成：
-
+bear make
 
 ###python  补全jedi 需要
 ```
