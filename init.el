@@ -42,6 +42,7 @@ This function should only modify configuration layer settings."
      (c-c++ :variables c-c++-backend 'lsp-clangd)
 
      (rust :variables rust-backend 'lsp)
+
      react
      csv
      ;;(python )
@@ -62,7 +63,7 @@ This function should only modify configuration layer settings."
      (lua :variables
           lua-backend 'lsp
           lua-lsp-server 'emmy
-          lsp-clients-emmy-lua-jar-path "/home/jim/dl/EmmyLua-LS-all.jar" ; default path
+          lsp-clients-emmy-lua-jar-path (concat (getenv "HOME")  "/.spacemacs.d/bin/EmmyLua-LS-all.jar") ; default path
           lsp-clients-emmy-lua-java-path "java") ; default path
 
      vimscript
@@ -77,8 +78,8 @@ This function should only modify configuration layer settings."
      php
      (go :variables
          go-tab-width 4
-         gofmt-command "goimports"
-         godoc-at-point-function 'godoc-gogetdoc
+         ;; gofmt-command "goimports
+         ;; godoc-at-point-function 'godoc-gogetdoc
          go-backend 'lsp
          go-format-before-save t
          ;;go-use-golangci-lint t
@@ -809,12 +810,12 @@ you should place your code here."
 
 
 
-  (custom-set-faces
-   '(term-color-blue ((t (:background "blue" :foreground "steel blue"))))
-   '(term-color-green ((t (:background "green3" :foreground "lime green"))))
-   '(term-color-red ((t (:background "red3" :foreground "brown"))))
-   '(tooltip ((t (:background "#555555" :foreground "#CCCCCC"))))
-   )
+  ;; (custom-set-faces
+  ;;  '(term-color-blue ((t (:background "blue" :foreground "steel blue"))))
+  ;;  '(term-color-green ((t (:background "green3" :foreground "lime green"))))
+  ;;  '(term-color-red ((t (:background "red3" :foreground "brown"))))
+  ;;  ;; '(tooltip ((t (:background "#555555" :foreground "#CCCCCC"))))
+  ;;  )
 
   (global-set-key (kbd "M-w")   'copy-region-or-whole-line)
   (global-set-key (kbd "s-w")   'copy-region-or-whole-line)
