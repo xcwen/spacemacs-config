@@ -145,10 +145,12 @@ This function should only modify configuration layer settings."
    ;; A list of packages that will not be installed and loaded.
    dotspacemacs-excluded-packages '( php-extras
                                      ;;phpcbf
-                                     auto-highlight-symbol
+                                     ;; auto-highlight-symbol
                                      version-control
                                      git-modes
                                      yasnippet-snippets
+				     php-auto-yasnippets
+
                                      chinese-pyim
                                      org-contrib
                                      ;;go-eldoc
