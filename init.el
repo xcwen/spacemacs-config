@@ -529,7 +529,7 @@ It should only modify the values of Spacemacs settings."
 
    ;; Format specification for setting the frame title.
    ;; %a - the `abbreviated-file-name', or `buffer-name'
-   ;; %t - `projectile-project-name'
+   ;; %t - `projectile-project-nameg
    ;; %I - `invocation-name'
    ;; %S - `system-name'
    ;; %U - contents of $USER
@@ -851,8 +851,10 @@ you should place your code here."
                                      ))
 
   (add-hook 'java-mode-hook '(lambda ( )
-                                     (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
-                                     ))
+
+                               (my-set-evil-local-map  "\C-t"      'meghanada-back-jump)
+                               (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
+                               ))
 
   (add-hook 'js-mode-hook '(lambda ( )
                              (typescript-mode)
@@ -1146,6 +1148,7 @@ you should place your code here."
   (set-frame-width (selected-frame) 91)
   (set-frame-height (selected-frame) 91)
   (recentf-load-list)
+  ;; (push '(alpha-background . 20) default-frame-alist)
 
   )
 (defun dotspacemacs/emacs-custom-settings ()
