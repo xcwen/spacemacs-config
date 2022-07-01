@@ -1782,6 +1782,19 @@ object satisfying `yas--field-p' to restrict the expansion to."
 
            ((and (string= major-mode "java-mode")  (eq ?\. c))
             (company-complete  ) )
+           ((and 
+                  (string= major-mode "rust-mode")
+                 (or
+                  ;; . 
+                  (eq ?\. c)
+                  ;; ::
+                  (and (eq ?: c)
+                       (eq ?: (char-before (1- (point)))))))
+
+            (message "do ac-source-php")
+            (company-complete  ))
+
+
            ((and (string= major-mode "lua-mode")  (eq ?\. c))
             (company-complete  ) )
            ((and (string= major-mode "python-mode")  (eq ?\. c))

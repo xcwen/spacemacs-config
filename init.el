@@ -39,6 +39,7 @@ This function should only modify configuration layer settings."
    '(clojure
      elixir
      systemd
+     (lsp :variables lsp-rust-server 'rust-analyzer)
      (c-c++ :variables c-c++-backend 'lsp-clangd)
 
      (rust :variables rust-backend 'lsp)
@@ -851,6 +852,11 @@ you should place your code here."
   (add-hook 'lua-mode-hook '(lambda ( )
                                      (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
                                      ))
+
+  (add-hook 'rust-mode-hook '(lambda ( )
+                              (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
+                              ))
+
 
   (add-hook 'java-mode-hook '(lambda ( )
 
