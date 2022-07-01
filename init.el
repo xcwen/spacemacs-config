@@ -4,9 +4,9 @@
 ;;; Code:
 
 (setq-default  my-font-size 24 )
-(setq-default  my-keyboard-input-dev "/dev/input/event7" )
+(setq-default  my-keyboard-input-dev "/dev/input/event7")
 
-(load  (expand-file-name "init-ex.el" dotspacemacs-directory) t t  t nil )
+;;(load  (expand-file-name "init-ex.el" dotspacemacs-directory) t t  t nil )
 
 
 (defun dotspacemacs/layers ()
@@ -708,6 +708,8 @@ you should place your code here."
 
   (setq left-fringe-width 48)
 
+
+  (setq my-keyboard-input-dev (s-trim (shell-command-to-string (concat  (getenv "HOME") "/desktop/key_send/get_kbd_eventid.sh" )) ))
 
   ;; 关闭 生成 .#filename 文件
   (setq create-lockfiles nil)
