@@ -636,6 +636,7 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
   (set-evil-main-state-key "a" 'switch-file-opt )
   (set-evil-main-state-key "A" 'switch-file-opt-proto )
   (set-evil-main-state-key "e" 'cleanup-and-goto-error)
+  (set-evil-main-state-key "i" 'lsp-ui-doc-show)
   (set-evil-main-state-key "d" 'show-baidu-dict-at-region)
 
 
@@ -900,6 +901,7 @@ you should place your code here."
                                                       )
                                                   (fcitx-inactivate-input-method)
                                                   (evil-force-normal-state)
+                                                  (lsp-ui-doc-hide)
                                                   )
 
                                                 ))
