@@ -636,9 +636,21 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
   (set-evil-main-state-key "a" 'switch-file-opt )
   (set-evil-main-state-key "A" 'switch-file-opt-proto )
   (set-evil-main-state-key "e" 'cleanup-and-goto-error)
-  (set-evil-main-state-key "i" 'lsp-ui-doc-show)
+  ;; (set-evil-main-state-key "i" 'lsp-ui-doc-show)
   (set-evil-main-state-key "d" 'show-baidu-dict-at-region)
 
+  (set-evil-main-state-key
+   "i"
+   '(lambda()
+      (interactive )
+      (flycheck-explain-error-at-point   )
+      (cond
+       ((string= major-mode "php-mode")
+        (progn
+          (ac-php-show-tip)
+          ))
+       (t (lsp-ui-doc-show))
+       )))
 
   (set-evil-main-state-key "\""
   '(lambda()
@@ -676,7 +688,6 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
                (set-evil-main-state-key-on-mode php-mode-map "D" 'my-jump-table-sql  )
 
                (set-evil-main-state-key-on-mode  php-mode-map "r" 'ac-php-remake-tags )
-               (set-evil-main-state-key-on-mode  php-mode-map "i" 'flycheck-display-error-at-point )
                (set-evil-main-state-key-on-mode  php-mode-map "f" 'ac-php-gen-def )
                (set-evil-main-state-key-on-mode  php-mode-map "m" 'php-mode-make)
                ))
