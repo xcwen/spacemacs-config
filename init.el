@@ -827,12 +827,6 @@ you should place your code here."
 
 
 
-  ;; (custom-set-faces
-  ;;  '(term-color-blue ((t (:background "blue" :foreground "steel blue"))))
-  ;;  '(term-color-green ((t (:background "green3" :foreground "lime green"))))
-  ;;  '(term-color-red ((t (:background "red3" :foreground "brown"))))
-  ;;  ;; '(tooltip ((t (:background "#555555" :foreground "#CCCCCC"))))
-  ;;  )
 
   (global-set-key (kbd "M-w")   'copy-region-or-whole-line)
   (global-set-key (kbd "s-w")   'copy-region-or-whole-line)
@@ -1082,6 +1076,12 @@ you should place your code here."
    '(phpcbf-standard (concat (getenv "HOME") "/spacemacs-config/ruleset.xml" ))
    '(flycheck-phpcs-standard (concat (getenv "HOME") "/spacemacs-config/ruleset.xml" ))
   )
+
+  ;; 设置sqlfmt : cnpm install -g sql-formatter
+  (setq sqlfmt-executable  "sql-formatter")
+  (setq sqlfmt-options  '())
+
+
 
 
   (add-hook
