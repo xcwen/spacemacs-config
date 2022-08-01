@@ -330,7 +330,7 @@ It should only modify the values of Spacemacs settings."
    ;; quickly tweak the mode-line size to make separators look not too crappy.
    ;;(if (string= (system-name) "jim-MacBookPro") 48 24  )
    dotspacemacs-default-font (list
-                              ;; "MesloLGS NF"
+                              ;;"MesloLGS NF"
                               "XHei Mono.Ubuntu"
                               ;;"Source Code Pro"
                                    ;;:size  (if (string= (system-name) "jim-PC" )  48 24  )
@@ -1103,6 +1103,9 @@ you should place your code here."
    'term-mode-hook
    '(lambda()
       (yas-minor-mode -1 )
+      ;; (message "=== selected: %s"  (selected-frame )  )
+      ;;  (set-face-attribute 'default (selected-frame ) :font "MesloLGS NF:weight=normal")
+      ;; (set-face-attribute 'default (selected-frame ) :font "XHei Mono.Ubuntu:weight=normal")
 
       (define-key evil-insert-state-local-map   (kbd "C-y")  'term-paste )
       (define-key evil-insert-state-local-map   (kbd "C-v")  'term-paste )

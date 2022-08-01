@@ -22,7 +22,7 @@
 
 ;;; Commentary:
 (defvar term-local-cmd-start-line-regex-str
-  "^╰❯ $"
+  "^╰─ $"
   "Doc ,line like:
 localhost:~/site-lisp/config$"
   )
