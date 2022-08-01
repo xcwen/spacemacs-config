@@ -329,7 +329,10 @@ It should only modify the values of Spacemacs settings."
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
    ;;(if (string= (system-name) "jim-MacBookPro") 48 24  )
-  dotspacemacs-default-font (list  "XHei Mono.Ubuntu"  ;;"Source Code Pro"
+   dotspacemacs-default-font (list
+                              ;; "MesloLGS NF"
+                              "XHei Mono.Ubuntu"
+                              ;;"Source Code Pro"
                                    ;;:size  (if (string= (system-name) "jim-PC" )  48 24  )
                                    :size (max (round(* my-font-size (string-to-number (shell-command-to-string "grep ScreenScaleFactors  ~/.config/deepin/qt-theme.ini | awk -F= '{print $2}' ") ))) my-font-size )
 
@@ -638,6 +641,18 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
   (set-evil-main-state-key "e" 'cleanup-and-goto-error)
   ;; (set-evil-main-state-key "i" 'lsp-ui-doc-show)
   (set-evil-main-state-key "d" 'show-baidu-dict-at-region)
+
+  (set-evil-main-state-key
+   "/"
+   '(lambda()
+      (interactive )
+      (cond
+       ((string= major-mode "php-mode")
+        (progn
+            (helm-projectile-grep (concat (projectile-project-root) "src/app" ) )
+          ))
+       (t  (spacemacs/helm-project-smart-do-search) )
+       )))
 
   (set-evil-main-state-key
    "i"
@@ -1164,6 +1179,9 @@ you should place your code here."
 
   (setq undo-tree-auto-save-history nil)
 
+
+  (setq multi-term-program "/bin/bash")
+  (setq multi-term-program "/bin/zsh")
 
   (set-frame-position (selected-frame) 1920 0)
   (set-frame-width (selected-frame) 91)
