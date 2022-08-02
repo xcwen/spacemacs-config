@@ -138,7 +138,7 @@ This function should only modify configuration layer settings."
    ;; `:location' property: '(your-package :location "~/path/to/your-package/")
    ;; Also include the dependencies as they will not be resolved automatically.
    ;;dotspacemacs-additional-packages '()
-   dotspacemacs-additional-packages '(vue-mode  multi-term zencoding-mode )
+   dotspacemacs-additional-packages '(vue-mode  multi-term zencoding-mode eterm-256color )
 
 
    ;; A list of packages that cannot be updated.
@@ -150,7 +150,7 @@ This function should only modify configuration layer settings."
                                      version-control
                                      git-modes
                                      yasnippet-snippets
-				     php-auto-yasnippets
+             php-auto-yasnippets
 
                                      chinese-pyim
                                      org-contrib
@@ -1102,6 +1102,7 @@ you should place your code here."
   (add-hook
    'term-mode-hook
    '(lambda()
+      (eterm-256color-mode)
       (yas-minor-mode -1 )
       ;; (message "=== selected: %s"  (selected-frame )  )
       ;;  (set-face-attribute 'default (selected-frame ) :font "MesloLGS NF:weight=normal")
