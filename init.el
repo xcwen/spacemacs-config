@@ -92,7 +92,8 @@ This function should only modify configuration layer settings."
                  typescript-backend 'tide
                  typescript-fmt-on-save t)
      ;; elixir
-     (java :variables java-backend 'meghanada)
+    ;; (java :variables java-backend 'meghanada)
+      (java :variables java-backend 'lsp)
      ;;(java )
      ruby
      javascript
@@ -623,6 +624,11 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
      ("org-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/org/")
      ("gnu-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")))
 
+ ;; (setq url-proxy-services
+ ;;       '(("no_proxy" . "^\\(localhost\\|10.*\\)")
+ ;;         ("http" . "127.0.0.1:41091")
+ ;;         ("https" . "127.0.0.1:41091")))
+ ;;(setq lsp-java-jdt-download-url "http://127.0.0.1:8080/jdt-language-server-1.14.0-202207211651.tar.gz")
 )
 
 
@@ -881,7 +887,11 @@ you should place your code here."
 
   (add-hook 'java-mode-hook '(lambda ( )
 
-                               (my-set-evil-local-map  "\C-t"      'meghanada-back-jump)
+
+                               ;;(xref-pop-marker-stack)
+                               ;; (my-set-evil-local-map  "\C-t"      'meghanada-back-jump)
+                                (my-set-evil-local-map  "\C-t"      'xref-pop-marker-stack)
+
                                (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
                                ))
 

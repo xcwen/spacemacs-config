@@ -91,43 +91,44 @@ localhost:~/site-lisp/config$"
       (setq file-path-str (concat  (getenv "HOME") "/" )))
 
     ;;(message "1.1")
-    (dolist  ( opt-buffer (buffer-list) )
+    ;; (dolist  ( opt-buffer (buffer-list) )
 
-      ;;(message "1.1.1")
-      (let (check-free-term)
-        (with-current-buffer opt-buffer
-          (setq check-free-term
-                (and
-                 ;;term-mode
-                 (string= "term-mode" major-mode)
-                 ;;本地，处于命令行完成状态
-                 (string-match term-local-cmd-start-line-regex-str (buffer-substring-no-properties (line-beginning-position) (line-end-position )))
-                 ;;同一个目录
-                 (string= file-path-str default-directory )
-                     ))
+    ;;   ;;(message "1.1.1")
+    ;;   (let (check-free-term)
+    ;;     (with-current-buffer opt-buffer
+    ;;       (setq check-free-term
+    ;;             (and
+    ;;              ;;term-mode
+    ;;              (string= "term-mode" major-mode)
+    ;;              ;;本地，处于命令行完成状态
+    ;;              (string-match term-local-cmd-start-line-regex-str (buffer-substring-no-properties (line-beginning-position) (line-end-position )))
+    ;;              ;;同一个目录
+    ;;              (string= file-path-str default-directory )
+    ;;                  ))
 
-          ;; (when  (string= "term-mode" major-mode)
-          ;;   (message "check:[%s][%s][%s]<=>[%S], %S %S"
-          ;;            file-path-str
-          ;;            default-directory
-          ;;            major-mode
+    ;;       (when  (string= "term-mode" major-mode)
+    ;;         (message "check:[%s][%s][%s]<=>[%S], %S %S"
+    ;;                  file-path-str
+    ;;                  default-directory
+    ;;                  major-mode
 
-          ;;            (string= "term-mode" major-mode)
+    ;;                  (string= "term-mode" major-mode)
 
-          ;;            ;;本地，处于命令行完成状态
-          ;;            (string-match term-local-cmd-start-line-regex-str (buffer-substring-no-properties (line-beginning-position) (line-end-position )))
-          ;;            ;;同一个目录
-          ;;            (string= file-path-str default-directory )
+    ;;                  ;;本地，处于命令行完成状态
+    ;;                  (string-match term-local-cmd-start-line-regex-str (buffer-substring-no-properties (line-beginning-position) (line-end-position )))
+    ;;                  ;;同一个目录
+    ;;                  (string= file-path-str default-directory )
 
-          ;;            )
-          ;;   )
-          )
+    ;;                  )
+    ;;         )
+    ;;       )
 
-        (when check-free-term
-          (switch-to-buffer opt-buffer)
-          (setq find-flag t)
-          (return )
-        )))
+    ;;     (when check-free-term
+    ;;       (switch-to-buffer opt-buffer)
+    ;;       (setq find-flag t)
+    ;;       (return )
+    ;;     ))
+    ;;   )
 
     ;;(message "1.2")
     (let (check-free-term)
