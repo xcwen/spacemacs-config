@@ -43,7 +43,24 @@ cd spacemacs
 #切换到开发版本
 git check develop
 
+
+
 ```
+
+###  修改org-mode 键绑定
+`layers/+emacs/org/packages.el`
+
+```diff
+       (setq evil-org-use-additional-insert t
+             evil-org-key-theme `(textobjects
+                                  navigation
+-                                 additional
++                                 ;;additional
+                                  ,@(when org-want-todo-bindings '(todo)))))
+```
+
+
+
 
 
 安装 spacemacs 配置
