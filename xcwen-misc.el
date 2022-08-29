@@ -167,12 +167,13 @@ localhost:~/site-lisp/config$"
     ;;(message "===%s %s" default-directory file-path-str )
     ;;(message "22 ===%s %s"  term-local-cmd-start-line-regex-str line-txt  )
     ;;进入当前文件所在文件夹
-    (when (and  (not (string= file-path-str default-directory ))
-                (string-match term-local-cmd-start-line-regex-str line-txt ) ;;本地，处于命令行完成状态
-                )
-      (setq init-cmd  (concat "cd '" file-path-str  "' # goto file location   \r" ) )
+    ;; (when (and  (not (string= file-path-str default-directory ))
+    ;;             (string-match term-local-cmd-start-line-regex-str line-txt ) ;;本地，处于命令行完成状态
+    ;;             )
+    (setq init-cmd  (concat "cd '" file-path-str  "' # goto file location   \r" ) )
       ;;(message "send init-cmd :%s " init-cmd )
-      (term-send-raw-string init-cmd ))
+    (term-send-raw-string init-cmd )
+      ;;)
     ))
 
 

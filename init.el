@@ -759,11 +759,11 @@ you should place your code here."
 
 
   ;;关闭 lsp-ui-doc
-  (setq lsp-ui-doc-delay 100000)
+  (setq lsp-ui-doc-delay 1)
   (setq lsp-ui-sideline-delay 10000 )
-  (setq lsp-eldoc-enable-hover nil)
+  (setq lsp-eldoc-enable-hover t)
   (setq lsp-eldoc-enable-signature-help nil)
-  (setq lsp-enable-symbol-highlighting nil)
+  (setq lsp-enable-symbol-highlighting t)
   (setq lsp-enable-xref nil)
   (setq lsp-enable-indentation nil )
   (setq lsp-eldoc-prefer-signature-help nil)
@@ -776,6 +776,7 @@ you should place your code here."
   (setq lsp-debounce-full-sync-notifications nil)
   (setq lsp-enable-file-watchers nil)
   (setq lsp-enable-folding nil)
+  (setq lsp-java-vmargs '("-noverify" "-Xmx1G" "-XX:+UseG1GC" "-XX:+UseStringDeduplication" "-javaagent:/home/jim/.m2/repository/org/projectlombok/lombok/1.18.24/lombok-1.18.24.jar" "-Xbootclasspath/a:/home/jim/.m2/repository/org/projectlombok/lombok/1.18.24/lombok-1.18.24.jar"))
 
   (setq dart-indent-trigger-commands '())
 
@@ -1170,7 +1171,7 @@ you should place your code here."
       ;;(add-to-list 'term-bind-key-alist '( "<up>". term-send-raw ))
       ))
 
-  (lsp-ui-mode nil)
+  ;; (lsp-ui-mode nil)
 
   (evilmi-load-plugin-rules '(web-mode
                               html-mode
