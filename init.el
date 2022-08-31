@@ -148,6 +148,7 @@ This function should only modify configuration layer settings."
    dotspacemacs-excluded-packages '( php-extras
                                      ;;phpcbf
                                      ;; auto-highlight-symbol
+             gendoxy
                                      version-control
                                      git-modes
                                      yasnippet-snippets
@@ -624,11 +625,13 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
      ("org-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/org/")
      ("gnu-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")))
 
- ;; (setq url-proxy-services
- ;;       '(("no_proxy" . "^\\(localhost\\|10.*\\)")
- ;;         ("http" . "127.0.0.1:41091")
- ;;         ("https" . "127.0.0.1:41091")))
- ;;(setq lsp-java-jdt-download-url "http://127.0.0.1:8080/jdt-language-server-1.14.0-202207211651.tar.gz")
+ (setq url-proxy-services
+       '(("no_proxy" . "^\\(localhost\\|10.*\\|mirrors\\.tuna\\.tsinghua\\.edu\\.cn\\)")
+         ("http" . "127.0.0.1:41091")
+         ("https" . "127.0.0.1:41091")))
+ (setq lsp-java-jdt-download-url "http://127.0.0.1:8080/jdt-language-server-1.14.0-202207211651.tar.gz")
+
+ (setq lsp-java-jdt-download-url "https://download.eclipse.org/jdtls/milestones/1.12.0/jdt-language-server-1.12.0-202206011637.tar.gz")
 )
 
 
