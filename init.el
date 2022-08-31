@@ -625,13 +625,15 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
      ("org-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/org/")
      ("gnu-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")))
 
- (setq url-proxy-services
-       '(("no_proxy" . "^\\(localhost\\|10.*\\|mirrors\\.tuna\\.tsinghua\\.edu\\.cn\\)")
-         ("http" . "127.0.0.1:41091")
-         ("https" . "127.0.0.1:41091")))
- (setq lsp-java-jdt-download-url "http://127.0.0.1:8080/jdt-language-server-1.14.0-202207211651.tar.gz")
+ (setq url-proxy-services nil)
+ ;; (setq url-proxy-services
+ ;;       '(("no_proxy" . "^\\(localhost\\|10.*\\|mirrors\\.tuna\\.tsinghua\\.edu\\.cn\\)")
+ ;;         ("http" . "127.0.0.1:41091")
+ ;;         ("https" . "127.0.0.1:41091")))
+ (setq lsp-java-jdt-download-url "http://127.0.0.1:8080/jdt-language-server-1.15.0-202208290205.tar.gz")
+ (setq  lsp-java--download-root  "http://127.0.0.1:8080/")
 
- (setq lsp-java-jdt-download-url "https://download.eclipse.org/jdtls/milestones/1.12.0/jdt-language-server-1.12.0-202206011637.tar.gz")
+ ;; (setq lsp-java-jdt-download-url "https://download.eclipse.org/jdtls/milestones/1.12.0/jdt-language-server-1.12.0-202206011637.tar.gz")
 )
 
 
@@ -673,7 +675,16 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
         (progn
           (ac-php-show-tip)
           ))
-       (t (lsp-ui-doc-show))
+       (t
+        (progn
+
+
+
+          (setq lsp-ui-doc-show-with-cursor t)
+        (lsp-ui-doc-show)
+        (setq lsp-ui-doc-show-with-cursor nil)
+
+        ))
        )))
 
   (set-evil-main-state-key "\""
@@ -763,6 +774,7 @@ you should place your code here."
 
   ;;关闭 lsp-ui-doc
   (setq lsp-ui-doc-delay 1)
+  (setq lsp-ui-doc-show-with-cursor  nil)
   (setq lsp-ui-sideline-delay 10000 )
   (setq lsp-eldoc-enable-hover t)
   (setq lsp-eldoc-enable-signature-help nil)
@@ -780,6 +792,7 @@ you should place your code here."
   (setq lsp-enable-file-watchers nil)
   (setq lsp-enable-folding nil)
   (setq lsp-java-vmargs '("-noverify" "-Xmx1G" "-XX:+UseG1GC" "-XX:+UseStringDeduplication" "-javaagent:/home/jim/.m2/repository/org/projectlombok/lombok/1.18.24/lombok-1.18.24.jar" "-Xbootclasspath/a:/home/jim/.m2/repository/org/projectlombok/lombok/1.18.24/lombok-1.18.24.jar"))
+  (setq lsp-java-vmargs '("-noverify" "-Xmx1G" "-XX:+UseG1GC" "-XX:+UseStringDeduplication" ))
 
   (setq dart-indent-trigger-commands '())
 
