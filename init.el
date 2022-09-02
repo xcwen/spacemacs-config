@@ -643,6 +643,9 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
 (load  (expand-file-name "init-syntax-table.el" dotspacemacs-directory) )
 (load  (expand-file-name "xcwen-misc.el" dotspacemacs-directory) )
 (defun set-main-key()
+
+  (define-key evil-motion-state-map "," nil )
+
   (set-evil-main-state-key "w" 'save-buffer )
 
   (set-evil-main-state-key "u" 'upper-or-lower-whole-word)
@@ -652,6 +655,13 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
   (set-evil-main-state-key "e" 'cleanup-and-goto-error)
   ;; (set-evil-main-state-key "i" 'lsp-ui-doc-show)
   (set-evil-main-state-key "d" 'show-baidu-dict-at-region)
+  (set-evil-main-state-key "c" 'lsp-execute-code-action)
+  (set-evil-main-state-key "S" 'lsp-java-open-super-implementation  )
+  (set-evil-main-state-key "s" 'lsp-java--show-implementations  )
+  (set-evil-main-state-key "o" 'other-window  )
+  (set-evil-main-state-key "p" 'treemacs  )
+
+
 
   (set-evil-main-state-key
    "/"

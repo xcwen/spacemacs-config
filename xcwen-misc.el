@@ -255,7 +255,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
   (setq key  (concat "," key ))
   (define-key evil-normal-state-map  key  func )
   (define-key evil-visual-state-map key  func )
-  (define-key evil-normal-state-map key  func )
+  (define-key evil-motion-state-map key  func )
   )
 
 
