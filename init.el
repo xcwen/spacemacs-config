@@ -625,13 +625,13 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
      ("org-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/org/")
      ("gnu-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")))
 
- (setq url-proxy-services nil)
- ;; (setq url-proxy-services
- ;;       '(("no_proxy" . "^\\(localhost\\|10.*\\|mirrors\\.tuna\\.tsinghua\\.edu\\.cn\\)")
- ;;         ("http" . "127.0.0.1:41091")
- ;;         ("https" . "127.0.0.1:41091")))
- (setq lsp-java-jdt-download-url "http://127.0.0.1:8080/jdt-language-server-1.15.0-202208290205.tar.gz")
- (setq  lsp-java--download-root  "http://127.0.0.1:8080/")
+ ;; (setq url-proxy-services nil)
+ (setq url-proxy-services
+       '(("no_proxy" . "^\\(localhost\\|10.*\\)")
+         ("http" . "127.0.0.1:41091")
+         ("https" . "127.0.0.1:41091")))
+ ;; (setq lsp-java-jdt-download-url "http://127.0.0.1:8080/jdt-language-server-1.15.0-202208290205.tar.gz")
+ ;; (setq  lsp-java--download-root  "http://127.0.0.1:8080/")
 
  ;; (setq lsp-java-jdt-download-url "https://download.eclipse.org/jdtls/milestones/1.12.0/jdt-language-server-1.12.0-202206011637.tar.gz")
 )
@@ -653,7 +653,6 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
   (set-evil-main-state-key "a" 'switch-file-opt )
   (set-evil-main-state-key "A" 'switch-file-opt-proto )
   (set-evil-main-state-key "e" 'cleanup-and-goto-error)
-  ;; (set-evil-main-state-key "i" 'lsp-ui-doc-show)
   (set-evil-main-state-key "d" 'show-baidu-dict-at-region)
   (set-evil-main-state-key "c" 'lsp-execute-code-action)
   (set-evil-main-state-key "S" 'lsp-java-open-super-implementation  )
@@ -687,14 +686,10 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
           ))
        (t
         (progn
-
-
-
           (setq lsp-ui-doc-show-with-cursor t)
-        (lsp-ui-doc-show)
-        (setq lsp-ui-doc-show-with-cursor nil)
-
-        ))
+          (lsp-ui-doc-show)
+          (setq lsp-ui-doc-show-with-cursor nil)
+          ))
        )))
 
   (set-evil-main-state-key "\""
@@ -980,9 +975,9 @@ you should place your code here."
 
   (spacemacs|create-align-repeat-x "my-align" "=>" nil t)
 
-  (global-set-key "\M-1" 'delete-other-windows)
+  (global-set-key "\M-1" 'my-delete-other-windows)
   (global-set-key (kbd "s-/") 'hippie-expand)
-  (global-set-key  (kbd "s-1") 'delete-other-windows)
+  (global-set-key  (kbd "s-1") 'my-delete-other-windows)
   (global-set-key  (kbd "C-S-W") 'evil-yank )
   (global-set-key  (kbd "C-x C-e")
                    '(lambda( eval-last-sexp-arg-internal)(interactive "P")
@@ -1019,7 +1014,7 @@ you should place your code here."
                                                    (company-complete)
                                                  (company-complete))
                                                ))
-  (set-evil-all-state-key  (kbd "M-1")  'delete-other-windows)
+  (set-evil-all-state-key  (kbd "M-1")  'my-delete-other-windows)
   (set-evil-all-state-key  (kbd "M-h") 'backward-kill-word-without-_)
   (set-evil-all-state-key  (kbd "C-h") 'delete-backward-char)
   (set-evil-all-state-key  (kbd "s-h") 'backward-kill-word-without-_)
@@ -1168,8 +1163,8 @@ you should place your code here."
       (setq term-unbind-key-list  '("C-x"))
       (setq term-bind-key-alist nil)
 
-      (add-to-list 'term-bind-key-alist '("M-1" .  delete-other-windows ))
-      (add-to-list 'term-bind-key-alist '("s-1" .  delete-other-windows ))
+      (add-to-list 'term-bind-key-alist '("M-1" .  my-delete-other-windows ))
+      (add-to-list 'term-bind-key-alist '("s-1" .  my-delete-other-windows ))
 
       ;;(add-to-list 'term-bind-key-alist '("C-^" .  helm-mini ))
       (add-to-list 'term-bind-key-alist '("M-x" .  helm-M-x ))
