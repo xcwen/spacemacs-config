@@ -2086,6 +2086,17 @@ If FORWARD is nil, search backward, otherwise forward."
     (when project-dir
       (message "%s" (shell-command-to-string cmd  )))))
 
+(defun restart-project()
+  "DOCSTRING"
+  (interactive)
+  (let ((project-dir (go-core-server--get-project-root-dir )  )  cmd)
+
+    (setq cmd ( concat "cd  " project-dir "&& ./restart.sh " ) )
+    (message "cmd:%s"  cmd)
+    (when project-dir
+      (message "%s" (shell-command-to-string cmd  )))))
+
+
 
 (defun my-join-line ()
   "DOCSTRING"

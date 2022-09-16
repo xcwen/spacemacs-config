@@ -626,10 +626,10 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
      ("gnu-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")))
 
  ;; (setq url-proxy-services nil)
- (setq url-proxy-services
-       '(("no_proxy" . "^\\(localhost\\|10.*\\)")
-         ("http" . "127.0.0.1:41091")
-         ("https" . "127.0.0.1:41091")))
+ ;; (setq url-proxy-services
+ ;;       '(("no_proxy" . "^\\(localhost\\|10.*\\)")
+ ;;         ("http" . "127.0.0.1:41091")
+ ;;         ("https" . "127.0.0.1:41091")))
  ;; (setq lsp-java-jdt-download-url "http://127.0.0.1:8080/jdt-language-server-1.15.0-202208290205.tar.gz")
  ;; (setq  lsp-java--download-root  "http://127.0.0.1:8080/")
 
@@ -658,6 +658,7 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
   (set-evil-main-state-key "S" 'lsp-java-open-super-implementation  )
   (set-evil-main-state-key "s" 'lsp-java--show-implementations  )
   (set-evil-main-state-key "o" 'other-window  )
+  (set-evil-main-state-key "m" 'restart-project  )
   (set-evil-main-state-key "p" 'treemacs  )
 
 
@@ -734,7 +735,8 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
 
   ;;(set-evil-main-state-key-on-mode  protobuf-mode-map "m" 'core-server-make )
 
-  ;;(set-evil-main-state-key-on-mode  go-mode-map "m" 'go-core-server-make )
+  ;;(set-evil-main-state-key-on-mode  go-mode-map "m" 'restart-project)
+  (set-evil-main-state-key-on-mode  java-mode-map "m" 'restart-project)
   ;;(set-evil-main-state-key-on-mode  dart-mode-map "m" 'flutter-monitor )
 
   ;;(set-evil-main-state-key-on-mode  java-mode-map "f" 'java-gen-get-set-code  )
