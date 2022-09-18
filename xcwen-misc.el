@@ -1149,6 +1149,12 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
      nil 0 nil "_NET_WM_STATE" 32
      '(2 "_NET_WM_STATE_FULLSCREEN" 0)) )
   )
+(defun my-delete-other-windows ()
+(interactive )
+   (delete-other-windows)
+   (delete-window (treemacs-get-local-window))
+)
+
 ;;最化大
 (defun my-maximized ()
   (interactive)
@@ -2079,6 +2085,17 @@ If FORWARD is nil, search backward, otherwise forward."
     (message "cmd:%s"  cmd)
     (when project-dir
       (message "%s" (shell-command-to-string cmd  )))))
+
+(defun restart-project()
+  "DOCSTRING"
+  (interactive)
+  (let ((project-dir (go-core-server--get-project-root-dir )  )  cmd)
+
+    (setq cmd ( concat "cd  " project-dir "&& ./restart.sh " ) )
+    (message "cmd:%s"  cmd)
+    (when project-dir
+      (message "%s" (shell-command-to-string cmd  )))))
+
 
 
 (defun my-join-line ()
