@@ -735,7 +735,7 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
 
   (set-evil-main-state-key-on-mode  java-mode-map "m" 'restart-project)
   (set-evil-main-state-key-on-mode  java-mode-map "t" 'maven-test-method)
-  (set-evil-main-state-key-on-mode  dart-mode-map "m" 'flutter-monitor )
+  ;;(set-evil-main-state-key-on-mode  dart-mode-map "m" 'flutter-monitor )
 
 
 
@@ -795,8 +795,8 @@ you should place your code here."
   (setq lsp-debounce-full-sync-notifications nil)
   (setq lsp-enable-file-watchers nil)
   (setq lsp-enable-folding nil)
-  (setq lsp-java-vmargs '("-noverify" "-Xmx1G" "-XX:+UseG1GC" "-XX:+UseStringDeduplication" "-javaagent:/home/jim/.m2/repository/org/projectlombok/lombok/1.18.24/lombok-1.18.24.jar" "-Xbootclasspath/a:/home/jim/.m2/repository/org/projectlombok/lombok/1.18.24/lombok-1.18.24.jar"))
-  (setq lsp-java-vmargs '("-noverify" "-Xmx1G" "-XX:+UseG1GC" "-XX:+UseStringDeduplication" ))
+  (setq lsp-java-vmargs '("-noverify" "-Xmx1G" "-XX:+UseG1GC" "-XX:+UseStringDeduplication" "-javaagent:/home/jim/.spacemacs.d/bin/lombok-1.18.24.jar" "-Xbootclasspath/a:/home/jim/.spacemacs.d/bin/lombok-1.18.24.jar"))
+  ;; (setq lsp-java-vmargs '("-noverify" "-Xmx1G" "-XX:+UseG1GC" "-XX:+UseStringDeduplication" ))
 
   (setq dart-indent-trigger-commands '())
 
