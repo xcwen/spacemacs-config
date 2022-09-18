@@ -6,4 +6,4 @@
                        ("main" "public static void main (String[] args)  {\n    $0\n}" "main" nil nil nil "/home/jim/.spacemacs.d/my-yas/java-mode/main" nil nil)))
 
 
-;;; Do not edit! File generated at Thu Sep  1 12:21:19 2022
+;;; Do not edit! File generated at Sat Sep  3 13:03:56 2022
