@@ -795,11 +795,7 @@ you should place your code here."
   (setq lsp-debounce-full-sync-notifications nil)
   (setq lsp-enable-file-watchers nil)
   (setq lsp-enable-folding nil)
-<<<<<<< HEAD
-  (setq lsp-java-vmargs '("-noverify" "-Xmx1G" "-XX:+UseG1GC" "-XX:+UseStringDeduplication" "-javaagent:/home/jim/.m2/repository/org/projectlombok/lombok/1.18.24/lombok-1.18.24.jar" "-Xbootclasspath/a:/home/jim/.m2/repository/org/projectlombok/lombok/1.18.24/lombok-1.18.24.jar"))
-=======
   (setq lsp-java-vmargs '("-noverify" "-Xmx1G" "-XX:+UseG1GC" "-XX:+UseStringDeduplication" "-javaagent:/home/jim/.spacemacs.d/bin/lombok-1.18.24.jar" "-Xbootclasspath/a:/home/jim/.spacemacs.d/bin/lombok-1.18.24.jar"))
->>>>>>> 0c8b1f64872970092b81e280245e50d3c8ae738d
   ;; (setq lsp-java-vmargs '("-noverify" "-Xmx1G" "-XX:+UseG1GC" "-XX:+UseStringDeduplication" ))
 
   (setq dart-indent-trigger-commands '())
