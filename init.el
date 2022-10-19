@@ -52,6 +52,7 @@ This function should only modify configuration layer settings."
              )
      nginx
 
+     (json :variables json-backend  'company-json)
      (templates :variables templates-private-directory "~/.spacemacs.d/templates")
      (sql :variables
           sql-backend 'lsp
@@ -90,6 +91,9 @@ This function should only modify configuration layer settings."
 
      (typescript :variables
                  typescript-backend 'tide
+                 ;; typescript-backend 'lsp
+                 ;; typescript-lsp-linter nil
+
                  typescript-fmt-on-save t)
      ;; elixir
     ;; (java :variables java-backend 'meghanada)
