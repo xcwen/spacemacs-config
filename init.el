@@ -1223,6 +1223,7 @@ you should place your code here."
 
   (setq multi-term-program "/bin/bash")
   (setq multi-term-program "/bin/zsh")
+  (add-to-list 'auto-mode-alist '( "\\.blade\\.php\\'" . web-mode))
 
   (set-frame-position (selected-frame) 1920 0)
   (set-frame-width (selected-frame) 91)
