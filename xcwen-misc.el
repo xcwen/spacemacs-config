@@ -581,7 +581,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
         (cond
          ((string= major-mode  "php-mode")
           (progn
-            (setq ctrl-name (f-base  (f-base path-name )) )
+            (setq ctrl-name (my-s-snake-case(f-base  (f-base path-name ))) )
             (save-excursion
               (let (line-txt  )
                 (beginning-of-defun)
