@@ -331,12 +331,6 @@ The test for presence of the car of ELT-CONS is done with `equal'."
             (setq cur-path (concat (nth 0  (s-split "/public/" (buffer-file-name)) ) "/app/Http/Controllers/" file-name ))
             (unless (f-exists-p cur-path )
               (setq cur-path (concat (nth 0  (s-split "/\\(new_\\)?vue/" (buffer-file-name)) ) "/app/Http/Controllers/" file-name ))
-              (unless (f-exists? cur-path)
-
-                (setq  cur-path (concat "../../../../application/cc/admin/" ( my-s-upper-camel-case ctrl-name )  ".php" ) )
-                )
-
-
               )
             ))
         (list cur-path pos-info)
@@ -476,48 +470,40 @@ The test for presence of the car of ELT-CONS is done with `equal'."
             (message "===%s" server-type-str)
             (cond
              ((string= server-type-str "core")
-              (setq server-type "phpcore")
+              (setq server-type "php")
               )
+             ((string= server-type-str "route__php_tars_admin")
+              (setq server-type "php")
+              )
+
              ((string= server-type-str "gocore")
               (setq server-type "gocore")
               )
              ((string= server-type-str "console_php_core")
-              (setq server-type "console_php_core")
+              (setq server-type "php")
               )
-             ((string= server-type-str "tianji")
-              (setq server-type "console_php_core")
-              )
-             ((string= server-type-str "phone_exchange")
-              (setq server-type "console_php_core")
-              )
-
 
 
              ))))
+    (message "server-type:%s" server-type )
     (cond
-     ((string= server-type  "php" )
+     ((string= server-type  "php"  )
       (setq  obj-file  (concat (get-url-path-get-fix-path-from-env  "PHP_CONTROLLERS_DIR" ) "/" ctrl-name  ".php" ) )
       (setq pos-info ( concat "/function[ \t]+" action-name "[ \t]*("  ) )
-
-
+      (unless (f-exists-p  obj-file )
+        (setq  obj-file  (concat (get-url-path-get-fix-path-from-env  "PHP_CONTROLLERS_DIR" ) "/" (my-s-upper-camel-case ctrl-name) ".php" ) )
+        )
       )
 
      ((string= server-type  "gocore" )
       (setq  obj-file  (concat (get-url-path-get-fix-path-from-env  "GOCORE_CONTROLLERS_DIR" ) "/" ctrl-name  ".go" ) )
       (setq pos-info ( concat "/func[ \t]+.*" (my-s-upper-camel-case action-name) "[ \t]*("  ) )
       )
-     ((string= server-type  "phpcore" )
-      (setq  obj-file  (concat (get-url-path-get-fix-path-from-env  "PHPCORE_CONTROLLERS_DIR" ) "/" ctrl-name  ".php" ) )
-      (setq pos-info ( concat "/function[ \t]+" action-name "[ \t]*("  ) )
-      )
-     ((string= server-type  "console_php_core" )
-      (setq  obj-file  (concat (get-url-path-get-fix-path-from-env  "CONSOLE_PHPCORE_CONTROLLERS_DIR" ) "/" ctrl-name  ".php" ) )
-      (setq pos-info ( concat "/function[ \t]+" action-name "[ \t]*("  ) )
-      )
 
 
      )
 
+    ;; (message "server-type:%s => %s" server-type obj-file )
     (list  obj-file  pos-info )
 
     ))
@@ -814,11 +800,12 @@ The test for presence of the car of ELT-CONS is done with `equal'."
       (setq obj-file opt-file))
     ;;check for   php html js
     (unless obj-file
-      (let ((path-name (buffer-file-name)) ctrl-name action-name tmp-arr )
+      (let ((path-name (buffer-file-name)) ctrl-name action-name tmp-arr  )
         (cond
          ((string= major-mode  "php-mode")
           (progn
-            (setq ctrl-name (f-base  (f-base path-name )) )
+            (setq ctrl-name (my-s-snake-case  (f-base  (f-base path-name ))) )
+            (message "ctrl-name :%s" ctrl-name)
             (save-excursion
               (let (line-txt  )
                 (beginning-of-defun)
@@ -866,7 +853,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
             ))
          ((string= major-mode  "go-mode")
           (let ( go-action-name )
-            (setq ctrl-name   (s-snake-case (f-base  (f-base path-name ))) )
+            (setq ctrl-name   (my-s-snake-case (f-base  (f-base path-name ))) )
             (save-excursion
               (let (line-txt  )
                 (beginning-of-defun)
@@ -874,7 +861,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
                 (setq tmp-arr (s-match  ".*func[ \t]+([^)]+)[ \t]*\\([a-zA-Z0-9_]*\\)"  line-txt ) )
                 (when tmp-arr
                   (setq go-action-name (nth 1 tmp-arr) )
-                  (setq action-name (s-snake-case go-action-name ) )
+                  (setq action-name (my-s-snake-case go-action-name ) )
                   )))
             (when (and (s-match "/controllers/" path-name )   )
               (let (view-dir)
@@ -967,7 +954,15 @@ The test for presence of the car of ELT-CONS is done with `equal'."
               (setq  action-name   (nth 2 tmp-arr) )
               (setq  obj-file (concat "../../src/app/Controllers/" ctrl-name ".php" ) )
               (setq pos-info ( concat "/function[ \t]*" action-name "[ \t]*(" ) )
+
+              (unless (and obj-file (f-exists? obj-file ) )
+                (setq  ctrl-name   (my-s-upper-camel-case (nth 1 tmp-arr)))
+                (setq  obj-file (concat "../../src/app/Controllers/" ctrl-name ".php" ) )
+                )
+
               )
+
+
 
             (unless (and obj-file (f-exists? obj-file ) )
               (setq  ctrl-name   (nth 1 tmp-arr) )
@@ -1265,14 +1260,14 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
 
       (if (= count 1)
 
-          (if (s-match "_" ( s-snake-case word) )
+          (if (s-match "_" ( my-s-snake-case word) )
               (progn
 
                 (cond
                  ((s-uppercase?  word ) ;;ONE_TWO => one_two
                   (setq next_word (s-downcase word))
                   )
-                 (  (string=  word ( s-snake-case word)  )   ;;one_two => OneTwo
+                 (  (string=  word (my-s-snake-case word)  )   ;;one_two => OneTwo
 
                     (setq next_word (my-s-upper-camel-case word))
 
@@ -1291,7 +1286,7 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
              ((s-uppercase?  word ) ;;ONE => one
               (setq next_word (s-downcase word))
               )
-             (  (string=  word ( s-snake-case word)  )   ;;one=> One
+             (  (string=  word ( my-s-snake-case word)  )   ;;one=> One
 
                 (setq next_word (my-s-upper-camel-case word))
 
@@ -2229,7 +2224,7 @@ If FORWARD is nil, search backward, otherwise forward."
                     (line-end-position )))
     (string-match (concat "\\(\\(public\\)\\|\\(private\\)\\)[ \t]*\\([a-zA-Z].+\\)[ \t]+\\b" cur-word  "\\b"  ) line-txt)
     (setq class-name  (match-string-no-properties 4 line-txt) )
-    (setq value (s-upper-camel-case  cur-word) )
+    (setq value (my-s-upper-camel-case  cur-word) )
     (kill-new (concat
                "\n\t/**\n\t*/\n\tpublic "class-name " get" value "(){\n\n\t\treturn this."  cur-word ";\n\t}\n"
                "\n\t/**\n\t*/\n\tpublic void set" value "(" class-name " value ){\n\n\t\tthis."cur-word"=value;\n\t}\n"
