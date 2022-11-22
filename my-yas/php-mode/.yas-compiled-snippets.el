@@ -88,6 +88,8 @@
                        ("interface" "interface ${1:`(yas-php-get-class-name-by-file-name)`}\n{\n    $0\n}" "interface" nil
                         ("definitions")
                         nil "/home/jim/.spacemacs.d/my-yas/php-mode/interface" nil nil)
+                       ("ign" "/** @phpstan-ignore-next-line */" "ign" nil nil nil "/home/jim/.spacemacs.d/my-yas/php-mode/ign" nil nil)
+                       ("ig" "/** @phpstan-ignore-line */" "ig" nil nil nil "/home/jim/.spacemacs.d/my-yas/php-mode/ig" nil nil)
                        ("if" "if (${1:condition}) {\n    $0\n}" "if" nil
                         ("control structure")
                         nil "/home/jim/.spacemacs.d/my-yas/php-mode/if" nil nil)
@@ -152,4 +154,4 @@
                         nil "/home/jim/.spacemacs.d/my-yas/php-mode/__call" nil nil)))
 
 
-;;; Do not edit! File generated at Sat Sep  3 13:03:56 2022
+;;; Do not edit! File generated at Wed Nov 16 14:23:31 2022

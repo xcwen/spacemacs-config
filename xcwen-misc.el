@@ -559,7 +559,10 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 
       (when switch-flag
         (setq line-txt (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
-        (when (string-match   "SWITCH-TO:[ \t]*\\([^ \t]*\\)[ \t]*"   line-txt)
+        (when
+            (or (string-match   "SWITCH-TO:[ \t]*\\([^ \t]*\\)[ \t]*"   line-txt)
+                (string-match   "SWITCH-TO:.*\"\\([^ \t]*\\)\"[ \t]*"   line-txt)
+                )
           (setq  opt-file (match-string  1 line-txt))
 
           (unless (f-exists-p  opt-file )
@@ -770,13 +773,18 @@ The test for presence of the car of ELT-CONS is done with `equal'."
   (let (  line-txt  opt-file  file-list obj-file check-file-name file-name file-name-fix  (use-default t) pos-info  (goto-gocore-flag nil)  (goto-phpcore-flag nil ) (switch-flag) )
     (save-excursion
       (goto-char (point-min))
-      (setq switch-flag  (search-forward-regexp "[^-]SWITCH-TO:" nil t  ) )
-
+      (setq switch-flag  (search-forward-regexp "SWITCH-TO:" nil t  ) )
+      ;; (message "switch-flag %s" switch-flag)
       (when switch-flag
         (setq line-txt (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
-        (when (string-match   "SWITCH-TO:[ \t]*\\([^ \t]*\\)[ \t]*"   line-txt)
+        ;; (message "line-txt %s" line-txt)
+        (when
+            (or
+             (string-match   "SWITCH-TO:.*\"\\([^ \t]*\\)\"[ \t]*"   line-txt)
+             (string-match   "SWITCH-TO:[ \t]*\\([^ \t]*\\)[ \t]*"   line-txt)
+            )
           (setq  opt-file (match-string  1 line-txt))
-          ;;(message "KKKKKKKK %s=> %s" line-txt opt-file )
+          ;; (message "KKKKKKKK %s=> %s" line-txt opt-file )
           (when (s-matches-p "^[a-z0-9]+$" opt-file  )
             (setq file-name (file-name-nondirectory (buffer-file-name)))
             (setq file-name-fix (file-name-base  file-name))
@@ -792,6 +800,11 @@ The test for presence of the car of ELT-CONS is done with `equal'."
            (unless (f-exists-p  opt-file )
              (setq opt-file ( get-route-jump-file-name (concat "/"  opt-file ) (get-url-path-get-fix-path-from-env "VUE_VIEW_DIR") ))
            )
+
+           (unless (f-exists-p  opt-file )
+             (setq opt-file ( get-route-jump-file-name (concat "/"  opt-file ) (get-url-path-get-fix-path-from-env "SWITCH_TO_CONFIG") ))
+             )
+
 
 
           )))
