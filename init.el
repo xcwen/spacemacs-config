@@ -1122,9 +1122,10 @@ you should place your code here."
 
 
 
+  (setq phpcbf-executable (concat (getenv "HOME") "/spacemacs-config/bin/phpcbf" ) )
 
   (custom-set-variables
-   '(phpcbf-executable (concat (getenv "HOME") "/console_php_core/src/vendor/bin/phpcbf" ) )
+   '(phpcbf-executable (concat (getenv "HOME") "/spacemacs-config/bin/phpcbf" ) )
    '(phpcbf-standard (concat (getenv "HOME") "/spacemacs-config/ruleset.xml" ))
    '(flycheck-phpcs-standard (concat (getenv "HOME") "/spacemacs-config/ruleset.xml" ))
   )

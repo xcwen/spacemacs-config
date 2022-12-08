@@ -15,6 +15,16 @@
   (file-name-nondirectory
    (file-name-sans-extension (or (buffer-file-name)
                                  (buffer-name (current-buffer))))))
+(defun yas-php-get-namespace-name-by-file-name ()
+
+  (s-replace-regexp "/" "\\\\"
+  (substring
+   (s-replace-regexp ".*/app/" "App/"
+                     (file-name-directory   (or (buffer-file-name)
+                                                (buffer-name (current-buffer))
+                                                )) ) 0 -1 )
+  )
+  )
 
 ;;; .yas-setup.el ends here
 ;;; Snippet definitions:
@@ -139,7 +149,7 @@
                        ("clse" "class ${1:`(yas-php-get-class-name-by-file-name)`} extends ${2:ParentClass}\n{\n    $0\n}" "class extends" nil
                         ("definitions")
                         nil "/home/jim/.spacemacs.d/my-yas/php-mode/clse" nil nil)
-                       ("cls" "class ${1:`(yas-php-get-class-name-by-file-name)`}\n{\n  $0\n}" "class" nil
+                       ("cls" "<?php\nnamespace  `(yas-php-get-namespace-name-by-file-name)`;\n\nclass ${1:`(yas-php-get-class-name-by-file-name)`}\n{\n  $0\n}" "class" nil
                         ("definitions")
                         nil "/home/jim/.spacemacs.d/my-yas/php-mode/cls" nil nil)
                        ("catch" "catch (${1:\\PDOException} ${2:$e}) {\n    ${3:\n    throw $e;}\n}" "catch" nil
@@ -154,4 +164,4 @@
                         nil "/home/jim/.spacemacs.d/my-yas/php-mode/__call" nil nil)))
 
 
-;;; Do not edit! File generated at Wed Nov 16 14:23:31 2022
+;;; Do not edit! File generated at Fri Dec  2 16:24:57 2022

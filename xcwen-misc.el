@@ -490,10 +490,12 @@ The test for presence of the car of ELT-CONS is done with `equal'."
      ((string= server-type  "php"  )
       (setq  obj-file  (concat (get-url-path-get-fix-path-from-env  "PHP_CONTROLLERS_DIR" ) "/" ctrl-name  ".php" ) )
       (setq pos-info ( concat "/function[ \t]+" action-name "[ \t]*("  ) )
+      (message " check  11: %s" obj-file)
       (unless (f-exists-p  obj-file )
         (setq  obj-file  (concat (get-url-path-get-fix-path-from-env  "PHP_CONTROLLERS_DIR" ) "/" (my-s-upper-camel-case ctrl-name) ".php" ) )
         )
       )
+     (message " check  22: %s" obj-file)
 
      ((string= server-type  "gocore" )
       (setq  obj-file  (concat (get-url-path-get-fix-path-from-env  "GOCORE_CONTROLLERS_DIR" ) "/" ctrl-name  ".go" ) )
