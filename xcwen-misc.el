@@ -901,7 +901,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
               )))
 
 
-         ((string= major-mode  "web-mode" )
+         ( (or (string= major-mode  "web-mode" ) (string= major-mode  "vue-mode" )  )
           (setq tmp-arr (s-match  "/\\([a-zA-Z0-9_-]*\\)/\\([a-zA-Z0-9_-]*\\).blade.php"  path-name ) )
           (when tmp-arr
             (setq  ctrl-name   (nth 1 tmp-arr) )
@@ -2200,7 +2200,7 @@ If FORWARD is nil, search backward, otherwise forward."
 
 
 
-     (when (string= "web-mode" major-mode)
+     (when (or (string= "web-mode" major-mode)  (string= "vue-mode" major-mode))
        (setq file-info (web-get-file-at-point) ))
 
     (when  ( and (nth 0 file-info) (file-exists-p  (nth 0 file-info)  ) )

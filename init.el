@@ -52,6 +52,8 @@ This function should only modify configuration layer settings."
              )
      nginx
 
+
+     (node :variables node-add-modules-path t)
      (json :variables json-backend  'company-json)
      (templates :variables templates-private-directory "~/.spacemacs.d/templates")
      (sql :variables
@@ -121,6 +123,8 @@ This function should only modify configuration layer settings."
      helm
       markdown
 
+      (vue :variables vue-backend 'lsp)
+
      ;;multiple-cursors
       ;;(multiple-cursors :variables multiple-cursors-backend 'evil-mc)
       (org
@@ -143,7 +147,7 @@ This function should only modify configuration layer settings."
    ;; `:location' property: '(your-package :location "~/path/to/your-package/")
    ;; Also include the dependencies as they will not be resolved automatically.
    ;;dotspacemacs-additional-packages '()
-   dotspacemacs-additional-packages '(vue-mode  multi-term zencoding-mode eterm-256color )
+   dotspacemacs-additional-packages '( multi-term zencoding-mode eterm-256color )
 
 
    ;; A list of packages that cannot be updated.
@@ -889,6 +893,10 @@ you should place your code here."
   (add-hook 'web-mode-hook '(lambda ( )
                              (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
                              ))
+  (add-hook 'vue-mode-hook '(lambda ( )
+                              (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
+                              ))
+
 
   (add-hook 'php-mode-hook '(lambda ( )
                               (require 'php-align)
@@ -1059,10 +1067,10 @@ you should place your code here."
 
                ))
 
-  (add-hook 'vue-mode-hook
-            '(lambda()
-               (web-mode)
-               ))
+  ;; (add-hook 'vue-mode-hook
+  ;;           '(lambda()
+  ;;              (web-mode)
+  ;;              ))
 
 
 
@@ -1201,6 +1209,7 @@ you should place your code here."
   ;; (lsp-ui-mode nil)
 
   (evilmi-load-plugin-rules '(web-mode
+                              vue-mode
                               html-mode
                               nxml-mode
                               nxhtml-mode
