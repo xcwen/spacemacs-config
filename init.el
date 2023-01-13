@@ -52,6 +52,7 @@ This function should only modify configuration layer settings."
              )
      nginx
 
+     (command-log)
 
      (node :variables node-add-modules-path t)
      (json :variables json-backend  'company-json)
@@ -722,6 +723,22 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
            )
          )
        )))
+
+  (set-evil-main-state-key
+   ":"
+   '(lambda()
+      (interactive )
+        (let ( cur_word)
+          (message "xxx")
+          (save-excursion
+             (setq  cur_word (current-word ))
+            (backward-word)
+            (insert "\"")
+            (forward-word)
+            (insert (concat "\" => $" cur_word  "," ))
+            )
+          )
+        ))
 
 
   (set-evil-all-state-key (kbd "C-S-j")    'switch-file-term)

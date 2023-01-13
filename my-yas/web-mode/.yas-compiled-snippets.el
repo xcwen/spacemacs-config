@@ -29,9 +29,6 @@
                        ("div" "<div class=\"$1\"${2: id=\"$3\"}>\n  $0 asdfa\n</div>" "div" nil
                         ("twitter-bootstrap")
                         nil "/home/jim/.spacemacs.d/my-yas/web-mode/div.yasnippet" nil nil)
-                       ("dis" "style=\"display:none;\"" "dis" nil
-                        ("twitter-bootstrap")
-                        nil "/home/jim/.spacemacs.d/my-yas/web-mode/dis.yasnippet" nil nil)
                        ("container" "<div class=\"container\">\n  $0\n</div>" "container" nil
                         ("twitter-bootstrap")
                         nil "/home/jim/.spacemacs.d/my-yas/web-mode/container.yasnippet" nil nil)
@@ -49,4 +46,4 @@
                         nil "/home/jim/.spacemacs.d/my-yas/web-mode/abutton.yasnippet" "direct-keybinding" nil)))
 
 
-;;; Do not edit! File generated at Fri Dec  2 16:24:57 2022
+;;; Do not edit! File generated at Tue Jan 10 13:44:53 2023
