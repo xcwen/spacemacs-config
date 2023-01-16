@@ -156,12 +156,12 @@ This function should only modify configuration layer settings."
    ;; A list of packages that will not be installed and loaded.
    dotspacemacs-excluded-packages '( php-extras
                                      ;;phpcbf
-                                     ;; auto-highlight-symbol
-             gendoxy
+                                     ;;auto-highlight-symbol
+                                     gendoxy
                                      version-control
                                      git-modes
                                      yasnippet-snippets
-             php-auto-yasnippets
+                                     php-auto-yasnippets
 
                                      chinese-pyim
                                      org-contrib
@@ -651,6 +651,7 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
 (load custom-file )
 (load  (expand-file-name "init-syntax-table.el" dotspacemacs-directory) )
 (load  (expand-file-name "xcwen-misc.el" dotspacemacs-directory) )
+(load  (expand-file-name "php-doc-block.el" dotspacemacs-directory) )
 (defun set-main-key()
 
   (define-key evil-motion-state-map "," nil )
