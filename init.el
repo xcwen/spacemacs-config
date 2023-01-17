@@ -80,7 +80,7 @@ This function should only modify configuration layer settings."
 
      yaml
      ;;erlang
-     php
+     (php )
      (go :variables
          go-tab-width 4
          ;; gofmt-command "goimports
