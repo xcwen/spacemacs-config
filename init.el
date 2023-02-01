@@ -7,7 +7,7 @@
 (setq-default  my-keyboard-input-dev "/dev/input/event7")
 
 ;;(load  (expand-file-name "init-ex.el" dotspacemacs-directory) t t  t nil )
-
+(add-to-list 'load-path "/home/jim/.emacs.d/elpa/28.1/develop/org-9.6.1" )
 
 (defun dotspacemacs/layers ()
   "Layer configuration:
