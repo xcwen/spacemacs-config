@@ -112,9 +112,9 @@ This function should only modify configuration layer settings."
      ;;ivy
      helm
 
-     (chinese :variables
-              chinese-enable-youdao-dict t
-              )
+     ;; (chinese :variables
+     ;;          chinese-enable-youdao-dict t
+     ;;          )
 
      protobuf
 
@@ -631,7 +631,7 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
 
  (setq configuration-layer-elpa-archives
      '(("melpa-cn" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/")
-     ("org-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/org/")
+     ;; ("org-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/org/")
      ("gnu-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")))
 
  ;; (setq url-proxy-services nil)
