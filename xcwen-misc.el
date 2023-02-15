@@ -1840,6 +1840,9 @@ object satisfying `yas--field-p' to restrict the expansion to."
             ( auto-complete  ))
            ((and (string= major-mode "typescript-mode")  (eq ?\. c))
             ( company-complete ))
+           ((and (string= major-mode "vue-mode")  (eq ?\. c))
+            ( company-complete ))
+
            ((and (string= major-mode "dart-mode")  (eq ?\. c))
             ( company-complete ))
            ((and (string= major-mode "elixir-mode")  (eq ?\. c))
