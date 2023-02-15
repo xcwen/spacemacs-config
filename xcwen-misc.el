@@ -47,7 +47,10 @@ localhost:~/site-lisp/config$"
   (s-join "_" (mapcar 'downcase (my-s-split-words s))))
 
 
-
+(defun check-file-ts()
+  (interactive)
+  (and  (s-ends-with-p ".ts" (buffer-name))   )
+       )
 
 (defun my-s-split-words (s)
   "Split S into list of words."
@@ -623,7 +626,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 
               (when (> (line-number-at-pos )  2)
                 (save-excursion
-                  (if (string= major-mode "typescript-mode" )
+                  (if (check-file-ts )
                       (re-search-backward "[ \t]*public[ \t]+" 0 t 1 )
                     ( evil-backward-section-begin)
                     )
@@ -900,6 +903,29 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 
               )))
 
+         ((check-file-ts  )
+          (let (url file-info)
+            (setq tmp-arr (s-match  "/views/\\([a-zA-Z0-9_-]*\\)/\\([a-zA-Z0-9_-]*\\).ts"  path-name ) )
+            (when tmp-arr
+              (setq  ctrl-name   (nth 1 tmp-arr) )
+              (setq  action-name   (nth 2 tmp-arr) )
+              (setq url (switch-file-opt-ts-url ) )
+              (when (string=  url "")
+                (setq url (concat "/" ctrl-name "/" action-name ) )
+                )
+              )
+            (when url
+              (setq file-info  ( get-url-path-goto-info url ) )
+              (setq  obj-file (nth 0 file-info) )
+              (setq  pos-info (nth 1 file-info) )
+              )
+            )
+          (unless (and obj-file (f-exists? obj-file ) )
+            (setq  obj-file  (concat "./" (file-name-base path-name ) ".vue" ) )
+            (setq pos-info nil )
+            )
+          )
+
 
          ( (or (string= major-mode  "web-mode" ) (string= major-mode  "vue-mode" )  )
           (setq tmp-arr (s-match  "/\\([a-zA-Z0-9_-]*\\)/\\([a-zA-Z0-9_-]*\\).blade.php"  path-name ) )
@@ -925,41 +951,8 @@ The test for presence of the car of ELT-CONS is done with `equal'."
             (setq  obj-file  (concat"./" action-name ".ts" ) )
             )
           )
-         ((string= major-mode  "jade-mode" )
-          (setq tmp-arr (s-match  "/\\([a-zA-Z0-9_-]*\\)/\\([a-zA-Z0-9_-]*\\).jade"  path-name ) )
-          (when tmp-arr
-            (setq  ctrl-name   (nth 1 tmp-arr) )
-            (setq  action-name   (nth 2 tmp-arr) ))
-
-          (when (s-match "/views/" path-name )
-            (setq  obj-file  (concat"../../web_public/page_ts/" ctrl-name  "/" action-name ".ts" ) )
-
-            )
-          )
 
 
-         ((string= major-mode  "typescript-mode" )
-          (let (url file-info)
-            (setq tmp-arr (s-match  "/views/\\([a-zA-Z0-9_-]*\\)/\\([a-zA-Z0-9_-]*\\).ts"  path-name ) )
-            (when tmp-arr
-              (setq  ctrl-name   (nth 1 tmp-arr) )
-              (setq  action-name   (nth 2 tmp-arr) )
-              (setq url (switch-file-opt-ts-url ) )
-              (when (string=  url "")
-                (setq url (concat "/" ctrl-name "/" action-name ) )
-                )
-              )
-            (when url
-              (setq file-info  ( get-url-path-goto-info url ) )
-              (setq  obj-file (nth 0 file-info) )
-              (setq  pos-info (nth 1 file-info) )
-              )
-            )
-          (unless (and obj-file (f-exists? obj-file ) )
-            (setq  obj-file  (concat "./" (file-name-base path-name ) ".vue" ) )
-            (setq pos-info nil )
-            )
-          )
          ((string= major-mode  "protobuf-mode" )
           (let (url file-info)
             (message "------------- %s " path-name)
@@ -1010,7 +1003,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 
               (when (> (line-number-at-pos )  2)
                 (save-excursion
-                  (if (string= major-mode "typescript-mode" )
+                  (if (check-file-ts    )
                       (re-search-backward "[ \t]*public[ \t]+" 0 t 1 )
                     ( evil-backward-section-begin)
                     )
@@ -2196,7 +2189,7 @@ If FORWARD is nil, search backward, otherwise forward."
      (when (string= "js2-mode" major-mode)
        (setq file-info (js-get-file-at-point) ))
 
-     (when (string= "typescript-mode" major-mode)
+     (when (check-file-ts )
        (setq file-info (ts-get-file-at-point) )
        (message "file-info %S" file-info )
        )

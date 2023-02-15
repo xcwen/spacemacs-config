@@ -926,7 +926,8 @@ you should place your code here."
                               ))
 
   (add-hook 'typescript-mode-hook '(lambda ( )
-                              (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
+                                     (vue-mode)
+                              ;; (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
                               ))
 
   (add-hook 'lua-mode-hook '(lambda ( )
