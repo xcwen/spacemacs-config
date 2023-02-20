@@ -1810,10 +1810,10 @@ object satisfying `yas--field-p' to restrict the expansion to."
 
            ((and (string= major-mode "java-mode")  (eq ?\. c))
             (company-complete  ) )
-           ((and 
+           ((and
                   (string= major-mode "rust-mode")
                  (or
-                  ;; . 
+                  ;; .
                   (eq ?\. c)
                   ;; ::
                   (and (eq ?: c)
@@ -2023,6 +2023,36 @@ If FORWARD is nil, search backward, otherwise forward."
         (setq project-root-dir nil)))
 
     project-root-dir))
+(defun get-project-root-dir (file-name)
+  "Get the project root directory of the curent opened buffer."
+  ;;(ac-php--debug "Lookup for the project root...")
+  (let (project-root-dir tags-file (file-name buffer-file-name))
+
+    ;; 1. Get working directory using `buffer-file-name' or `default-directory'
+    (if file-name
+        (setq project-root-dir (file-name-directory file-name))
+      (setq project-root-dir (expand-file-name default-directory)))
+
+    ;; 3. Scan for the real project root of the opend file
+    ;; We're looking either for the `ac-php-config-file' file
+    ;; or the '.projectile' file, or the 'vendor/autoload.php' file
+    (let (last-dir)
+      (while
+          (not (or
+                (file-exists-p (concat project-root-dir file-name ))
+                (string= project-root-dir "/")))
+        (setq last-dir project-root-dir
+              project-root-dir (file-name-directory
+                                (directory-file-name project-root-dir)))
+          (when (string= last-dir project-root-dir)
+            (setq project-root-dir "/"))))
+
+    (when (string= project-root-dir "/")
+      (progn
+        (setq project-root-dir nil)))
+
+    project-root-dir))
+
 
 (defun go-core-server--get-project-root-dir ()
   "Get the project root directory of the curent opened buffer."

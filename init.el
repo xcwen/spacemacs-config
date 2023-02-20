@@ -926,8 +926,11 @@ you should place your code here."
                               ))
 
   (add-hook 'typescript-mode-hook '(lambda ( )
-                                     (vue-mode)
-                              ;; (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
+                                     
+                                     (if(get-project-root-dir "vite.config.ts"  )
+                                         (vue-mode)
+                                       (progn
+                                         (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )))
                               ))
 
   (add-hook 'lua-mode-hook '(lambda ( )
