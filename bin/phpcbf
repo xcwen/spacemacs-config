@@ -1,4 +1,4 @@
-#!/usr/bin/env php
+#!/usr/bin/php
 <?php
 /**
  * PHP Code Beautifier and Fixer fixes violations of a defined coding standard.
