@@ -38,7 +38,7 @@
                  "\n"))))
 
 
-(add-hook 'python-mode-hook #'yasnippet-snippets--fixed-indent)
+;;(add-hook 'python-mode-hook #'yasnippet-snippets--fixed-indent)
 ;;; Snippet definitions:
 ;;;
 (yas-define-snippets 'python-mode
@@ -281,4 +281,4 @@
                        ("__" "__${init}__" "__...__" nil nil nil "/home/jim/.spacemacs.d/my-yas/python-mode/__" nil nil)))
 
 
-;;; Do not edit! File generated at Tue Jan 10 13:44:53 2023
+;;; Do not edit! File generated at Tue Mar 14 10:20:04 2023

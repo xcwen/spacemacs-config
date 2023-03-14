@@ -117,6 +117,7 @@ This function should only modify configuration layer settings."
      ;;          )
 
      protobuf
+     (conda :variables conda-anaconda-home "/home/jim/anaconda3")
 
      better-defaults
      emacs-lisp
@@ -124,7 +125,9 @@ This function should only modify configuration layer settings."
      helm
       markdown
 
-      (vue :variables vue-backend 'lsp)
+      (vue :variables
+           vue-backend 'lsp
+           )
 
      ;;multiple-cursors
       ;;(multiple-cursors :variables multiple-cursors-backend 'evil-mc)
@@ -148,7 +151,7 @@ This function should only modify configuration layer settings."
    ;; `:location' property: '(your-package :location "~/path/to/your-package/")
    ;; Also include the dependencies as they will not be resolved automatically.
    ;;dotspacemacs-additional-packages '()
-   dotspacemacs-additional-packages '( multi-term zencoding-mode eterm-256color )
+   dotspacemacs-additional-packages '(multi-term zencoding-mode ox-twbs eterm-256color )
 
 
    ;; A list of packages that cannot be updated.
@@ -786,6 +789,8 @@ you should place your code here."
 
   (setq left-fringe-width 48)
 
+  (setq indent-tabs-mode nil)
+  (setq tab-width 4)
 
   (setq my-keyboard-input-dev (s-trim (shell-command-to-string (concat  (getenv "HOME") "/desktop/key_send/get_kbd_eventid.sh" )) ))
 
@@ -793,7 +798,6 @@ you should place your code here."
   (setq create-lockfiles nil)
 
 
-  (setq lsp-python-ms-python-executable  "/usr/bin/python3")
   (require 'font-lock+ )
 
 
@@ -810,11 +814,10 @@ you should place your code here."
   (setq lsp-eldoc-enable-signature-help nil)
   (setq lsp-enable-symbol-highlighting t)
   (setq lsp-enable-xref nil)
-  (setq lsp-enable-indentation nil )
+  (setq lsp-enable-indentation t )
   (setq lsp-eldoc-prefer-signature-help nil)
   (setq lsp-enable-on-type-formatting  nil)
   (setq lsp-eldoc-hook nil )
-  (setq lsp-enable-indentation  nil)
   (setq lsp-links-check-internal 10000)
   (setq lsp-enable-links nil)
   (setq lsp-auto-execute-action nil)
@@ -911,6 +914,10 @@ you should place your code here."
   (add-hook 'web-mode-hook '(lambda ( )
                              (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
                              ))
+  (add-hook 'python-mode-hook '(lambda()
+                                 (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
+                              ))
+
   (add-hook 'vue-mode-hook '(lambda ( )
                               (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
                               ))
@@ -926,7 +933,7 @@ you should place your code here."
                               ))
 
   (add-hook 'typescript-mode-hook '(lambda ( )
-                                     
+
                                      (if(get-project-root-dir "vite.config.ts"  )
                                          (vue-mode)
                                        (progn

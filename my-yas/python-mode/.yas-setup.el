@@ -35,4 +35,4 @@
                  "\n"))))
 
 
-(add-hook 'python-mode-hook #'yasnippet-snippets--fixed-indent)
+;;(add-hook 'python-mode-hook #'yasnippet-snippets--fixed-indent)

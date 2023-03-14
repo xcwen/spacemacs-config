@@ -49,7 +49,8 @@ localhost:~/site-lisp/config$"
 
 (defun check-file-ts()
   (interactive)
-  (and  (s-ends-with-p ".ts" (buffer-name))   )
+
+  (and  (s-ends-with-p ".ts" (buffer-file-name))   )
        )
 
 (defun my-s-split-words (s)
@@ -310,6 +311,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 
             (setq file-name-end (point))
             (setq cur-path (buffer-substring-no-properties file-name-begin file-name-end ))
+            (message "cur-path:%s" cur-path)
             (get-url-path-goto-info cur-path)
             ))
         ))
@@ -919,12 +921,11 @@ The test for presence of the car of ELT-CONS is done with `equal'."
               (setq  obj-file (nth 0 file-info) )
               (setq  pos-info (nth 1 file-info) )
               )
-            )
-          (unless (and obj-file (f-exists? obj-file ) )
-            (setq  obj-file  (concat "./" (file-name-base path-name ) ".vue" ) )
-            (setq pos-info nil )
-            )
-          )
+            (unless (and obj-file (f-exists? obj-file ) )
+              (setq  obj-file  (concat "./" (file-name-base path-name ) ".vue" ) )
+              (setq pos-info nil )
+              )
+            ))
 
 
          ( (or (string= major-mode  "web-mode" ) (string= major-mode  "vue-mode" )  )
@@ -2023,7 +2024,7 @@ If FORWARD is nil, search backward, otherwise forward."
         (setq project-root-dir nil)))
 
     project-root-dir))
-(defun get-project-root-dir (file-name)
+(defun get-project-root-dir (find-file-name)
   "Get the project root directory of the curent opened buffer."
   ;;(ac-php--debug "Lookup for the project root...")
   (let (project-root-dir tags-file (file-name buffer-file-name))
@@ -2039,7 +2040,7 @@ If FORWARD is nil, search backward, otherwise forward."
     (let (last-dir)
       (while
           (not (or
-                (file-exists-p (concat project-root-dir file-name ))
+                (file-exists-p (concat project-root-dir find-file-name ))
                 (string= project-root-dir "/")))
         (setq last-dir project-root-dir
               project-root-dir (file-name-directory
@@ -2219,15 +2220,17 @@ If FORWARD is nil, search backward, otherwise forward."
      (when (string= "js2-mode" major-mode)
        (setq file-info (js-get-file-at-point) ))
 
-     (when (check-file-ts )
-       (setq file-info (ts-get-file-at-point) )
-       (message "file-info %S" file-info )
+     (if (check-file-ts )
+         (progn
+           (setq file-info (ts-get-file-at-point) )
+           (message "file-info %S" file-info ))
+       (when (or (string= "web-mode" major-mode)  (string= "vue-mode" major-mode))
+         (setq file-info (web-get-file-at-point) ))
+
        )
 
 
 
-     (when (or (string= "web-mode" major-mode)  (string= "vue-mode" major-mode))
-       (setq file-info (web-get-file-at-point) ))
 
     (when  ( and (nth 0 file-info) (file-exists-p  (nth 0 file-info)  ) )
       (find-file  (nth 0 file-info)  )
