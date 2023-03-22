@@ -5,7 +5,6 @@
                      '(("xdtd" "<include: file=\"../al_common/td_xs_opt.html\" />" "xdtd" nil
                         ("twitter-bootstrap")
                         nil "/home/jim/.spacemacs.d/my-yas/web-mode/xdtd.yasnippet" nil nil)
-                       ("ts" "<script src=\"./$0\" > </script>\n" "ts" nil nil nil "/home/jim/.spacemacs.d/my-yas/web-mode/ts" nil nil)
                        ("trdata" "{!!  \\App\\Helper\\Utils::gen_jquery_data($var )  !!}\n" "trdata" nil nil nil "/home/jim/.spacemacs.d/my-yas/web-mode/trdata" nil nil)
                        ("tdopt" "<td class=\"remove-for-not-xs\" ></td>\n\n<td class=\"remove-for-xs\" >操作</td>\n\n<include: file=\"../al_common/td_xs_opt.html\" />\n\n<td class=\"remove-for-xs\" >\n    <div   data-userid=\"[$var.userid]\" data-stu_nick=\"[$var.nick]\">\n        <a href=\"javascript:;\" class=\"btn  fa fa-info td-info\"></a>\n        <a href=\"javascript:;\" class=\"btn fa fa-user opt-user \"></a>\n    </div>\n</td>\n" "tdopt" nil nil nil "/home/jim/.spacemacs.d/my-yas/web-mode/tdopt.yasnippet" nil nil)
                        ("table" "<table   class=\"table table-bordered table-striped\"   >" "table" nil
@@ -46,4 +45,4 @@
                         nil "/home/jim/.spacemacs.d/my-yas/web-mode/abutton.yasnippet" "direct-keybinding" nil)))
 
 
-;;; Do not edit! File generated at Tue Mar 14 10:20:04 2023
+;;; Do not edit! File generated at Thu Mar 16 15:27:10 2023

@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# contributor: jim
+# name: ts
+# key: ts
+# group: definitions
+# --
+<script lang="ts" src="./`(yas-vue-get-name-by-file-name)`.ts"/>
