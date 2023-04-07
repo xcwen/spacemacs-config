@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# contributor: jim
+# name: less
+# key: less
+# group: definitions
+# --
+<style lang="less" scoped >
+$0
+</style>

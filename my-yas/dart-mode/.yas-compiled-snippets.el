@@ -43,4 +43,4 @@
                        ("acls" "abstract class ${1:Name} {\n  $0\n}" "aclass" nil nil nil "/home/jim/.spacemacs.d/my-yas/dart-mode/aclass" nil nil)))
 
 
-;;; Do not edit! File generated at Thu Mar 16 15:27:09 2023
+;;; Do not edit! File generated at Fri Mar 24 12:45:17 2023

@@ -922,6 +922,15 @@ you should place your code here."
                               (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
                               ))
 
+  (add-hook 'org-mode-hook '(lambda ( )
+                              (setq evil-org-key-theme
+                                    `(textobjects
+                                      navigation
+                                      ;;additional
+                                      ,@(when org-want-todo-bindings '(todo))))
+                              ))
+
+
 
   (add-hook 'php-mode-hook '(lambda ( )
                               (require 'php-align)

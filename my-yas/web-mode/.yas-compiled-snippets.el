@@ -45,4 +45,4 @@
                         nil "/home/jim/.spacemacs.d/my-yas/web-mode/abutton.yasnippet" "direct-keybinding" nil)))
 
 
-;;; Do not edit! File generated at Thu Mar 16 15:27:10 2023
+;;; Do not edit! File generated at Fri Mar 24 12:45:18 2023
