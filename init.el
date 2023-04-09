@@ -40,7 +40,7 @@ This function should only modify configuration layer settings."
      elixir
      systemd
      (lsp :variables lsp-rust-server 'rust-analyzer)
-     (c-c++ :variables c-c++-backend 'lsp-clangd)
+     (c-c++ :variables c-c++-backend 'lsp-ccls )
 
      (rust :variables rust-backend 'lsp)
 

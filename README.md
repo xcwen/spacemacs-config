@@ -154,6 +154,12 @@ npm install typescript -g
 ```
 
 ### c++ 编码需要
+https://github.com/MaskRay/ccls/wiki/Build
+
+sudo apt install clang cmake libclang-dev llvm-dev rapidjson-dev
+cmake -H. -BRelease
+cmake --build Release
+
 apt-get install clangd-11
 
 #### 从make/cmake 生成补全配置
