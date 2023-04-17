@@ -437,7 +437,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
                (s-replace
                 "\"" ""
                 (shell-command-to-string
-                 (concat "grep 'url[ \t]*=' "  (s-replace ".ts" ".vue" (buffer-file-name))  " |awk -F= '{print $2}'"  )
+                 (concat "grep '[ \t]+url[ \t]*=' "  (s-replace ".ts" ".vue" (buffer-file-name))  " |awk -F= '{print $2}'"  )
                  )) ))
     url
     ))
@@ -916,6 +916,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
                 (setq url (concat "/" ctrl-name "/" action-name ) )
                 )
               )
+            ;; (ac-php--debug "path-name:%s=> %s" path-name  url )
             (when url
               (setq file-info  ( get-url-path-goto-info url ) )
               (setq  obj-file (nth 0 file-info) )
