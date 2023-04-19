@@ -798,7 +798,6 @@ you should place your code here."
   (setq create-lockfiles nil)
 
 
-  (require 'font-lock+ )
 
 
 
