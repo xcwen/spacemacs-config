@@ -919,6 +919,8 @@ you should place your code here."
 
   (add-hook 'vue-mode-hook '(lambda ( )
                               (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
+
+                              (setq company-backends '(company-capf) )
                               ))
 
   (add-hook 'org-mode-hook '(lambda ( )

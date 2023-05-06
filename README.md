@@ -47,16 +47,15 @@ git check develop
 
 ```
 
-###  修改org-mode 键绑定
-`layers/+emacs/org/packages.el`
+###   关闭编辑报错
 
-```diff
-       (setq evil-org-use-additional-insert t
-             evil-org-key-theme `(textobjects
-                                  navigation
--                                 additional
-+                                 ;;additional
-                                  ,@(when org-want-todo-bindings '(todo)))))
+
+```
+ts:
+   // @ts-ignore
+php:
+/** @phpstan-ignore-next-line */
+/** @phpstan-ignore-line */
 ```
 
 
