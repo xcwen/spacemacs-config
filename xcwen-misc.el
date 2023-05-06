@@ -294,6 +294,16 @@ The test for presence of the car of ELT-CONS is done with `equal'."
   (evil-define-key 'emacs mode-map  key  func )
   )
 
+(defun align-eq ()
+  "D."
+  (interactive)
+
+  (let ((tmp-mark-pos  (get-mark-pos-ex)))
+    (align-regexp (car tmp-mark-pos  ) (cadr tmp-mark-pos  )  "\\(\\s-*\\)=\\(\\s-*\\)")
+    (setq tmp-mark-pos  (get-mark-pos-ex))
+    (align-regexp (car tmp-mark-pos  ) (cadr tmp-mark-pos  )  "=\\(\\s-*\\)")
+   nil 1 )
+  )
 
 (defun ts-get-file-at-point ()
   "D."

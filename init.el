@@ -799,12 +799,6 @@ you should place your code here."
 
 
 
-
-
-  (load  (expand-file-name "php-align.el" dotspacemacs-directory) )
-
-
-
   ;;关闭 lsp-ui-doc
   (setq lsp-ui-doc-delay 1)
   (setq lsp-ui-doc-show-with-cursor  nil)
@@ -855,7 +849,6 @@ you should place your code here."
   ( set-evil-normal-state-key "F"  'copy-field-list )
   ( set-evil-virtual-state-key "Y"  'copy-region-or-whole-line )
   ( set-evil-virtual-state-key "F"  'copy-field-list )
-
   (set-evil-normal-state-key "D"  'kill-region-or-whole-line )
   ( set-evil-virtual-state-key "D" 'kill-region-or-whole-line  )
   (require 'company)
@@ -934,12 +927,12 @@ you should place your code here."
 
 
   (add-hook 'php-mode-hook '(lambda ( )
-                              (require 'php-align)
-                              (php-align-setup)
 
                               (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
 
                               (my-set-evil-not-insert-local-map "g\C-]"   'my-jump-merber-class )
+                              (my-set-evil-not-insert-local-map "="  'align-eq )
+
                               ))
 
   (add-hook 'typescript-mode-hook '(lambda ( )
