@@ -907,11 +907,13 @@ you should place your code here."
                              (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
                              ))
   (add-hook 'python-mode-hook '(lambda()
+                                 (my-set-evil-not-insert-local-map "="  'align-eq )
                                  (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
                               ))
 
   (add-hook 'vue-mode-hook '(lambda ( )
                               (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
+                              (my-set-evil-not-insert-local-map "="  'align-eq )
 
                               (setq company-backends '(company-capf) )
                               ))
@@ -940,6 +942,7 @@ you should place your code here."
                                      (if(get-project-root-dir "vite.config.ts"  )
                                          (vue-mode)
                                        (progn
+                                         (my-set-evil-not-insert-local-map "="  'align-eq )
                                          (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )))
                               ))
 
@@ -967,27 +970,6 @@ you should place your code here."
                                ))
 
 
-
-
-
-;
-  ;; 等号对齐
-  (define-key evil-visual-state-map (kbd "=")
-    '(lambda( beg end  )
-       (interactive "r")
-
-       ;;"多行注释处理"
-       (if (and mark-active
-                (string-match "\n"
-                              (buffer-substring-no-properties (region-beginning)(region-end))))
-           (progn
-             (mark-region-ex)
-
-             (setq beg (region-beginning) )
-             (setq end (region-end) )
-             ))
-       (align beg end)
-       ))
 
 
   (define-key evil-normal-state-map [escape] '(lambda()
