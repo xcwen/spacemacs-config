@@ -9,7 +9,14 @@
     <description>
         My custom rule set that checks my code...
     </description>
-
+    <!-- 
+         <rule ref="rulesets/codesize.xml" />
+         <rule ref="rulesets/cleancode.xml" />
+         <rule ref="rulesets/controversial.xml" />
+         <rule ref="rulesets/design.xml" />
+         <rule ref="rulesets/naming.xml" />
+         <rule ref="rulesets/unusedcode.xml" />
+    -->
     <!-- Import the entire unused code rule set -->
     <rule name="UnusedLocalVariable"
           since="0.2"

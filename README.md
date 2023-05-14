@@ -120,8 +120,6 @@ PS1='localhost:\w$(git_branch)$ '
 
 ###php 补全
 
-指定项目所在的根目录,在项目根目录上生成.tags目录
-
 ``` bash
 #php 代码检查
 sudo apt-get install phpmd php-cli php-xml php-codesniffer
