@@ -32,7 +32,8 @@ This function should only modify configuration layer settings."
    dotspacemacs-configuration-layer-path '()
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(clojure
+   '(asciidoc
+     clojure
      elixir
      systemd
      (lsp :variables lsp-rust-server 'rust-analyzer)

@@ -94,6 +94,29 @@
           )
         ))
 
+  (set-evil-main-state-key
+   ","
+   '(lambda()
+      (interactive )
+      (let (line-txt)
+        (when (string= major-mode "go-mode") 
+          (save-excursion
+            (setq line-txt (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
+            (beginning-of-line)
+            (re-search-forward  "[a-zA-Z)_](" )
+            (if (s-starts-with-p "func" line-txt )
+                (insert "ctx context.Context, ")
+              (insert "ctx, ")
+              )
+            ))
+        )))
+
+  (set-evil-main-state-key
+   "f"
+   'beginning-of-defun)
+
+
+
 
   (set-evil-all-state-key (kbd "C-S-j")    'switch-file-term)
 

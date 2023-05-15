@@ -120,8 +120,6 @@ PS1='localhost:\w$(git_branch)$ '
 
 ###php 补全
 
-指定项目所在的根目录,在项目根目录上生成.tags目录
-
 ``` bash
 #php 代码检查
 sudo apt-get install phpmd php-cli php-xml php-codesniffer
@@ -151,8 +149,19 @@ emacs php-mode 快捷键
 npm install typescript -g
 ```
 
-### c++ 编码需要
+### c/c++ 编码需要
+基于 `ccls` 补全
+
+树莓派的pico 的 .ccls 文件如下
+```
+%compile_commands.json
+-isystem/home/jim/pico/arm-none-eabi-gcc/arm-none-eabi/include
+```
+
+
+
 https://github.com/MaskRay/ccls/wiki/Build
+
 
 sudo apt install clang cmake libclang-dev llvm-dev rapidjson-dev
 cmake -H. -BRelease
@@ -178,12 +187,10 @@ compile_commands.json 文件能够有效提高一些工具(比如说ccls1, vscod
 安装之后，执行以下命令即可生成：
 bear make
 
-###python  补全jedi 需要
-```
-apt-get install virtualenv
-or:
-apt-get install python-virtualenv
-```
+### python
+安装 anaconda3
+
+
 
 ### go 补全 需要
 ```bash
