@@ -603,4 +603,3 @@ you should place your code here."
   (recentf-load-list)
 
   )
-

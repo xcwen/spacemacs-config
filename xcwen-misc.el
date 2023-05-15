@@ -299,9 +299,9 @@ The test for presence of the car of ELT-CONS is done with `equal'."
   (interactive)
 
   (let ((tmp-mark-pos  (get-mark-pos-ex)))
-    (align-regexp (car tmp-mark-pos  ) (cadr tmp-mark-pos  )  "\\(\\s-*\\)=" 1 1  )
+    (align-regexp (car tmp-mark-pos  ) (cadr tmp-mark-pos  )  "\\(\\s-*\\)=>?" 1 1  )
     (setq tmp-mark-pos  (get-mark-pos-ex))
-    (align-regexp (car tmp-mark-pos  ) (cadr tmp-mark-pos  )  "=\\(\\s-*\\)" 1 1 )
+    (align-regexp (car tmp-mark-pos  ) (cadr tmp-mark-pos  )  "=>?\\(\\s-*\\)" 1 1 )
   ))
 
 
