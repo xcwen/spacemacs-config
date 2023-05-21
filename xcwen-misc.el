@@ -2331,17 +2331,6 @@ If FORWARD is nil, search backward, otherwise forward."
 
   ))
 
-(defun tt ()
-"Doc  ."
-(interactive)
-(let ()
-
-  (set (make-local-variable 'completion-at-point-functions ) nil)
-  (set (make-local-variable 'my-completion-at-point-functions ) '(lsp-completion-at-point) )
-  (set (make-local-variable 'company-backends)
-       '(company-my-capf ))
-
-))
 
 (provide 'xcwen-misc)
 
