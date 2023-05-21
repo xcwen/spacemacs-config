@@ -1,10 +1,11 @@
-(setq-default  my-font-size 24 )
-(setq-default  my-keyboard-input-dev "/dev/input/event7")
 
 
 (load  (expand-file-name "init-syntax-table.el" dotspacemacs-directory) )
 (load  (expand-file-name "xcwen-misc.el" dotspacemacs-directory) )
 (load  (expand-file-name "php-doc-block.el" dotspacemacs-directory) )
+
+(setq my-font-size 24 )
+(setq my-keyboard-input-dev "/dev/input/event7")
 (defun set-main-key()
 
   (define-key evil-motion-state-map "," nil )
