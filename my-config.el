@@ -71,7 +71,7 @@
         (progn
             (helm-projectile-grep (concat (projectile-project-root) "src/app" ) )
           ))
-       (t  (spacemacs/helm-project-smart-do-search) )
+       (t  (spacemacs/helm-project-smart-do-search) ) ;; flycheck-disable-line
        )))
 
   (set-evil-main-state-key
