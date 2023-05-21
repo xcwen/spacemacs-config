@@ -1,12 +1,47 @@
+;;; my-config.el --- Some basic utility function of xcwen
+;; -*- Emacs-Lisp -*-
+
+;; Time-stamp: <2010-09-11 09:53:02 Saturday by taoshanwen>
+
+;; This  file is free  software; you  can redistribute  it and/or
+;; modify it under the terms of the GNU General Public License as
+;; published by  the Free Software Foundation;  either version 3,
+;; or (at your option) any later version.
+
+;; This file is  distributed in the hope that  it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR  A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You  should have  received a  copy of  the GNU  General Public
+;; License along with  GNU Emacs; see the file  COPYING.  If not,
+;; write  to  the Free  Software  Foundation,  Inc., 51  Franklin
+;; Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
 
-(load  (expand-file-name "init-syntax-table.el" dotspacemacs-directory) )
+;;; Code:
+(require 'core-dotspacemacs)
+(add-to-list 'load-path   dotspacemacs-directory  )
 (load  (expand-file-name "xcwen-misc.el" dotspacemacs-directory) )
+(require 'xcwen-misc)
+(load  (expand-file-name "init-syntax-table.el" dotspacemacs-directory) )
 (load  (expand-file-name "php-doc-block.el" dotspacemacs-directory) )
 
-(setq my-font-size 24 )
+(require 'php-mode)
+(require 'lsp-ui-doc)
+(require 'lsp-ui)
+(require 'lsp)
+(require 'undo-tree)
+(require 'evil-org)
+(require 'info+)
+(require 'evil-commands)
+(require 'evil-matchit)
+(require 'evil-states)
+(require 'eterm-256color)
+(require 'helm-projectile)
 (setq my-keyboard-input-dev "/dev/input/event7")
 (defun set-main-key()
+  "D."
 
   (define-key evil-motion-state-map "," nil )
 
@@ -29,7 +64,7 @@
 
   (set-evil-main-state-key
    "/"
-   '(lambda()
+   #'(lambda()
       (interactive )
       (cond
        ((string= major-mode "php-mode")
@@ -41,7 +76,7 @@
 
   (set-evil-main-state-key
    "i"
-   '(lambda()
+   #'(lambda()
       (interactive )
       (flycheck-explain-error-at-point   )
       (cond
@@ -58,7 +93,7 @@
        )))
 
   (set-evil-main-state-key "\""
-  '(lambda()
+  #'(lambda()
      (interactive )
      (if (ac-php--in-string-or-comment-p)
          (cond
@@ -81,7 +116,7 @@
 
   (set-evil-main-state-key
    ":"
-   '(lambda()
+   #'(lambda()
       (interactive )
         (let ( cur_word)
           (message "xxx")
@@ -97,10 +132,10 @@
 
   (set-evil-main-state-key
    ","
-   '(lambda()
+   #'(lambda()
       (interactive )
       (let (line-txt)
-        (when (string= major-mode "go-mode") 
+        (when (string= major-mode "go-mode")
           (save-excursion
             (setq line-txt (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
             (beginning-of-line)
@@ -125,10 +160,8 @@
   (add-hook 'vue-mode-hook 'zencoding-mode)
 
 
-
-
   (add-hook 'php-mode-hook
-            '(lambda ( )
+            #'(lambda ( )
                (set-evil-main-state-key-on-mode php-mode-map "D" 'my-jump-table-sql  )
 
                (set-evil-main-state-key-on-mode  php-mode-map "r" 'ac-php-remake-tags )
@@ -172,31 +205,24 @@ you should place your code here."
 
 
   ;;关闭 lsp-ui-doc
-  (lsp-ui-mode nil)
   (setq lsp-ui-doc-delay 1)
   (setq lsp-eldoc-enable-hover nil  )
   (setq lsp-ui-doc-show-with-cursor  nil)
   (setq lsp-ui-sideline-delay 10000 )
   (setq lsp-eldoc-enable-hover t)
-  (setq lsp-eldoc-enable-signature-help nil)
   (setq lsp-enable-symbol-highlighting t)
   (setq lsp-enable-xref nil)
   (setq lsp-enable-indentation t )
-  (setq lsp-eldoc-prefer-signature-help nil)
-  (setq lsp-enable-on-type-formatting  nil)
-  (setq lsp-eldoc-hook nil )
-  (setq lsp-links-check-internal 10000)
-  (setq lsp-enable-links nil)
   (setq lsp-auto-execute-action nil)
   (setq lsp-debounce-full-sync-notifications nil)
   (setq lsp-enable-file-watchers nil)
   (setq lsp-enable-folding nil)
-  (setq lsp-java-workspace-dir "/home/jim/java_workspace/" )
-  ;; (setq lsp-java-vmargs '("-noverify" "-Xmx1G" "-XX:+UseG1GC" "-XX:+UseStringDeduplication" "-javaagent:/home/jim/.spacemacs.d/bin/lombok-1.18.24.jar" "-Xbootclasspath/a:/home/jim/.spacemacs.d/bin/lombok-1.18.24.jar"))
-   (setq lsp-java-vmargs '("-noverify" "-Xmx1G" "-XX:+UseG1GC" "-XX:+UseStringDeduplication" "-javaagent:/home/jim/.spacemacs.d/bin/lombok-1.18.24.jar" ))
-  ;; (setq lsp-java-vmargs '("-noverify" "-Xmx1G" "-XX:+UseG1GC" "-XX:+UseStringDeduplication" ))
+  ;; (setq lsp-java-workspace-dir "/home/jim/java_workspace/" )
+  ;; ;; (setq lsp-java-vmargs '("-noverify" "-Xmx1G" "-XX:+UseG1GC" "-XX:+UseStringDeduplication" "-javaagent:/home/jim/.spacemacs.d/bin/lombok-1.18.24.jar" "-Xbootclasspath/a:/home/jim/.spacemacs.d/bin/lombok-1.18.24.jar"))
+  ;;  (setq lsp-java-vmargs '("-noverify" "-Xmx1G" "-XX:+UseG1GC" "-XX:+UseStringDeduplication" "-javaagent:/home/jim/.spacemacs.d/bin/lombok-1.18.24.jar" ))
+  ;; ;; (setq lsp-java-vmargs '("-noverify" "-Xmx1G" "-XX:+UseG1GC" "-XX:+UseStringDeduplication" ))
 
-  (setq dart-indent-trigger-commands '())
+  ;; (setq dart-indent-trigger-commands '())
 
  ;;(setq    nil)
 
@@ -233,13 +259,13 @@ you should place your code here."
   (define-key company-active-map  (kbd  "C-N")   'company-select-next )
   (define-key company-active-map  (kbd  "C-P")   'company-select-previous )
   ;;test
-  (define-key company-active-map  (kbd  "C-1")   '(lambda()
+  (define-key company-active-map  (kbd  "C-1")   #'(lambda()
                                                     (interactive )
                                                     (describe-key (kbd "C-N" ) )
                                                     ) )
 
 
-  (define-key evil-insert-state-map  (kbd  "C-P")   '(lambda(&optional arg)
+  (define-key evil-insert-state-map  (kbd  "C-P")   #'(lambda(&optional arg)
                                                        (interactive "p")
                                                        (if (company--active-p)
                                                            (company-select-previous arg)
@@ -247,7 +273,7 @@ you should place your code here."
                                                          )
                                                         ))
 
-  (define-key evil-insert-state-map  (kbd  "C-N")   '(lambda(&optional arg)
+  (define-key evil-insert-state-map  (kbd  "C-N")   #'(lambda(&optional arg)
                                                        (interactive "p")
                                                        (if (company--active-p)
                                                            (company-select-next arg)
@@ -271,38 +297,39 @@ you should place your code here."
   (global-set-key (kbd "s-w")   'copy-region-or-whole-line)
 
 
-  (add-hook 'go-mode-hook '(lambda ( )
+  (add-hook 'go-mode-hook #'(lambda ( )
 
 
                              (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
 
                              ))
-  (add-hook 'web-mode-hook '(lambda ( )
+  (add-hook 'web-mode-hook #'(lambda ( )
                              (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
                              ))
-  (add-hook 'python-mode-hook '(lambda()
+  (add-hook 'python-mode-hook #'(lambda()
                                  (my-set-evil-not-insert-local-map "="  'align-eq )
                                  (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
                               ))
 
-  (add-hook 'vue-mode-hook '(lambda ( )
+  (add-hook 'vue-mode-hook #'(lambda ( )
                               (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
                               (my-set-evil-not-insert-local-map "="  'align-eq )
 
                               (setq company-backends '(company-capf) )
                               ))
 
-  (add-hook 'org-mode-hook '(lambda ( )
+  (add-hook 'org-mode-hook #'(lambda ( )
                               (setq evil-org-key-theme
                                     `(textobjects
                                       navigation
                                       ;;additional
-                                      ,@(when org-want-todo-bindings '(todo))))
+                                      ;;,@(when org-want-todo-bindings '(todo))
+                                      ))
                               ))
 
 
 
-  (add-hook 'php-mode-hook '(lambda ( )
+  (add-hook 'php-mode-hook #'(lambda ( )
 
                               (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
 
@@ -311,25 +338,27 @@ you should place your code here."
 
                               ))
 
-  (add-hook 'typescript-mode-hook '(lambda ( )
+  (add-hook 'typescript-mode-hook #'(lambda ( )
 
                                      (if(get-project-root-dir "vite.config.ts"  )
-                                         (vue-mode)
+                                        (progn
+                                          (vue-mode) ;;
+                                         )
                                        (progn
                                          (my-set-evil-not-insert-local-map "="  'align-eq )
                                          (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )))
                               ))
 
-  (add-hook 'lua-mode-hook '(lambda ( )
+  (add-hook 'lua-mode-hook #'(lambda ( )
                                      (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
                                      ))
 
-  (add-hook 'rust-mode-hook '(lambda ( )
+  (add-hook 'rust-mode-hook #'(lambda ( )
                               (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
                               ))
 
 
-  (add-hook 'java-mode-hook '(lambda ( )
+  (add-hook 'java-mode-hook #'(lambda ( )
 
 
                                ;;(xref-pop-marker-stack)
@@ -339,14 +368,15 @@ you should place your code here."
                                (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
                                ))
 
-  (add-hook 'js-mode-hook '(lambda ( )
+  (add-hook 'js-mode-hook #'(lambda ( )
+                              (require 'typescript)
                              (typescript-mode)
                                ))
 
 
 
 
-  (define-key evil-normal-state-map [escape] '(lambda()
+  (define-key evil-normal-state-map [escape] #'(lambda()
                                                 (interactive )
                                                 (if (string= major-mode "term-mode" )
                                                     (let()
@@ -362,7 +392,7 @@ you should place your code here."
 
 
   (define-key evil-normal-state-map "gf" 'my-goto-file )
-  (define-key evil-insert-state-map [escape] '(lambda()
+  (define-key evil-insert-state-map [escape] #'(lambda()
                                                 (interactive )
                                                 (if (string= major-mode "term-mode" )
                                                     (let()
@@ -374,14 +404,14 @@ you should place your code here."
                                                   )
                                                 ))
 
-  (spacemacs|create-align-repeat-x "my-align" "=>" nil t)
+  ;; (spacemacs|create-align-repeat-x "my-align" "=>" nil t)
 
   (global-set-key "\M-1" 'my-delete-other-windows)
   (global-set-key (kbd "s-/") 'hippie-expand)
   (global-set-key  (kbd "s-1") 'my-delete-other-windows)
   (global-set-key  (kbd "C-S-W") 'evil-yank )
   (global-set-key  (kbd "C-x C-e")
-                   '(lambda( eval-last-sexp-arg-internal)(interactive "P")
+                   #'(lambda( eval-last-sexp-arg-internal)(interactive "P")
                       (cond
                        ((string= major-mode "emacs-lisp-mode")
                         (eval-last-sexp eval-last-sexp-arg-internal)
@@ -410,7 +440,7 @@ you should place your code here."
 
                             )))))
 
-  (set-evil-all-state-key  (kbd "C-<tab>")  '(lambda () (interactive)
+  (set-evil-all-state-key  (kbd "C-<tab>")  #'(lambda () (interactive)
                                                (if  (string= major-mode "php-mode")
                                                    (company-complete)
                                                  (company-complete))
@@ -425,10 +455,10 @@ you should place your code here."
   (set-evil-all-state-key (kbd "C-S-l") 'multi-term-next )
 
   ;;查找时,使用trim-string,去掉前后空格
-  (define-key isearch-mode-map (kbd "C-y")  '(lambda()(interactive)
+  (define-key isearch-mode-map (kbd "C-y")  #'(lambda()(interactive)
                                                (isearch-yank-string (trim-string (current-kill 0) ))))
 
-  (define-key isearch-mode-map (kbd "C-v")  '(lambda()(interactive)
+  (define-key isearch-mode-map (kbd "C-v")  #'(lambda()(interactive)
                                                (isearch-yank-string (trim-string (current-kill 0) ))))
 
   (dolist (mode-hook (list
@@ -437,7 +467,7 @@ you should place your code here."
                  'emacs-lisp-mode-hook
                  ))
 
-    (add-hook mode-hook '(lambda() (interactive )
+    (add-hook mode-hook #'(lambda() (interactive )
                                (flycheck-mode)
                                (company-mode)
 
@@ -448,7 +478,7 @@ you should place your code here."
 
 
   (add-hook 'Info-mode-hook
-            '(lambda()
+            #'(lambda()
 
                (define-key Info-mode-map (kbd "<return>")  'Info-follow-nearest-node )
                (define-key Info-mode-map (kbd "P")  'Info-next )
@@ -462,13 +492,9 @@ you should place your code here."
 
 
 
-  (add-hook 'minibuffer-inactive-mode-hook
-            '(lambda()
-               ;;(message  "  XXXX  minibuffer-inactive-mode-hook ")
-               ))
-  (define-key   evil-ex-search-keymap  (kbd "C-y")  '(lambda()(interactive)
+  (define-key   evil-ex-search-keymap  (kbd "C-y")  #'(lambda()(interactive)
                                                        (insert (trim-string (current-kill 0) ))))
-  (define-key    evil-ex-search-keymap (kbd "C-v")  '(lambda()(interactive)
+  (define-key    evil-ex-search-keymap (kbd "C-v")  #'(lambda()(interactive)
                                                        (insert (trim-string (current-kill 0) ))))
 
 
@@ -493,13 +519,13 @@ you should place your code here."
 
 
   ;;ex 命令行调整
-  (evil-ex-define-cmd  "wq"  '(lambda ()
+  (evil-ex-define-cmd  "wq"  #'(lambda ()
                                 (interactive )
                                 (save-buffer )
                                 (multi-term-goto-last-term )
                                 ))
 
-  (evil-ex-define-cmd  "q"  '(lambda ()
+  (evil-ex-define-cmd  "q"  #'(lambda ()
                                (interactive )
                                (multi-term-goto-last-term )
                                ))
@@ -526,16 +552,16 @@ you should place your code here."
    '(flycheck-phpcs-standard (concat (getenv "HOME") "/spacemacs-config/ruleset.xml" ))
   )
 
-  ;; 设置sqlfmt : cnpm install -g sql-formatter
-  (setq sqlfmt-executable  "sql-formatter")
-  (setq sqlfmt-options  '())
+  ;; ;; 设置sqlfmt : cnpm install -g sql-formatter
+  ;; (setq sqlfmt-executable  "sql-formatter")
+  ;; (setq sqlfmt-options  '())
 
 
 
 
   (add-hook
    'term-mode-hook
-   '(lambda()
+   #'(lambda()
       (eterm-256color-mode)
       (yas-minor-mode -1 )
       ;; (message "=== selected: %s"  (selected-frame )  )
@@ -558,7 +584,7 @@ you should place your code here."
       (define-key evil-insert-state-local-map   (kbd "C-w")  'term-send-raw)
       (define-key evil-insert-state-local-map   (kbd "C-d")  'term-send-raw)
       (define-key evil-insert-state-local-map   (kbd "C-t")  'term-send-raw)
-      (define-key evil-insert-state-local-map   (kbd "C-s")  '(lambda() (interactive) ))
+      (define-key evil-insert-state-local-map   (kbd "C-s")  #'(lambda() (interactive) ))
       (define-key evil-insert-state-local-map   (kbd "M-h")  'term-send-backward-kill-word )
       (define-key evil-insert-state-local-map   (kbd "s-h")  'term-send-backward-kill-word )
 
@@ -625,6 +651,10 @@ you should place your code here."
   (set-frame-position (selected-frame) 1920 0)
   (set-frame-width (selected-frame) 91)
   (set-frame-height (selected-frame) 91)
-  (recentf-load-list)
+  ;; (recentf-load-list)
 
   )
+
+(provide 'my-config)
+
+;;; my-config.el ends here
