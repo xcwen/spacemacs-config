@@ -345,7 +345,7 @@ It should only modify the values of Spacemacs settings."
                               "XHei Mono.Ubuntu"
                               ;;"Source Code Pro"
                                    ;;:size  (if (string= (system-name) "jim-PC" )  48 24  )
-                                   :size (max (round(* my-font-size (string-to-number (shell-command-to-string "grep ScreenScaleFactors  ~/.config/deepin/qt-theme.ini | awk -F= '{print $2}' ") ))) my-font-size )
+                                   :size (max (round(* 24 (string-to-number (shell-command-to-string "grep ScreenScaleFactors  ~/.config/deepin/qt-theme.ini | awk -F= '{print $2}' ") ))) 24 )
 
                                    :weight 'normal
                                    :width 'normal
@@ -649,7 +649,6 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
 
 (setq custom-file (expand-file-name "custom.el" dotspacemacs-directory) )
 (load custom-file )
-(load  (expand-file-name "my-config.el" dotspacemacs-directory) )
 
 ;;(defun dotspacemacs/user-config )
 (defun dotspacemacs/user-config ()
@@ -659,6 +658,8 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
+
+  (load  (expand-file-name "my-config.el" dotspacemacs-directory) )
   (my-user-config)
   )
 (defun dotspacemacs/emacs-custom-settings ()

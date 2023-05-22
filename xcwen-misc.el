@@ -17,8 +17,20 @@
 ;; License along with  GNU Emacs; see the file  COPYING.  If not,
 ;; write  to  the Free  Software  Foundation,  Inc., 51  Franklin
 ;; Street, Fifth Floor, Boston, MA 02110-1301, USA.
-
-(eval-when-compile (require 'cl))
+(require 's)
+(require 'f)
+(require 'cl-lib)
+(require 'evil)
+(require 'multi-term)
+(require 'yasnippet)
+(require 'phpcbf)
+(require 'xref)
+(require 'flycheck)
+(require 'ac-php-core)
+(require 'treemacs )
+(require 'lsp-sqls )
+(require 'company)
+(require 'flutter)
 
 ;;; Commentary:
 (defvar term-local-cmd-start-line-regex-str
@@ -48,6 +60,7 @@ localhost:~/site-lisp/config$"
 
 
 (defun check-file-ts()
+  "Doc."
   (interactive)
 
   (and  (s-ends-with-p ".ts" (buffer-file-name))   )
@@ -153,7 +166,7 @@ localhost:~/site-lisp/config$"
             (switch-to-buffer opt-buffer)
             (setq find-flag t)
             ;;(message "1.2.2: %s" opt-buffer)
-            (return ))
+            (cl-return ))
           )))
 
 
@@ -232,9 +245,6 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 
 
 
-(defun yas-org-very-safe-expand ()
-  "D."
-  (let ((yas/fallback-behavior 'return-nil)) (yas-expand)))
 
 (defun set-evil-all-state-key ( key func )
   "D. KEY FUNC ."
@@ -256,14 +266,17 @@ The test for presence of the car of ELT-CONS is done with `equal'."
   )
 
 (defun set-evil-main-state-key (  key func )
+  "D. KEY FUNC ."
+  (let ()
   (setq key  (concat "," key ))
   (define-key evil-normal-state-map  key  func )
   (define-key evil-visual-state-map key  func )
   (define-key evil-motion-state-map key  func )
-  )
+  ))
 
 
 (defun set-evil-main-state-key-on-mode ( mode-map  key func )
+  "D. KEY FUNC . MODE-MAP ."
   (setq key  (concat "," key ))
   (evil-define-key 'normal  mode-map  key  func )
   (evil-define-key 'motion mode-map  key  func )
@@ -328,6 +341,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 
 
 (defun js-get-file-at-point ()
+  "DEFUN."
   (interactive)
   (let( cur-path  pos-info)
         (save-excursion
@@ -351,6 +365,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
         (list cur-path pos-info)
   ))
 (defun web-get-file-at-point ()
+  "D."
   (interactive)
   (let( cur-path  pos-info)
         (save-excursion
@@ -376,43 +391,11 @@ The test for presence of the car of ELT-CONS is done with `equal'."
         (list cur-path pos-info)
     ))
 
-(defun php-get-html-in-handle ()
-    "DOCSTRING"
-  (interactive)
-  (let (line-txt opt-file opt-dir )
-    (save-excursion
-      (goto-char (point-min))
-
-      (when (search-forward "APP_PATH" nil t  )
-        (setq line-txt (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
-        (if (string-match   "APP_PATH[ \t]*\\.[ \t]*'\\(.*\\)'[ \t]*;"   line-txt)
-            (setq opt-dir  (concat "../" (match-string  1 line-txt)  ) )
-          )
-        ))
-
-
-    (if opt-dir
-        (save-excursion
-          (let (file-name-begin file-name-end )
-
-            (skip-chars-backward "a-zA-Z0-9._/"   )
-            (setq file-name-begin (point))
-
-            (skip-chars-forward "a-zA-Z0-9._/"   )
-
-            (setq file-name-end (point))
-
-            (setq opt-file (concat opt-dir "/"  (buffer-substring-no-properties file-name-begin file-name-end )) )
-
-            )))
-
-    (list opt-file  nil )
-    ))
 
 (defvar cleanup-flag t )
 ;; (switch-cc-to-h ))))
 (defun cleanup-and-goto-error ()
-  "DOCSTRING"
+  "DOCSTRING."
   (interactive)
   (let (pos cur-pos )
     (setq cur-pos (point ) )
@@ -441,6 +424,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
       ))
   )
 (defun switch-file-opt-ts-url ()
+  "D."
 
   (let(url )
     (setq url (s-trim
@@ -452,11 +436,13 @@ The test for presence of the car of ELT-CONS is done with `equal'."
     url
     ))
 (defun get-url-path-get-fix-path-from-env  (  env-key )
+  "D ENV-KEY."
   (s-trim (s-replace  "\"" ""  (shell-command-to-string (concat "grep '^"  env-key  "'  "  (go-core-server--get-project-root-dir ) ".env |awk -F= '{print $2}' "  )  ))
   ))
 
 (defun get-route-jump-file-name  (  sub-path  route-config-str )
-  (let ((match_path "/" ) route  path)
+  "SUB-PATH, ROUTE-CONFIG-STR."
+  (let ((match_path "/" ) route  path kv)
     (dolist  ( item  (s-split ";" route-config-str))
       (setq kv (s-split ":" item))
       (when (=  2 (length kv ))
@@ -464,13 +450,14 @@ The test for presence of the car of ELT-CONS is done with `equal'."
         (setq path (s-trim (nth 1 kv)) )
         (when (s-starts-with-p route  sub-path   )
           (setq match_path  path)
-          (return)
+          (cl-return)
           )))
     (concat  match_path  sub-path )
     ))
 
 
 (defun get-url-path-goto-info(url)
+  "URL."
   (let (obj-file pos-info  arr arr-len ctrl-name action-name (server-type "php") server-type-str )
     (setq  arr (s-split "/" url  ) )
     ;;("" "gocore" "more_call" "test" "teacher_list")
@@ -510,11 +497,10 @@ The test for presence of the car of ELT-CONS is done with `equal'."
         (setq  obj-file  (concat (get-url-path-get-fix-path-from-env  "PHP_CONTROLLERS_DIR" ) "/" (my-s-upper-camel-case ctrl-name) ".php" ) )
         )
       )
-     (message " check  22: %s" obj-file)
 
      ((string= server-type  "gocore" )
       (setq  obj-file  (concat (get-url-path-get-fix-path-from-env  "GOCORE_CONTROLLERS_DIR" ) "/" ctrl-name  ".go" ) )
-      (setq pos-info ( concat "/func[ \t]+.*" (my-s-upper-camel-case action-name) "[ \t]*("  ) )
+      (setq pos-info (concat "/func[ \t]+.*" (my-s-upper-camel-case action-name) "[ \t]*("  ) )
       )
 
 
@@ -529,6 +515,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 ;;(get-url-path-goto-info "/core/test/teacher_list")
 
 (defun get-action-switch-to(action )
+  "ACTION."
   (let ( switch-flag   (fix (concat "ACTION-SWITCH-TO:"  action ":" )) opt-file line-txt )
     (save-excursion
       (goto-char (point-min))
@@ -553,7 +540,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
     ))
 
 (defun switch-file-opt-proto ()
-  "DOCSTRING"
+  "DOCSTRING."
   (interactive)
   (let (  line-txt  opt-file  file-list obj-file check-file-name file-name file-name-fix  (use-default t) pos-info  (goto-gocore-flag nil)  (goto-phpcore-flag nil ) (switch-flag) )
     (save-excursion
@@ -651,15 +638,14 @@ The test for presence of the car of ELT-CONS is done with `equal'."
               (when move-flag
                 (goto-char (point-min))
                 (re-search-forward  (substring-no-properties pos-info 1 ) )
-                (next-line))
+                (forward-line))
               )
             ))
 
-      (when use-default (switch-cc-to-h))
       )))
 
 (defun my-jump-merber-class()
-  "DOCSTRING"
+  "DOCSTRING."
   (interactive)
   (let ((tags-data (ac-php-get-tags-data))
         symbol-ret check-class-list  class-name inherit-map class-map z-class-name class-member-list  file-list  tmp-arr jump-pos function-map  tmp-ret )
@@ -694,7 +680,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 
 
 (defun my-jump-table-sql()
-  "DOCSTRING"
+  "DOCSTRING."
   (interactive)
   (let ((tags-data (ac-php-get-tags-data))
         symbol-ret check-class-list  class-name inherit-map class-map z-class-name class-member-list  file-list  tmp-arr jump-pos )
@@ -728,14 +714,14 @@ The test for presence of the car of ELT-CONS is done with `equal'."
     )
   )
 
-(defvar  show-baidu-dict-flag nil
-  "")
+(defvar  show-baidu-dict-flag nil)
 
-(defvar  show-baidu-dict-cur-point nil
-  "")
+(defvar  show-baidu-dict-cur-point nil)
+(defvar  my-keyboard-input-dev "")
 
 
 (defun show-baidu-dict-close()
+  "D."
   (when  show-baidu-dict-flag
 
     (shell-command-to-string (concat "/home/jim/desktop/key_send/send_baidu_dict  " my-keyboard-input-dev "  0") )
@@ -743,7 +729,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
     )
   )
 (defun show-baidu-dict-at-region()
-  "DOCSTRING"
+  "DOCSTRING."
   (interactive)
   (let ( (cur-evil-visual-state-flag (evil-visual-state-p) )  )
   (setq show-baidu-dict-flag t   )
@@ -759,9 +745,8 @@ The test for presence of the car of ELT-CONS is done with `equal'."
   (if cur-evil-visual-state-flag
     (evil-normal-state)
     (progn
-      (run-at-time
-       1 nil
-       '(lambda()
+      (run-at-time 1 nil
+       #'(lambda()
           (evil-normal-state)
           (goto-char show-baidu-dict-cur-point)
           ))
@@ -771,7 +756,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
   ))
 
 (defun switch-file-opt ()
-  "DOCSTRING"
+  "DOCSTRING."
   (interactive)
   (let (  line-txt  opt-file  file-list obj-file check-file-name file-name file-name-fix  (use-default t) pos-info  (goto-gocore-flag nil)  (goto-phpcore-flag nil ) (switch-flag) )
     (save-excursion
@@ -1028,11 +1013,10 @@ The test for presence of the car of ELT-CONS is done with `equal'."
               (when move-flag
                 (goto-char (point-min))
                 (re-search-forward  (substring-no-properties pos-info 1 ) )
-                (next-line))
+                (forward-line))
               )
             ))
 
-      (when use-default (switch-cc-to-h))
       )))
 ;;XXX
 
@@ -1040,45 +1024,16 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 
 
 (defun trim-string (string)
-  "Remove white spaces in beginning and ending of STRING.
-White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
+  "STRING."
 (replace-regexp-in-string "\\`[ \t\n]*" "" (replace-regexp-in-string "[ \t\n]*\\'" "" string))
 )
 
 
-(defun proto-get-cur-cmd()
-  "DOCSTRING"
-  (let (cmdid  obj-tag)
-    (setq  cmdid (thing-at-point 'symbol))
-  (if cmdid
-    (progn
-      (setq obj-tag  cmdid)
-      (setq obj-tag (replace-regexp-in-string  "\\(.*\\)_in$" "\\1" cmdid ) )
-      (if (string= obj-tag cmdid)
-        (setq obj-tag (replace-regexp-in-string  "\\(.*\\)_out$" "\\1" cmdid ) ))
-      (if (string= obj-tag cmdid)
-        (setq obj-tag (replace-regexp-in-string  "\\(.*\\)_cmd$" "\\1" cmdid ) ))
-      (if (string= obj-tag cmdid)
-        (setq obj-tag (replace-regexp-in-string  "send_\\(.*\\)$" "\\1" cmdid ) ))
-
-
-
-      (if (string= obj-tag cmdid)
-        (setq obj-tag (replace-regexp-in-string  "^n_\\(.*\\)$" "\\1" cmdid ) ))
-
-      (if (string= obj-tag cmdid)
-        (setq obj-tag (replace-regexp-in-string  "0[xX]\\(.*\\)$" "\\1" cmdid ) ))
-
-      obj-tag
-      )
-   ""
-    ))
-  )
 ;;
 
 ;;------------------------------------------------------------
 (defun show-dict ()
-  "翻译"
+  "翻译."
   (interactive)
   (let ((cmd "goldendict")(word))
     (setq word (if (and  mark-active
@@ -1087,7 +1042,7 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
     (call-process  cmd nil 0 nil  word   )
     ))
 (defun fcitx-inactivate-input-method()
-  "fcitx 关闭输入法"
+  "Fcitx 关闭输入法."
   (interactive)
   (when (check-in-linux)
     (call-process  "fcitx-remote" nil 0 nil  "-c") )
@@ -1099,7 +1054,7 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
   )
 
 (defun fcitx-activate-input-method()
-  "fcitx 开启输入法"
+  "Fcitx 开启输入法."
   (interactive)
 
   (when (check-in-linux)
@@ -1110,54 +1065,10 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
   )
 
 
-(defun proto-show-msg ()
-  "查看协议数据"
-  (interactive)
-  (let (line-msg message-type io-type hex-buf io-type-arg)
-    (setq line-msg (buffer-substring-no-properties
-        (line-beginning-position)
-        (line-end-position )))
-    ;;找到buffer
-    (string-match
-     "^.*\\([A-Za-z]+\\)\\([IO]\\)[ \t]*\\[\\(.*\\)\\]\\[\\([0-9A-F ]*\\)\\][\t ]*$"
-     line-msg)
-    (setq cat_proto "/home/jim/framework/gen_proto/gen_proto_app/bin/cat_proto")
-
-    (match-string 0 line-msg)
-    (setq message-type (match-string  1 line-msg))
-    (setq io-type (match-string  2 line-msg))
-    (setq hex-buf (match-string  4 line-msg))
-    (if (not hex-buf)
-  (progn
-
-    (message "it no a data line "))
-      (progn
-  (when (string= message-type "C")
-    (progn
-      (setq io-type-arg (if (string= io-type "I")  "-i" ""))
-      (setq bigend-flag "-b")
-      (setq header-arg "-fcmdid,H,4,2|userid,L,6,4|seqid,L,10,4|result,l,14,4")
-      (setq proto-src-arg "-p/home/jim/server/online/trunk/gen_proto/python/ultraman_online_proto.py") ))
-  (when (string= message-type "S")
-    (progn
-      (setq io-type-arg (if (string= io-type "I")  "" "-i"))
-      (setq bigend-flag "")
-      (setq header-arg "")
-      (setq proto-src-arg "-p/home/jim/work/ultraman/online/trunk/gen_proto/python/ultraman_db_proto.py") ))
-
-  ;;(message "%s %s %s %s %s %s"  cat_proto io-type-arg bigend-flag header-arg proto-src-arg hex-buf  )
-  (if (get-buffer  "*proto-out*") (kill-buffer "*proto-out*"))
-  (call-process  cat_proto nil "*proto-out*" nil  io-type-arg bigend-flag header-arg proto-src-arg hex-buf  )
-  (delete-other-windows)
-  (unless (get-buffer-window  "*proto-out*")
-    (set-window-buffer (split-window-below 17)  "*proto-out*"))
-  (switch-to-buffer-other-window "*proto-out*")
-  (goto-line 20)
-  (other-window 1)
-  ))))
 
 ;;全屏
 (defun my-fullscreen ()
+  "D."
   (interactive)
   (when (check-in-linux)
     (x-send-client-message
@@ -1165,13 +1076,15 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
      '(2 "_NET_WM_STATE_FULLSCREEN" 0)) )
   )
 (defun my-delete-other-windows ()
-(interactive )
-   (delete-other-windows)
-   (delete-window (treemacs-get-local-window))
-)
+  "D."
+  (interactive )
+  (delete-other-windows)
+  (delete-window (treemacs-get-local-window))
+  )
 
 ;;最化大
 (defun my-maximized ()
+  "D."
   (interactive)
   (when (check-in-linux )
     (x-send-client-message
@@ -1184,7 +1097,7 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
 ;;(progn (skip-syntax-backward "w_") (point))
 
 (defun get-whole-word-pos (&optional arg)
-  "得到当前单词的开始和结束"
+  "得到当前单词的开始和结束 ARG."
   (save-excursion
     (let ((beg
      (progn (skip-syntax-backward "w_") (point)))
@@ -1193,65 +1106,17 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
     ))
       (list beg end))))
 (defun copy-whole-word (&optional arg)
-  "Copy a sequence of string into kill-ring"
+  "ARG."
   (interactive)
   (let ( pos )
     (setq pos (get-whole-word-pos))
     (copy-region-as-kill (car pos) (cadr pos))
     ))
-(defun gen-function-as-kill ()
-  "由类的函数定义 生成函数的实现"
-  (interactive)
-  (save-excursion
-    (let (func-msg class-type pos re-str arg-1 )
-      ;;找到当前行定义的函数
-      (beginning-of-line)
-      (setq func-msg (buffer-substring-no-properties (point)
-           (re-search-forward ";" (point-max) t 1 )  ))
-      ;;处理前置的 virtual static
-      (setq func-msg (replace-regexp-in-string  "\\`[ \t\n]*\\(virtual\\|static\\)[ \t\n]+\\(.*\\)" "\\2" func-msg   ) )
-
-    ;;去掉其中的 =0 , =NULL 之类的东西
-      (setq func-msg (replace-regexp-in-string  "=[ \t]*[a-zA-Z0-9]\+" ""  func-msg ))
 
 
-
-      ;;找到是哪一个类的
-      (re-search-backward "^\s*class" 0 t 1)
-      (forward-word 2)
-      (setq pos (get-whole-word-pos))
-      (setq class-type (buffer-substring-no-properties
-      (car pos)(cadr pos )))
-      ;;在函数名前加上 class-name::
-      ;;在最后加上 {}
-      (setq re-str "\\`[ \t\n]*\\([a-zA-Z0-9_]+[ \t]*[&*]*\\)[ \t\n]*\\(\\(.\\|\n\\)*\\);")
-
-      (setq arg-1  (replace-regexp-in-string re-str "\\1" func-msg))
-      (if (or (string= arg-1 class-type ) (string= arg-1 (concat  "~" class-type  ) ) )
-          (setq func-msg (replace-regexp-in-string
-                          re-str
-                          (concat "\n"  class-type "::\\1\\2\n{\n\n}\n" )
-                          func-msg
-                          ))
-
-        (setq func-msg (replace-regexp-in-string
-                        re-str
-                        (concat "\n\\1\n" class-type "::\\2\n{\n\n}\n" )
-                        func-msg
-                        )))
-
-      ;;加入剪切列表
-      (kill-new func-msg))))
-
-
-(defun xcwen-beautify-xml ()
-    (interactive)
-    (save-excursion
-        (shell-command-on-region (point-min) (point-max) "xmllint --format -" (buffer-name) t)
-        (nxml-mode)
-        (indent-region begin end)))
 
 (defun xcwen-beautify-json ()
+  "D."
   (interactive)
   (let ((b (if mark-active (min (point) (mark)) (point-min)))
         (e (if mark-active (max (point) (mark)) (point-max))))
@@ -1261,13 +1126,13 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
 
 ;;删除当前单词
 (defun kill-whole-word (&optional arg)
-  "kill a word  into kill-ring"
+  "ARG."
   (interactive)
   (let (pos)
     (setq pos (get-whole-word-pos))
     (kill-region (car pos) (cadr pos))))
 (defun upper-or-lower-whole-word (count &optional arg)
-  "kill a word  into kill-ring"
+  "COUNT, ARG."
   (interactive "p")
   (let (pos cur_char word next_word (cur-point (point) ) )
     (message "xxxxxxxx %d" count)
@@ -1356,7 +1221,7 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
 
 
 (defun match-paren (arg)
-  "Go to the matching paren if on a paren; otherwise insert %."
+  "Go ARG to the matching paren if on a paren; otherwise insert %."
   (interactive "p")
   (cond ((looking-at "\\s(") (forward-list 1) (backward-char 1))
   ((looking-at "\\s)") (forward-char 1) (backward-list 1))
@@ -1364,12 +1229,12 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
 ;;---------------------------------------------------------------------------
 
 (defun join-line-0 (arg)
-  ""
+  "ARG."
   (interactive "p")
   (join-line 0))
 
 (defun json2php (arg)
-  "D."
+  "D ARG."
   (interactive "p")
   (let (txt)
     (setq txt (buffer-substring-no-properties (region-beginning)(region-end)) )
@@ -1382,6 +1247,7 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
   )
 
 (defun comment-or-uncomment-whole-line(num)
+  "NUM."
   (save-excursion
     (beginning-of-line)
     (let ((begin-point (point)))
@@ -1390,6 +1256,7 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
     ))
 
 (defun copy-whole-line(num)
+  "NUM."
   (save-excursion
     (beginning-of-line)
     (let ((begin-point (point)))
@@ -1398,7 +1265,9 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
     ))
 
 (defun get-mark-pos-ex ()
-  "跨行，则得到所有行的开始和结束"
+  "D."
+  (let( reg-begin-pos start-pos reg-end-pos end-pos  )
+  "跨行，则得到所有行的开始和结束."
   (setq reg-begin-pos (region-beginning))
   (setq reg-end-pos (region-end))
   (forward-char (- reg-begin-pos (point) ))
@@ -1409,21 +1278,23 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
       (backward-char 1 ))
   (end-of-line)
   (setq  end-pos  (if (= (point) (point-max) ) (point-max) (+ (point) 1 ) ))
-  (list start-pos end-pos ))
+  (list start-pos end-pos )))
 
 (defun mark-region-ex(&optional arg)
+  "ARG."
   (interactive "P")
+  (let ( tmp-mark-pos)
   (setq tmp-mark-pos  (get-mark-pos-ex))
   (forward-char (- (car tmp-mark-pos) (point) ))
-  (push-mark (cadr tmp-mark-pos) nil t ))
+  (push-mark (cadr tmp-mark-pos) nil t )))
 
 
 
 ;;功能
 ;;
 (defun opt-region-or-whole-line(opt-type   arg)
-  "提供高级的复制 剪切功能
-"
+  "提供高级的复制 剪切功能 OPT-TYPE ARG."
+  (let ( do-region-func do-line-func  tmp-mark-pos )
   (save-excursion
   (cond
    ( (string= opt-type "copy")
@@ -1448,17 +1319,17 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
       (progn
         (or arg (setq arg 1))
         (message "%s line :%d"  opt-type arg)
-        (funcall do-line-func arg)))))
+        (funcall do-line-func arg))))))
 
 ;;;###autoload
 (defun copy-region-or-whole-line(&optional arg)
-  "有选择区域时：
-  1:复制的内容是跨行的：复制区域所在的所有行的内容。不仅仅是区域内的内容
-  2:复制的内容没有跨行：复制区域中的内内容
+  "ARG.
+有选择区域时.
+1:复制的内容是跨行的：复制区域所在的所有行的内容。不仅仅是区域内的内容
+2:复制的内容没有跨行：复制区域中的内内容
 没有选择区域时:
-  1:复制所在的行
-  2:支持复制多行.  如 复制3行是  M-3 C-w
-"
+1:复制所在的行
+2:支持复制多行.  如 复制3行是  `M-3' `C-w'."
   (interactive "P")
 
 
@@ -1469,13 +1340,13 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
 
 ;;;###autoload
 (defun copy-field-list(&optional arg)
-  "有选择区域时：
-  1:复制的内容是跨行的：复制区域所在的所有行的内容。不仅仅是区域内的内容
-  2:复制的内容没有跨行：复制区域中的内内容
+  "ARG.
+有选择区域时：
+1:复制的内容是跨行的：复制区域所在的所有行的内容。不仅仅是区域内的内容
+2:复制的内容没有跨行：复制区域中的内内容
 没有选择区域时:
   1:复制所在的行
-  2:支持复制多行.  如 复制3行是  M-3 C-w
-"
+  2:支持复制多行.  如 复制3行是  `M-3' `C-w'."
   (interactive "P")
 
   (let ( tmp-mark-pos  txt line-list match_arr field_name ret-str  field_name_list )
@@ -1518,13 +1389,13 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
 
 ;;;###autoload
 (defun comment-or-uncomment-region-or-whole-line(&optional arg)
-  "有选择区域时：
+  "ARG.
+有选择区域时：
   1:comment的内容是跨行的：comment区域所在的所有行的内容。不仅仅是区域内的内容
   2:comment的内容没有跨行：comment区域中的内内容
 没有选择区域时:
   1:comment所在的行
-  2:支持comment多行.  如 comment3行是  M-3 C-w
-"
+  2:支持comment多行.  如 comment3行是  `M-3' `C-w'."
   (interactive "P")
   (opt-region-or-whole-line "comment" arg)
   )
@@ -1532,168 +1403,69 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
 
 ;;;###autoload
 (defun kill-region-or-whole-line(&optional arg)
-  "有选择区域时：
+  "ARG.
+有选择区域时：
   1:剪切的内容是跨行的：剪切区域所在的所有行的内容。不仅仅是区域内的内容
   2:剪切的内容没有跨行：剪切区域中的内内容
 没有选择区域时:
   1:剪切所在的行
-  2:支持剪切多行.  如 剪切3行是  M-3 C-k
-"
+  2:支持剪切多行.  如 剪切3行是  `M-3' `C-k'."
   (interactive "P")
   (opt-region-or-whole-line "kill" arg))
 
 
 
-(defun find-tag-ex (  &optional next-p)
-  ""
-  (interactive "P")
-  ;; (find-tag  (current-word) next-p t)
-  (let ((cur-word (current-word )))
-    (find-tag   cur-word next-p nil)
-    )
-  )
-
-(defun find-tag-next-ex (  )
-  ""
-  (interactive "")
-  (find-tag-ex  t)
-  )
 
 
-(defun qiang-comment-dwim-line (&optional arg)
-  "Replacement for the comment-dwim command.
-If no region is selected and current line is not blank and we are not at the end of the line,
-then comment current line.
-Replaces default behaviour of comment-dwim, when it inserts comment at the end of the line."
-  (interactive "*P")
-  (comment-normalize-vars)
-  (if (and (not (region-active-p)) (not (looking-at "[ \t]*$")))
-      (comment-or-uncomment-region (line-beginning-position) (line-end-position))
-    (comment-dwim arg)))
 
 
 ;;------------------------------------------------------------
 
 (defun begin-line-and-insert-line ( arg)
-  "C-o"
+  "ARG."
   (interactive "P")
   (move-beginning-of-line 1)
   (open-line 1))
 
 ;;
 (defun  region-indent-ex ( is-add )
-  "整体缩进"
+  "整体缩进 IS-ADD."
   (interactive)
+  (let( mark-pos  is-add)
   (save-excursion
     (setq mark-pos  (get-mark-pos-ex))
     (message  "%d %d" (car mark-pos) (cadr mark-pos) )
     (if is-add
-  (replace-regexp "^" "    " nil (nth 0 mark-pos) (- (nth 1 mark-pos) 1) )
-      (replace-regexp "\\(^\t\\)\\|\\(^    \\)" "" nil (nth 0 mark-pos) (- (nth 1 mark-pos)  1)))
-    ))
+        (replace-match "^" "    " nil (nth 0 mark-pos) (- (nth 1 mark-pos) 1) )
+      (replace-match "\\(^\t\\)\\|\\(^    \\)" "" nil (nth 0 mark-pos) (- (nth 1 mark-pos)  1)))
+    )))
 (defun region-indent-add ()
-  "DOCSTRING"
+  "DOCSTRING."
   (interactive)
   (region-indent-ex t)
   )
 (defun region-indent-sub ()
-  "DOCSTRING"
+  "DOCSTRING."
   (interactive)
   (region-indent-ex nil)
   )
-(defun get-tags-dir  ()
-  "DOCSTRING"
-  (let (tags-dir tags-file)
-    (setq tags-dir (file-name-directory (buffer-file-name)  ))
-    (while (not (or (file-exists-p  (concat tags-dir  ".tags" )) (string= tags-dir "/") ))
-    (setq tags-dir  ( file-name-directory (directory-file-name  tags-dir ) ) ))
-  (if (string= tags-dir "/") (setq tags-dir nil )   )
-  tags-dir
-  )
-  )
-(defun get-string-from-file (filePath)
-  "Return filePath's file content."
+(defun get-string-from-file (file-path)
+  "Return filePath's file content FILE-PATH."
   (with-temp-buffer
-    (insert-file-contents filePath)
+    (insert-file-contents file-path)
     (buffer-string)))
 
-(defun get-build-args  ()
-  "得到编译参数, build/self.cxx_flags.conf   "
-  (let (build-dir build-file)
-    (setq build-dir (file-name-directory (buffer-file-name)  ))
-    (while (not (or (file-exists-p  (concat build-dir  "build/self.cxx_flags.conf" ) ) (string= build-dir "/") ))
-    (setq build-dir  ( file-name-directory (directory-file-name  build-dir ) ) )
-    )
-  (append ac-clang-flags-g++-base  (if (string= build-dir "/") nil
-    (split-string (get-string-from-file (concat build-dir  "build/self.cxx_flags.conf" )  ))
-  ))
-  ))
 
 
-(defun my-ac-mode-complete ()
-  "对mode 指定匹配方案, go , c++  "
-  (interactive)
-  (if (string= major-mode  "go-mode")
-    ( auto-complete  '(ac-source-go ))
-  (progn
-    (if  (get-tags-dir) ;; 自己的代码
-      (progn
-      ;;查找编译参数
-      (let ((build-args  (get-build-args))  old-flags  )
-        ;;(message "build-args :%s" build-args)
-        ;;设置当前ac-clang-flags 配置
-        (if build-args
-          (progn
-          (setq old-flags ac-clang-flags )
-          (setq  ac-clang-flags build-args )  ))
 
-        ( auto-complete  '(ac-source-clang ))
-
-        ;;还原
-        (if build-args
-          (setq  ac-clang-flags old-flags ))
-        ))
-
-        (progn
-          (message "use ac-source-rtags")
-    ( auto-complete  '(ac-source-rtags ))
-        ))
-    )))
-
-(defun remake-tags ()
-  "DOCSTRING"
-  (interactive)
-  (let ((tags-dir (get-tags-dir) ) )
-  (message "remake %s" tags-dir )
-  (if tags-dir
-    (message (shell-command-to-string  (concat tags-dir "/.tags/metags") )))))
 
 (defun kill-other-buffers ()
   "Kill all other buffers."
   (interactive)
   (mapc 'kill-buffer (delq (current-buffer) (buffer-list))))
 
-(defun wcy-mark-some-thing-at-point()
-  (interactive)
-  (let* ((from (point))
-         (a (mouse-start-end from from 1))
-         (start (car a))
-         (end (cadr a))
-         (goto-point (if (= from start )
-       end
-                       start)))
-    (if (eq last-command 'wcy-mark-some-thing-at-point)
-        (progn
-          ;; exchange mark and point
-          (goto-char (mark-marker))
-          (set-marker (mark-marker) from))
-      (push-mark (if (= goto-point start) end start) nil t)
-      (when (and (interactive-p) (null transient-mark-mode))
-        (goto-char (mark-marker))
-        (sit-for 0 500 nil))
-      (goto-char goto-point))))
 (defun backward-kill-word-without-_ ()
-  "DOCSTRING"
+  "DOCSTRING."
   (interactive)
   (if (and  mark-active
       (not  (= (region-beginning) (region-end) ))
@@ -1713,31 +1485,17 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 
 
 (defun switch-file-term ()
-  " 交换终端和文件"
+  "交换终端和文件."
   (interactive)
   ;;(message "%s %s %s" "====" opt-file-name "kkk")
   (if (string= major-mode  "term-mode")
       (evil-buffer nil )
     (multi-term-goto-last-term)
     ))
-(defun my-go-packages-gopkgs ()
-  "Return a list of all Go packages, using `gopkgs'."
 
-  (sort (process-lines "gopkgs"  (concat "-workDir=" (go-core-server--get-project-root-dir ) ) ) #'string<))
-
-(defun switch-case-char (&optional arg)
-  ""
-  (interactive)
-  (let (pos cur_char)
-    (setq pos (if (< (point) (point-max)) (+ (point) 1) (point) ))
-    (setq cur_char (following-char))
-    (if (and (>= cur_char ?a ) (<= cur_char ?z )  )
-  (upcase-region (point) pos)
-      (downcase-region (point)  pos)
-      )
-    ))
 
 (defun get-cur-pkg()
+  "D."
   (save-excursion
     (let ( start-pos ( end-pos (point) ) tmp-arr txt)
     (backward-word)
@@ -1773,13 +1531,10 @@ object satisfying `yas--field-p' to restrict the expansion to."
                                     (yas--templates-for-key-at-point))
                                 (yas--templates-for-key-at-point))))
     (if templates-and-pos
-        (yas--expand-or-prompt-for-template (first templates-and-pos)
-                                            (second templates-and-pos)
-                                            (third templates-and-pos))
+        (yas--expand-or-prompt-for-template (cl-first templates-and-pos)
+                                            (cl-second templates-and-pos)
+                                            (cl-third templates-and-pos))
       (progn
-        (when ( string= major-mode "web-mode")
-          (message  "xx:%s"(web-mode-language-at-pos)  )
-          )
         (let ((c (char-before)))
           (cond
            ((and (or  (string= major-mode "c-mode") (string= major-mode "c++-mode"))
@@ -1792,10 +1547,7 @@ object satisfying `yas--field-p' to restrict the expansion to."
                           (eq ?: (char-before (1- (point)))))))
             (company-complete))
 
-           ((and (or
-                  (string= major-mode "php-mode")
-                  (and (string= major-mode "web-mode")
-                       (string=   (web-mode-language-at-pos)  "php"  )))
+           ((and (string= major-mode "php-mode")
                  (or
                   ;; ->
                   (and (eq ?> c)
@@ -1811,14 +1563,8 @@ object satisfying `yas--field-p' to restrict the expansion to."
 
 
            ((and (string= major-mode "go-mode")  (eq ?\. c))
-            (unless ( company-complete )
-              (let ( go-pkg )
-
-                (setq go-pkg (replace-regexp-in-string "^[\"']\\|[\"']$" "" (completing-read "Package: " (go-packages) nil t  (get-cur-pkg )  )))
-                (go-import-add nil  go-pkg)
-                ;;re company-complete
-                (company-complete)
-                )))
+            ( company-complete )
+            )
 
            ((and (string= major-mode "java-mode")  (eq ?\. c))
             (company-complete  ) )
@@ -1839,10 +1585,8 @@ object satisfying `yas--field-p' to restrict the expansion to."
             (company-complete  ) )
            ((and (string= major-mode "python-mode")  (eq ?\. c))
             (company-complete  ) )
-           ((and (string= major-mode "erlang-mode")  (eq ?\: c))
-            ( auto-complete  ))
-           ((and (string= major-mode "js2-mode")  (eq ?\. c))
-            ( auto-complete  ))
+           ;; ((and (string= major-mode "erlang-mode")  (eq ?\: c))
+           ;;  ( auto-complete  ))
            ((and (string= major-mode "typescript-mode")  (eq ?\. c))
             ( company-complete ))
            ((and (string= major-mode "vue-mode")  (eq ?\. c))
@@ -1860,93 +1604,9 @@ object satisfying `yas--field-p' to restrict the expansion to."
            ( t (indent-for-tab-command ))))
         )
       )))
-(defun my-indent-for-tab-command (&optional arg)
-  "Indent the current line or region, or insert a tab, as appropriate.
-This function either inserts a tab, or indents the current line,
-or performs symbol completion, depending on `tab-always-indent'.
-The function called to actually indent the line or insert a tab
-is given by the variable `indent-line-function'.
-
-If a prefix argument is given, after this function indents the
-current line or inserts a tab, it also rigidly indents the entire
-balanced expression which starts at the beginning of the current
-line, to reflect the current line's indentation.
-
-In most major modes, if point was in the current line's
-indentation, it is moved to the first non-whitespace character
-after indenting; otherwise it stays at the same position relative
-to the text.
-
-If `transient-mark-mode' is turned on and the region is active,
-this function instead calls `indent-region'.  In this case, any
-prefix argument is ignored."
-  (interactive "P")
-  (cond
-   ;; The region is active, indent it.
-   ((use-region-p)
-    (indent-region (region-beginning) (region-end)))
-   ((or ;; indent-to-left-margin is only meant for indenting,
-  ;; so we force it to always insert a tab here.
-  (eq indent-line-function 'indent-to-left-margin)
-  (and (not tab-always-indent)
-       (or (> (current-column) (current-indentation))
-     (eq this-command last-command))))
-    (insert-tab arg))
-   (t
-    (let ((old-tick (buffer-chars-modified-tick))
-          (old-point (point))
-    (old-indent (current-indentation)))
-
-      ;; Indent the line.
-      (or (not (eq (indent--funcall-widened indent-line-function) 'noindent))
-          (indent--default-inside-comment)
-          (when (or (<= (current-column) (current-indentation))
-                    (not (eq tab-always-indent 'complete)))
-            (indent--funcall-widened (default-value 'indent-line-function))))
-
-      (cond
-
-       ;; If a prefix argument was given, rigidly indent the following
-       ;; sexp to match the change in the current line's indentation.
-       (arg
-        (let ((end-marker
-               (save-excursion
-                 (forward-line 0) (forward-sexp) (point-marker)))
-              (indentation-change (- (current-indentation) old-indent)))
-          (save-excursion
-            (forward-line 1)
-            (when (and (not (zerop indentation-change))
-                       (< (point) end-marker))
-              (indent-rigidly (point) end-marker indentation-change))))))))))
 
 
 
-(defun search-proto-info ()
-  "Search for symbol near point.
-If FORWARD is nil, search backward, otherwise forward."
-  (interactive)
-  (let (string obj-str tmp-str )
-    (setq isearch-forward t)
-    (setq string (evil-find-symbol  t) )
-
-    (if  (null string)
-        (error "No proto item under point"))
-
-    (setq tmp-str "")
-    (cond
-     ((string= (substring string -4 ) "_out" )
-      (setq tmp-str (substring string 0 -4)))
-     ((string= (substring string -3 ) "_in" )
-      (setq tmp-str (substring string 0 -3)))
-     ((string= (substring string -4 ) "_cmd" )
-      (setq tmp-str (substring string 0 -4)))
-     )
-    (if (not (string= tmp-str ""))
-  (setq obj-str  (format "\\_<%s_cmd\\_>\\|\\_<%s_in\\_>\\|\\_<%s_out\\_>" tmp-str tmp-str tmp-str   ))
-      (setq obj-str string))
-
-
-    (evil-search obj-str t t)))
 
 (defun my-show-table-info()
   "Doc."
@@ -1965,18 +1625,15 @@ If FORWARD is nil, search backward, otherwise forward."
     (yas-recompile-all)
     (yas-reload-all)
     ))
-(defun my-align-comments (beginning end)
-  "Align comments within marked region."
-  (interactive "*r")
-  (let (indent-tabs-mode align-to-tab-stop)
-    (align-regexp beginning end  "//"  )))
 (defadvice find-function (before jim-find-funtion  activate compile)
+  "D."
   (interactive (find-function-read))
   (xref-push-marker-stack )
   )
 
 
 (defun my-set-evil-local-map( key fun  )
+  "KEY, FUN."
   (define-key evil-normal-state-local-map (kbd key ) fun)
   (define-key evil-insert-state-local-map (kbd key ) fun)
   (define-key evil-motion-state-local-map (kbd  key) fun)
@@ -1984,15 +1641,18 @@ If FORWARD is nil, search backward, otherwise forward."
 
 
 (defun my-set-evil-not-insert-local-map( key fun  )
+  "KEY, FUN."
   (define-key evil-normal-state-local-map (kbd key ) fun)
   (define-key evil-motion-state-local-map (kbd  key) fun)
   )
 
 (defun my-set-evil-main-local-map( key fun  )
+  "KEY, FUN."
   (my-set-evil-not-insert-local-map (concat  "," key ) fun )
   )
 
 (defun my-jump-set-evil-local-map( jump-fun  &optional back-fun   )
+  "JUMP-FUN BACK-FUN."
 
   (define-key evil-normal-state-local-map (kbd "C-]")  jump-fun)
   (define-key evil-insert-state-local-map (kbd "C-]") jump-fun)
@@ -2036,7 +1696,7 @@ If FORWARD is nil, search backward, otherwise forward."
 
     project-root-dir))
 (defun get-project-root-dir (find-file-name)
-  "Get the project root directory of the curent opened buffer."
+  "Get the project root directory of the curent opened buffer FIND-FILE-NAME."
   ;;(ac-php--debug "Lookup for the project root...")
   (let (project-root-dir tags-file (file-name buffer-file-name))
 
@@ -2098,26 +1758,11 @@ If FORWARD is nil, search backward, otherwise forward."
     ;;(ac-php--debug "Lookup for the project root:[%s]"  project-root-dir    )
     project-root-dir))
 
-(defun php-mode-make()
-  "DOCSTRING"
-  (interactive)
-  (let ((project-dir (core-server--get-project-root-dir )) )
-    (if (s-matches-p "/tests/" (buffer-file-name))
-        (progn ;; phpunit-current-test
-          (phpunit-current-test)
-          )
-      (progn ;; core-server
-        (message "====%s" project-dir)
-        (when project-dir
-          (message "%s" (shell-command-to-string (concat project-dir "/restart.sh" )  )))
-        )
-      )
-    ))
 
 
 
 (defun core-server-make()
-    "DOCSTRING"
+    "DOCSTRING."
   (interactive)
   (let ((project-dir (core-server--get-project-root-dir )) )
     (message "====%s" project-dir)
@@ -2125,7 +1770,7 @@ If FORWARD is nil, search backward, otherwise forward."
       (message "%s" (shell-command-to-string (concat project-dir "/proto/gen_proto.sh" )  )))))
 
 (defun go-core-server-make()
-  "DOCSTRING"
+  "DOCSTRING."
   (interactive)
   (let ((project-dir (go-core-server--get-project-root-dir )  )  cmd)
 
@@ -2135,7 +1780,7 @@ If FORWARD is nil, search backward, otherwise forward."
       (message "%s" (shell-command-to-string cmd  )))))
 
 (defun restart-project()
-  "DOCSTRING"
+  "DOCSTRING."
   (interactive)
   (let ((project-dir (go-core-server--get-project-root-dir )  )  cmd)
 
@@ -2147,9 +1792,9 @@ If FORWARD is nil, search backward, otherwise forward."
 
 
 (defun my-join-line ()
-  "DOCSTRING"
+  "DOCSTRING."
   (interactive)
-  (let (var1 pos-start post-end buf)
+  (let (var1 pos-start pos-end buf)
     (setq pos-start (region-beginning)   )
     (setq pos-end   (region-end) )
     (copy-region-as-kill pos-start pos-end )
@@ -2160,55 +1805,9 @@ If FORWARD is nil, search backward, otherwise forward."
     ))
 
 
-(defun set-admin-title ()
-  "DOCSTRING"
-  (interactive)
-  (let ( (admin-work-dir (concat (getenv "HOME") "/admin_yb1v1/"))  )
-    (if (s-prefix-p admin-work-dir (buffer-file-name)   )
-        (progn
-          (if (s-matches-p "git"  (f-canonical   admin-work-dir ) )
-              (setq frame-title-format  '("[ADMIN GIT]: %f [ADMIN GIT] "  ))
-            (setq frame-title-format  '(" [ADMIN 0.6]: %f [ADMIN 0.6] "  ))
-            )
-          )
-      (setq frame-title-format  '("file: %f "  ))
-      )
-    )
-  )
-(defun ts2js ()
-  "DOCSTRING"
-  (interactive)
-  (let ( obj-file  (obj-data ""))
-    (when ( and (string= major-mode "typescript-mode" )
-                (s-matches-p "/page_ts/" (buffer-file-name))
-                (not (s-matches-p "\\.d\\.ts$" (buffer-file-name) ))
-                             )
-      (setq obj-file  (s-replace ".ts" ".js" (s-replace "page_ts" "page_js" (buffer-file-name) ) ) )
-      (when (not (f-exists?  (f-dirname obj-file) ) )
-        (f-mkdir (f-dirname obj-file) )
-        )
-
-      (when (f-exists? obj-file  )
-        (setq obj-data ( f-read obj-file ) ))
-
-      (if (or (not (f-exists? obj-file  )) (s-matches-p "reference path" obj-data)
-              (string= (s-trim  obj-data ) "" )
-              )
-
-          (progn
-            (when (f-exists? obj-file  )
-              (f-delete obj-file  ))
-
-            (if (s-matches-p "//TS_FLAG:true" (buffer-string) )
-                (compile (concat "tsc  --out  " obj-file " "  (buffer-file-name) ) )
-              (f-copy (buffer-file-name) obj-file  ))
-            (message "%s:生成完毕" obj-file  ))
-        (message "%s :不是 typescript 生成的文件, 请备份为其它文件." obj-file  ))
-      ))
-  )
 
 (defun my-goto-file ()
-    "DOCSTRING"
+    "DOCSTRING."
   (interactive)
   (let (line-txt  line-info filename  line deal-flag file-info)
     (setq line-txt (buffer-substring-no-properties
@@ -2225,9 +1824,6 @@ If FORWARD is nil, search backward, otherwise forward."
         (forward-line (1-  line ))
         (setq deal-flag t )))
 
-     ;;$this->tpl->display('audition.html')
-     (when (string= "php-mode" major-mode)
-       (setq file-info (php-get-html-in-handle) ))
      (when (string= "js2-mode" major-mode)
        (setq file-info (js-get-file-at-point) ))
 
@@ -2260,13 +1856,14 @@ If FORWARD is nil, search backward, otherwise forward."
 
 
 (defadvice edts-find-source-under-point (before  jim-edts-find-source-under-point activate compile)
+  "D."
   (interactive)
   (message "xxxx  edts-find-source-under-point ")
   (xref-push-marker-stack )
   )
 
 (defun java-gen-get-set-code()
-  "DOCSTRING"
+  "DOCSTRING."
   (interactive)
   (let (
         line-txt
@@ -2286,15 +1883,10 @@ If FORWARD is nil, search backward, otherwise forward."
                ) )
     ))
 
-(defun check_phpmd_source (source )
-  (let(  )
-    (message "===%S" source)
-    source
-    ))
 
 ;; flutter-monitor 监控
 (defun flutter-monitor( &optional arg)
-  "Doc  ."
+  "Doc ARG ."
   (interactive "P")
   (let (cur-frame-count)
     (when  (and arg ( =  arg 1) )
@@ -2313,7 +1905,6 @@ If FORWARD is nil, search backward, otherwise forward."
     ))
 
 
-  (require 'flutter)
   (if (flutter--running-p)
       (if (and arg ( =  arg 2) )
           (flutter-hot-restart)
@@ -2331,17 +1922,6 @@ If FORWARD is nil, search backward, otherwise forward."
 
   ))
 
-(defun tt ()
-"Doc  ."
-(interactive)
-(let ()
-
-  (set (make-local-variable 'completion-at-point-functions ) nil)
-  (set (make-local-variable 'my-completion-at-point-functions ) '(lsp-completion-at-point) )
-  (set (make-local-variable 'company-backends)
-       '(company-my-capf ))
-
-))
 
 (provide 'xcwen-misc)
 
