@@ -205,11 +205,11 @@ you should place your code here."
 
 
   ;;关闭 lsp-ui-doc
+  (setq lsp-ui-doc-mode nil)
   (setq lsp-ui-doc-delay 1)
   (setq lsp-eldoc-enable-hover nil  )
   (setq lsp-ui-doc-show-with-cursor  nil)
   (setq lsp-ui-sideline-delay 10000 )
-  (setq lsp-eldoc-enable-hover t)
   (setq lsp-enable-symbol-highlighting t)
   (setq lsp-enable-xref nil)
   (setq lsp-enable-indentation t )
