@@ -150,7 +150,7 @@ localhost:~/site-lisp/config$"
     ;;(message "1.2")
     (let (check-free-term)
       (unless  find-flag
-        (dolist  ( opt-buffer (buffer-list) )
+        (cl-dolist  ( opt-buffer (buffer-list) )
           ;;(message "1.2.1 %s " opt-buffer )
           (with-current-buffer opt-buffer
             (setq check-free-term
@@ -443,7 +443,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 (defun get-route-jump-file-name  (  sub-path  route-config-str )
   "SUB-PATH, ROUTE-CONFIG-STR."
   (let ((match_path "/" ) route  path kv)
-    (dolist  ( item  (s-split ";" route-config-str))
+    (cl-dolist  ( item  (s-split ";" route-config-str))
       (setq kv (s-split ":" item))
       (when (=  2 (length kv ))
         (setq route (s-trim (nth 0 kv)) )
@@ -1359,7 +1359,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
     (cond
      ((s-match "^[ \t]+`[a-z0-9_A-Z]+`"  txt )
       (message "KKKKK")
-      (dolist  (line  line-list)
+      (cl-dolist  (line  line-list)
 
         (setq match_arr  ( s-match "^[ \t]+`\\([a-z0-9_A-Z]+\\)`"  line ))
         (setq field_name (nth 1 match_arr )  )
@@ -1367,7 +1367,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
         ))
 
      ((s-match "^[ \t]+\\$[a-z0-9_A-Z]+"  txt )
-      (dolist  (line  line-list)
+      (cl-dolist  (line  line-list)
         (setq match_arr  ( s-match "^[ \t]+\\$\\([a-z0-9_A-Z]+\\)"  line ))
         (setq field_name (nth 1 match_arr )  )
         (when field_name (setq field_name_list (append   field_name_list (list field_name ) )))
@@ -1375,7 +1375,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
      )
     (message "==== %S" field_name_list)
 
-    (dolist  (field_name field_name_list   )
+    (cl-dolist  (field_name field_name_list   )
       (cond
        (( = arg 2 ) (setq  ret-str  (concat ret-str "\n" "$"  field_name "= $row[\"" field_name "\"];"     ) ))
        (( = arg 3 ) (setq  ret-str  (concat ret-str "\n"  "\"" field_name "\"=> $row[\"" field_name "\"],"     ) ))
