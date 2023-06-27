@@ -54,6 +54,15 @@
   (set-evil-main-state-key "e" 'cleanup-and-goto-error)
   (set-evil-main-state-key "d" 'show-baidu-dict-at-region)
   (set-evil-main-state-key "c" 'lsp-execute-code-action)
+  (set-evil-main-state-key "f" #'(lambda()
+                                   (interactive )
+                                   (cond
+                                    ((and( string= major-mode "vue-mode") (check-file-ts)  )
+                                     (progn
+                                       (lsp-eslint-apply-all-fixes)
+                                       ))
+                                    (t  (lsp-format-buffer) ) ;; flycheck-disable-line
+                                    )))
   (set-evil-main-state-key "S" 'lsp-java-open-super-implementation  )
   (set-evil-main-state-key "s" 'lsp-java--show-implementations  )
   (set-evil-main-state-key "o" 'other-window  )
@@ -146,11 +155,6 @@
               )
             ))
         )))
-
-  (set-evil-main-state-key
-   "f"
-   'beginning-of-defun)
-
 
 
 
@@ -319,12 +323,15 @@ you should place your code here."
                               ))
 
   (add-hook 'org-mode-hook #'(lambda ( )
-                              (setq evil-org-key-theme
-                                    `(textobjects
-                                      navigation
-                                      ;;additional
-                                      ;;,@(when org-want-todo-bindings '(todo))
-                                      ))
+                              ;; (setq evil-org-key-theme
+                              ;;       `(textobjects
+                              ;;         navigation
+                              ;;         ;;additional
+                              ;;         ;;,@(when org-want-todo-bindings '(todo))
+                              ;;         ))
+                              ;; (defun evil-org--populate-additional-bindings ()
+                              ;;   )
+
                               ))
 
 
@@ -537,6 +544,7 @@ you should place your code here."
 
   (setq ac-php-project-root-dir-use-truename   nil )
   (setq flycheck-phpmd-rulesets (list  (concat (getenv "HOME") "/spacemacs-config/phpmd.xml"  ) ))
+  (setq lsp-flycheck-enable-unnecessary-info nil)
 
 
   (setq frame-title-format  '("file: %f "  ))
@@ -654,6 +662,9 @@ you should place your code here."
   ;; (recentf-load-list)
 
   )
+
+
+
 
 (provide 'my-config)
 
