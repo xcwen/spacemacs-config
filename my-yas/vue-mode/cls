@@ -1,0 +1,14 @@
+# -*- mode: snippet -*-
+# contributor: jim
+# name: cls
+# key: cls
+# group: definitions
+# --
+<template>
+    <div>
+    $0
+    </div>
+</template>
+<script lang="ts" src="./`(yas-vue-get-name-by-file-name)`.ts"/>
+<style lang="less" scoped >
+</style>

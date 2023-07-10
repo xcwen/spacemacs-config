@@ -29,6 +29,7 @@
 (require 'ac-php-core)
 (require 'treemacs )
 (require 'lsp-sqls )
+(require 'lsp-eslint)
 (require 'company)
 (require 'flutter)
 
@@ -406,6 +407,15 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 
       (setq cleanup-flag  (not cleanup-flag ) )
       )
+    (when (string= major-mode "vue-mode")
+      (if (check-file-ts)
+          (progn
+            (lsp-eslint-apply-all-fixes)
+            )
+        (lsp-format-buffer))
+
+      )
+
 
     (whitespace-cleanup)
     (flycheck-buffer)

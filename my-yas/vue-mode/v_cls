@@ -1,0 +1,22 @@
+# -*- mode: snippet -*-
+# contributor: jim
+# name: v_cls
+# key: v_cls
+# group: definitions
+# --
+//SWITCH-TO: vue
+import { defineComponent } from "vue"
+
+
+
+export default defineComponent({
+    
+    data() {
+    return {
+    };
+    },
+    created() {
+    },
+    methods: {
+    }
+});

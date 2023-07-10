@@ -20,13 +20,19 @@
 ;;; Snippet definitions:
 ;;;
 (yas-define-snippets 'vue-mode
-                     '(("ts" "<script lang=\"ts\" src=\"./`(yas-vue-get-name-by-file-name)`.ts\"/>" "ts" nil
+                     '(("v_cls" "//SWITCH-TO: vue\nimport { defineComponent } from \"vue\"\n\n\n\nexport default defineComponent({\n    \n    data() {\n    return {\n    };\n    },\n    created() {\n    },\n    methods: {\n    }\n});\n" "v_cls" nil
+                        ("definitions")
+                        nil "/home/jim/.spacemacs.d/my-yas/vue-mode/v_cls" nil nil)
+                       ("ts" "<script lang=\"ts\" src=\"./`(yas-vue-get-name-by-file-name)`.ts\"/>" "ts" nil
                         ("definitions")
                         nil "/home/jim/.spacemacs.d/my-yas/vue-mode/ts" nil nil)
                        ("log" "console.log($0);\n" "log" nil nil nil "/home/jim/.spacemacs.d/my-yas/vue-mode/log" nil nil)
                        ("less" "<style lang=\"less\" scoped >\n$0\n</style>" "less" nil
                         ("definitions")
-                        nil "/home/jim/.spacemacs.d/my-yas/vue-mode/less" nil nil)))
+                        nil "/home/jim/.spacemacs.d/my-yas/vue-mode/less" nil nil)
+                       ("cls" "<template>\n    <div>\n    $0\n    </div>\n</template>\n<script lang=\"ts\" src=\"./`(yas-vue-get-name-by-file-name)`.ts\"/>\n<style lang=\"less\" scoped >\n</style>" "cls" nil
+                        ("definitions")
+                        nil "/home/jim/.spacemacs.d/my-yas/vue-mode/cls" nil nil)))
 
 
-;;; Do not edit! File generated at Fri Mar 24 12:45:18 2023
+;;; Do not edit! File generated at Mon Jul  3 17:20:47 2023

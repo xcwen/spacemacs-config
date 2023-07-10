@@ -54,15 +54,6 @@
   (set-evil-main-state-key "e" 'cleanup-and-goto-error)
   (set-evil-main-state-key "d" 'show-baidu-dict-at-region)
   (set-evil-main-state-key "c" 'lsp-execute-code-action)
-  (set-evil-main-state-key "f" #'(lambda()
-                                   (interactive )
-                                   (cond
-                                    ((and( string= major-mode "vue-mode") (check-file-ts)  )
-                                     (progn
-                                       (lsp-eslint-apply-all-fixes)
-                                       ))
-                                    (t  (lsp-format-buffer) ) ;; flycheck-disable-line
-                                    )))
   (set-evil-main-state-key "S" 'lsp-java-open-super-implementation  )
   (set-evil-main-state-key "s" 'lsp-java--show-implementations  )
   (set-evil-main-state-key "o" 'other-window  )
