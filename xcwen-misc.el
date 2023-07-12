@@ -468,55 +468,33 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 
 (defun get-url-path-goto-info(url)
   "URL."
-  (let (obj-file pos-info  arr arr-len ctrl-name action-name (server-type "php") server-type-str )
-    (setq  arr (s-split "/" url  ) )
-    ;;("" "gocore" "more_call" "test" "teacher_list")
-    (setq arr-len (length arr) )
-    (if  (>=  arr-len 3 )
-        (progn
-          (setq ctrl-name (nth (- arr-len  2)  arr))
-          (setq action-name (nth (- arr-len  1)  arr))
-          (message "===len %d "  arr-len)
-          (when (>  arr-len 3)
-            (setq server-type-str (nth 1 arr ) )
-            (message "===%s" server-type-str)
-            (cond
-             ((string= server-type-str "core")
-              (setq server-type "php")
-              )
-             ((string= server-type-str "route__php_tars_admin")
-              (setq server-type "php")
-              )
-
-             ((string= server-type-str "gocore")
-              (setq server-type "gocore")
-              )
-             ((string= server-type-str "console_php_core")
-              (setq server-type "php")
-              )
-
-
-             ))))
+  (let (obj-file pos-info  tmp-arr project-name  ctrl-name action-name (server-type "route__default") server-type-str php-file-path)
     (message "server-type:%s" server-type )
+    ;;"/route__xx/admin/admin_manage/config_list"
+    ;;"/admin/admin_manage/config_list"
+    (setq tmp-arr (s-match "\\(/\\(route__[^/]*\\)\\)?\\(/.*\\)" url  ) )
+    (when tmp-arr
+      (when  (nth 2 tmp-arr)
+        (setq server-type (nth 2 tmp-arr) ) )
+      (setq url (nth 3 tmp-arr)))
+    (setq tmp-arr (s-match "\\(/\\([^/]*\\)\\)?/\\([^/]*\\)/\\([^/]*\\)$" url ) )
+
+    (setq ctrl-name  (my-s-upper-camel-case (nth 3  tmp-arr)))
+    (setq action-name   (nth 4  tmp-arr))
+    (setq project-name  (nth 2  tmp-arr))
+    (setq php-file-path  (concat "/"  ctrl-name  ".php"))
+    (when project-name
+      (setq php-file-path  (concat "/" (my-s-upper-camel-case  project-name) php-file-path ))
+      )
     (cond
-     ((string= server-type  "php"  )
-      (setq  obj-file  (concat (get-url-path-get-fix-path-from-env  "PHP_CONTROLLERS_DIR" ) "/" ctrl-name  ".php" ) )
+     ((string= server-type  "route__default"  )
+      (setq  obj-file  (concat (get-url-path-get-fix-path-from-env  "PHP_CONTROLLERS_DIR" )  php-file-path ) )
       (setq pos-info ( concat "/function[ \t]+" action-name "[ \t]*("  ) )
       (message " check  11: %s" obj-file)
-      (unless (f-exists-p  obj-file )
-        (setq  obj-file  (concat (get-url-path-get-fix-path-from-env  "PHP_CONTROLLERS_DIR" ) "/" (my-s-upper-camel-case ctrl-name) ".php" ) )
-        )
       )
-
-     ((string= server-type  "gocore" )
-      (setq  obj-file  (concat (get-url-path-get-fix-path-from-env  "GOCORE_CONTROLLERS_DIR" ) "/" ctrl-name  ".go" ) )
-      (setq pos-info (concat "/func[ \t]+.*" (my-s-upper-camel-case action-name) "[ \t]*("  ) )
-      )
-
-
      )
 
-    ;; (message "server-type:%s => %s" server-type obj-file )
+    (message "server-type:%s => %s" server-type obj-file )
     (list  obj-file  pos-info )
 
     ))
@@ -552,9 +530,10 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 (defun switch-file-opt-proto ()
   "DOCSTRING."
   (interactive)
-  (let (  line-txt  opt-file  file-list obj-file check-file-name file-name file-name-fix  (use-default t) pos-info  (goto-gocore-flag nil)  (goto-phpcore-flag nil ) (switch-flag) )
+  (let (  line-txt  opt-file  file-list obj-file check-file-name file-name file-name-fix  (use-default t) pos-info  (goto-gocore-flag nil) project-root-dir  (goto-phpcore-flag nil ) (switch-flag) )
     (save-excursion
       (goto-char (point-min))
+      (setq project-root-dir (get-project-root-dir ".env") )
       (setq switch-flag  (search-forward-regexp "[^-]SWITCH-TO:" nil t  ) )
 
       (when switch-flag
@@ -594,7 +573,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
       (setq obj-file opt-file))
     ;;check for   php html js
     (unless obj-file
-      (let ((path-name (buffer-file-name)) ctrl-name action-name tmp-arr )
+      (let ((path-name (buffer-file-name)) ctrl-name action-name tmp-arr path-fix  )
         (cond
          ((string= major-mode  "php-mode")
           (progn
@@ -607,14 +586,18 @@ The test for presence of the car of ELT-CONS is done with `equal'."
                 (when tmp-arr
                   (setq action-name (nth 1 tmp-arr) )
                   )))
+
             ;;phpcore tars
             (when (and (s-match "/app/Controllers/" path-name )  (not (string= action-name "__construct")) )
-              (setq obj-file (concat "../../../proto/src/" ctrl-name "__" action-name ".proto" )  )
-              (message "========%s"  obj-file )
+              (setq tmp-arr (s-match (concat "/app/Controllers/\\(.*\\)/" (f-base path-name)) path-name ))
+              (setq path-fix (concat "/" ctrl-name  "__" action-name ".proto"  ) )
+              (when tmp-arr
+                (setq  path-fix (concat "/" (my-s-snake-case(nth 1 tmp-arr)) path-fix) ))
+
+
+              (setq obj-file (concat  project-root-dir  "/proto/src"  path-fix )  )
+              (message "=======11=%s"  obj-file )
               )
-
-
-            ;;
             ))
 
          )))
@@ -768,7 +751,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 (defun switch-file-opt ()
   "DOCSTRING."
   (interactive)
-  (let (  line-txt  opt-file  file-list obj-file check-file-name file-name file-name-fix  (use-default t) pos-info  (goto-gocore-flag nil)  (goto-phpcore-flag nil ) (switch-flag) )
+  (let (  line-txt  opt-file  file-list obj-file check-file-name file-name file-name-fix  (use-default t) pos-info  (goto-gocore-flag nil)  (goto-phpcore-flag nil ) (switch-flag) project-root-dir  )
     (save-excursion
       (goto-char (point-min))
       (setq switch-flag  (search-forward-regexp "SWITCH-TO:" nil t  ) )
@@ -825,7 +808,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
       (setq obj-file opt-file))
     ;;check for   php html js
     (unless obj-file
-      (let ((path-name (buffer-file-name)) ctrl-name action-name tmp-arr  )
+      (let ((path-name (buffer-file-name)) ctrl-name action-name tmp-arr  path-fix )
         (cond
          ((string= major-mode  "php-mode")
           (progn
@@ -844,11 +827,17 @@ The test for presence of the car of ELT-CONS is done with `equal'."
               (setq obj-file  (get-action-switch-to action-name ) )
 
               (unless  (and  obj-file (f-exists-p  obj-file ) )
-                (setq obj-file ( get-route-jump-file-name (concat "/" ctrl-name  "/" action-name ".vue"  ) (get-url-path-get-fix-path-from-env "NEW_VUE_VIEW_DIR") ))
+                ;; (message "CHECK:%s=> %s"  (concat "/app/Controllers/(.*)/" (f-base path-name)) path-name )
+                (setq tmp-arr (s-match (concat "/app/Controllers/\\(.*\\)/" (f-base path-name)) path-name ))
+                (setq path-fix (concat "/" ctrl-name  "/" action-name ".vue"  ) )
+                (when tmp-arr
+                  (setq  path-fix (concat "/" (my-s-snake-case(nth 1 tmp-arr)) path-fix) ))
+
+                (setq obj-file ( get-route-jump-file-name  path-fix (get-url-path-get-fix-path-from-env "NEW_VUE_VIEW_DIR") ))
                 )
 
               (unless  (and  obj-file (f-exists-p  obj-file ) )
-                (setq obj-file ( get-route-jump-file-name (concat "/" ctrl-name  "/" action-name ".vue"  ) (get-url-path-get-fix-path-from-env "VUE_VIEW_DIR") ))
+                (setq obj-file ( get-route-jump-file-name path-fix (get-url-path-get-fix-path-from-env "VUE_VIEW_DIR") ))
                 )
 
               (message "========%s"  obj-file )
@@ -911,17 +900,21 @@ The test for presence of the car of ELT-CONS is done with `equal'."
               )))
 
          ((check-file-ts  )
-          (let (url file-info)
-            (setq tmp-arr (s-match  "/views/\\([a-zA-Z0-9_-]*\\)/\\([a-zA-Z0-9_-]*\\).ts"  path-name ) )
+          (let (url file-info project-name)
+            (setq tmp-arr (s-match  "/views/\\(\\([a-zA-Z0-9_-]*\\)/\\)?\\([a-zA-Z0-9_-]*\\)/\\([a-zA-Z0-9_-]*\\).ts"  path-name ) )
             (when tmp-arr
-              (setq  ctrl-name   (nth 1 tmp-arr) )
-              (setq  action-name   (nth 2 tmp-arr) )
+              (setq  ctrl-name   (nth 3 tmp-arr) )
+              (setq  action-name   (nth 4 tmp-arr) )
+              (setq  project-name (nth 2 tmp-arr) )
               (setq url (switch-file-opt-ts-url ) )
               (when (string=  url "")
                 (setq url (concat "/" ctrl-name "/" action-name ) )
+                (when project-name
+                      (setq url (concat "/" project-name url ) )
+                      )
                 )
               )
-            ;; (ac-php--debug "path-name:%s=> %s" path-name  url )
+            (ac-php--debug "path-name:%s=> %s" path-name  url )
             (when url
               (setq file-info  ( get-url-path-goto-info url ) )
               (setq  obj-file (nth 0 file-info) )
@@ -961,31 +954,35 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 
 
          ((string= major-mode  "protobuf-mode" )
-          (let (url file-info)
+          (let (url file-info path-fix project-name )
             (message "------------- %s " path-name)
-            (setq tmp-arr (s-match  "/\\([a-zA-Z0-9_-]*\\)__\\([a-zA-Z0-9_-]*\\).proto"  path-name ) )
+            (setq tmp-arr (s-match  "/proto/src\\(/\\([^/]*\\)\\)?/\\([a-zA-Z0-9_-]*\\)__\\([a-zA-Z0-9_-]*\\).proto"  path-name ) )
             (when tmp-arr
-              (setq  ctrl-name   (nth 1 tmp-arr) )
-              (setq  action-name   (nth 2 tmp-arr) )
-              (setq  obj-file (concat "../../src/app/Controllers/" ctrl-name ".php" ) )
-              (setq pos-info ( concat "/function[ \t]*" action-name "[ \t]*(" ) )
-
-              (unless (and obj-file (f-exists? obj-file ) )
-                (setq  ctrl-name   (my-s-upper-camel-case (nth 1 tmp-arr)))
-                (setq  obj-file (concat "../../src/app/Controllers/" ctrl-name ".php" ) )
+              (setq  project-name (nth 2 tmp-arr) )
+              (setq  ctrl-name   (my-s-upper-camel-case (nth 3 tmp-arr)) )
+              (setq  action-name   (nth 4 tmp-arr) )
+              (setq path-fix (concat "/" (my-s-upper-camel-case ctrl-name) ".php" ) )
+              (when  project-name
+                (setq path-fix (concat "/" (my-s-upper-camel-case project-name) path-fix ) )
                 )
 
+              (setq project-root-dir (get-project-root-dir ".env") )
+              (setq  obj-file (concat project-root-dir "/src/app/Controllers"   path-fix ) )
+              (message "=====: %s"  obj-file)
+              (setq pos-info ( concat "/function[ \t]*" action-name "[ \t]*(" ) )
+
+
               )
 
 
 
-            (unless (and obj-file (f-exists? obj-file ) )
-              (setq  ctrl-name   (nth 1 tmp-arr) )
-              (setq  action-name   (nth 2 tmp-arr) )
-              (setq  obj-file (concat "../../app/controllers/" ctrl-name ".go" ) )
-              (setq pos-info ( concat "/func[ \t]*.*)[ \t]*" (my-s-upper-camel-case  action-name) "[ \t]*(" ) )
+            ;; (unless (and obj-file (f-exists? obj-file ) )
+            ;;   (setq  ctrl-name   (nth 1 tmp-arr) )
+            ;;   (setq  action-name   (nth 2 tmp-arr) )
+            ;;   (setq  obj-file (concat "../../app/controllers/" ctrl-name ".go" ) )
+            ;;   (setq pos-info ( concat "/func[ \t]*.*)[ \t]*" (my-s-upper-camel-case  action-name) "[ \t]*(" ) )
 
-              )
+            ;;   )
 
 
             )
