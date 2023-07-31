@@ -314,14 +314,17 @@ you should place your code here."
                               ))
 
   (add-hook 'org-mode-hook #'(lambda ( )
-                              ;; (setq evil-org-key-theme
-                              ;;       `(textobjects
-                              ;;         navigation
-                              ;;         ;;additional
-                              ;;         ;;,@(when org-want-todo-bindings '(todo))
-                              ;;         ))
+                              (setq evil-org-key-theme
+                                    `(textobjects
+                                      navigation
+                                      ;;additional
+                                      ;;,@(when org-want-todo-bindings '(todo))
+                                      ))
+                              (evil-org-set-key-theme evil-org-key-theme)
+
                               ;; (defun evil-org--populate-additional-bindings ()
                               ;;   )
+
 
                               ))
 
