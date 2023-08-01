@@ -861,7 +861,14 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 
             (unless (and  obj-file (f-exists-p  obj-file ) ) ;;to protobuf
 
-              (setq obj-file (concat "../../../proto/src/" ctrl-name "__" action-name ".proto" )  )
+              (setq tmp-arr (s-match (concat "/app/Controllers/\\(.*\\)/" (f-base path-name)) path-name ))
+              (setq path-fix (concat "/" ctrl-name  "__" action-name ".proto"  ) )
+              (when tmp-arr
+                (setq  path-fix (concat "/" (my-s-snake-case(nth 1 tmp-arr)) path-fix) ))
+
+              (setq project-root-dir (get-project-root-dir ".env") )
+              (setq obj-file (concat  project-root-dir "/proto/src/"  path-fix )  )
+              (message "jump %s" obj-file)
               )
 
             ))
@@ -1025,6 +1032,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
             ))
 
       )))
+
 ;;XXX
 
 
