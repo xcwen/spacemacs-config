@@ -5,6 +5,7 @@
 
 ;;(load  (expand-file-name "init-ex.el" dotspacemacs-directory) t t  t nil )
 
+(add-to-list 'image-types 'svg)
 (defun dotspacemacs/layers ()
   "Layer configuration:
 This function should only modify configuration layer settings."
