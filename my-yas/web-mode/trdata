@@ -1,1 +1,0 @@
-{!!  \App\Helper\Utils::gen_jquery_data($var )  !!}

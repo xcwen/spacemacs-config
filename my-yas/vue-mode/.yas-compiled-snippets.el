@@ -30,9 +30,10 @@
                        ("less" "<style lang=\"less\" scoped >\n$0\n</style>" "less" nil
                         ("definitions")
                         nil "/home/jim/.spacemacs.d/my-yas/vue-mode/less" nil nil)
+                       ("icon" "import { ${1:PlusOutlined} } from '@ant-design/icons-vue';\n" "icon" nil nil nil "/home/jim/.spacemacs.d/my-yas/vue-mode/icon" nil nil)
                        ("cls" "<template>\n    <div>\n    $0\n    </div>\n</template>\n<script lang=\"ts\" src=\"./`(yas-vue-get-name-by-file-name)`.ts\"/>\n<style lang=\"less\" scoped >\n</style>" "cls" nil
                         ("definitions")
                         nil "/home/jim/.spacemacs.d/my-yas/vue-mode/cls" nil nil)))
 
 
-;;; Do not edit! File generated at Wed Aug  2 12:41:57 2023
+;;; Do not edit! File generated at Sat Sep 30 12:26:03 2023
