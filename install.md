@@ -1,3 +1,4 @@
 
 # php
-  sudo apt-get install php-cli phpmd php-codesniffer 
+  sudo apt-get install php-cli php-xml
+
