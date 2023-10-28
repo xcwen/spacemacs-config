@@ -41,6 +41,14 @@ localhost:~/site-lisp/config$"
   )
 ;;(eval-when-compile (require 'cl))
 
+(defvar fcitx-remote
+
+  (if (executable-find "fcitx-remote" )
+      (executable-find "fcitx-remote" )
+    (executable-find "fcitx5-remote" )
+      )
+  "兼容4 5."
+  )
 
 
 (defun my-s-lower-camel-case (s)
@@ -1060,7 +1068,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
   "Fcitx 关闭输入法."
   (interactive)
   (when (check-in-linux)
-    (call-process  "fcitx-remote" nil 0 nil  "-c") )
+    (call-process  fcitx-remote nil 0 nil  "-c") )
   (when (check-in-mac)
     (call-process  "input_switch" nil 0 nil  "-s" "ABC") )
 
@@ -1073,7 +1081,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
   (interactive)
 
   (when (check-in-linux)
-    (call-process  "fcitx-remote" nil 0 nil  "-o"))
+    (call-process  fcitx-remote nil 0 nil  "-o"))
   (when (check-in-mac)
     (call-process  "input_switch" nil 0 nil  "-s" "搜狗拼音") )
 
