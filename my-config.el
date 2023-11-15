@@ -41,67 +41,11 @@
 (require 'helm-projectile)
 (setq my-keyboard-input-dev "/dev/input/event7")
 
-(add-to-list 'load-path "~/.emacs.d/site-lisp/emacs-application-framework/")
-(require 'eaf)
 
 
-(require 'eaf-markdown-previewer)
-(require 'eaf-music-player)
-(require 'eaf-browser)
-(require 'eaf-terminal)
-(require 'eaf-demo)
-(require 'eaf-org-previewer)
-(require 'eaf-image-viewer)
-(require 'eaf-vue-demo)
-(require 'eaf-pdf-viewer)
-(require 'eaf-mindmap)
-(require 'eaf-js-video-player)
-(require 'eaf-markmap)
-(require 'eaf-pyqterminal)
-(require 'eaf-video-player)
-(require 'eaf-vue-tailwindcss)
-(require 'eaf-2048)
-(require 'eaf-system-monitor)
-(require 'eaf-git)
-
-
-
-(require 'eaf-evil)
-
-
-;(eaf-browser-continue-where-left-off t)
-;(eaf-browser-enable-adblocker t)
-(setq eaf-webengine-default-zoom 1.75)
-(setq eaf-terminal-font-size 24 )
-(setq eaf-terminal-font-family   "" )
-(defun eaf--generate-terminal-command ()
-  "D."
-  (if (or (eaf--called-from-wsl-on-windows-p)
-          (eq system-type 'windows-nt))
-      "powershell.exe"
-    "/bin/zsh"))
-
-
-                                        ;(eaf-bind-key scroll_up "C-n" eaf-pdf-viewer-keybinding)
-                                        ;(eaf-bind-key scroll_down "C-p" eaf-pdf-viewer-keybinding)
-                                        ;(eaf-bind-key nil "M-q" eaf-browser-keybinding) ;; unbind, see more in the Wiki
 
 (defun set-main-key()
   "D."
-
-  (setq eaf-evil-leader-keymap  spacemacs-cmds)
-  (define-key key-translation-map (kbd "SPC")
-              (lambda (prompt)
-                (if (derived-mode-p 'eaf-mode)
-                    (pcase eaf--buffer-app-name
-                      ("browser" (if eaf-buffer-input-focus
-                                     (kbd "SPC")
-                                   (kbd eaf-evil-leader-key)))
-                      ("pdf-viewer" (kbd eaf-evil-leader-key))
-                      ("image-viewer" (kbd eaf-evil-leader-key))
-                      (_  (kbd "SPC")))
-                  (kbd "SPC"))))
-
 
   (define-key evil-motion-state-map "," nil )
 
