@@ -59,7 +59,7 @@
   (set-evil-main-state-key "d" 'show-baidu-dict-at-region)
   (set-evil-main-state-key "c" 'lsp-execute-code-action)
   (set-evil-main-state-key "S" 'lsp-java-open-super-implementation  )
-  (set-evil-main-state-key "s" 'lsp-java--show-implementations  )
+  (set-evil-main-state-key "s" 'lsp-goto-implementation  )
   (set-evil-main-state-key "o" 'other-window  )
   (set-evil-main-state-key "m" 'restart-project  )
   (set-evil-main-state-key "p" 'treemacs  )
@@ -217,7 +217,7 @@ you should place your code here."
   (setq lsp-enable-file-watchers nil)
   (setq lsp-enable-folding nil)
   ;; (setq lsp-java-workspace-dir "/home/jim/java_workspace/" )
-  ;; ;; (setq lsp-java-vmargs '("-noverify" "-Xmx1G" "-XX:+UseG1GC" "-XX:+UseStringDeduplication" "-javaagent:/home/jim/.spacemacs.d/bin/lombok-1.18.24.jar" "-Xbootclasspath/a:/home/jim/.spacemacs.d/bin/lombok-1.18.24.jar"))
+  (setq lsp-java-vmargs '("-noverify" "-Xmx1G" "-XX:+UseG1GC" "-XX:+UseStringDeduplication" "-javaagent:/home/jim/.spacemacs.d/bin/lombok-1.18.24.jar" "-Xbootclasspath/a:/home/jim/.spacemacs.d/bin/lombok-1.18.24.jar"))
   ;;  (setq lsp-java-vmargs '("-noverify" "-Xmx1G" "-XX:+UseG1GC" "-XX:+UseStringDeduplication" "-javaagent:/home/jim/.spacemacs.d/bin/lombok-1.18.24.jar" ))
   ;; ;; (setq lsp-java-vmargs '("-noverify" "-Xmx1G" "-XX:+UseG1GC" "-XX:+UseStringDeduplication" ))
 
