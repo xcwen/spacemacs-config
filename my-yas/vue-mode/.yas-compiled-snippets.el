@@ -36,4 +36,4 @@
                         nil "/home/jim/.spacemacs.d/my-yas/vue-mode/cls" nil nil)))
 
 
-;;; Do not edit! File generated at Sat Sep 30 12:26:03 2023
+;;; Do not edit! File generated at Mon Jan  8 13:40:00 2024

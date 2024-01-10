@@ -637,9 +637,9 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
 
  ;; (setq url-proxy-services nil)
  ;; (setq url-proxy-services
- ;;       '(("no_proxy" . "^\\(localhost\\|10.*\\)")
- ;;         ("http" . "127.0.0.1:41091")
- ;;         ("https" . "127.0.0.1:41091")))
+ ;; '(("no_proxy" . "^\\(localhost\\|10.*\\)")
+ ;; ("http" . "127.0.0.1:7890")
+ ;; ("https" . "127.0.0.1:7890")))
  ;; (setq lsp-java-jdt-download-url "http://127.0.0.1:8080/jdt-language-server-1.15.0-202208290205.tar.gz")
  ;; (setq  lsp-java--download-root  "http://127.0.0.1:8080/")
 

@@ -1945,6 +1945,29 @@ object satisfying `yas--field-p' to restrict the expansion to."
 
   ))
 
+(defvar my-backup-directory "~/my-backups/")
+(defvar my-max-backups 10)
+
+(defun my-save-backup ()
+  "Save a backup of the current file to the backup directory with timestamp."
+  (when buffer-file-name
+    (let* ((current-time-string (format-time-string "%Y%m%d%H%M%S"))
+           (backup-file (expand-file-name (concat (file-name-nondirectory buffer-file-name) "-" current-time-string) my-backup-directory)))
+      (unless (file-exists-p my-backup-directory)
+        (make-directory my-backup-directory t))
+      (copy-file buffer-file-name backup-file t t)
+      (message "Backup saved to: %s" backup-file)
+      (my-trim-backups))))
+
+(defun my-trim-backups ()
+  "Delete excess backups and keep only the most recent ones."
+  (let ((backup-files (directory-files my-backup-directory t ".*" t)))
+    (when (> (length backup-files) my-max-backups)
+      (dolist (file (nthcdr my-max-backups backup-files))
+        (delete-file file)
+        (message "Deleted old backup: %s" file)))))
+
+(add-hook 'before-save-hook 'my-save-backup)
 
 (provide 'xcwen-misc)
 

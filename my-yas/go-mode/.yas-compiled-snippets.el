@@ -18,7 +18,8 @@
                        ("func" "func ${1:name}(${2:arguments}) ${3:returntype} {\n	$0\n}\n" "func" nil nil nil "/home/jim/.spacemacs.d/my-yas/go-mode/func" nil nil)
                        ("for" "for ${1:elements} {\n	$0\n}\n" "for" nil nil nil "/home/jim/.spacemacs.d/my-yas/go-mode/for" nil nil)
                        ("dd" "dd.DD($0)" "dd" nil nil nil "/home/jim/.spacemacs.d/my-yas/go-mode/dd" nil nil)
+                       ("ctx" "ctx context.Context," "ctx" nil nil nil "/home/jim/.spacemacs.d/my-yas/go-mode/ctx" nil nil)
                        ("bench" "func Benchmark${1:Feature}(b *testing.B) {\n	$0\n}\n" "bench" nil nil nil "/home/jim/.spacemacs.d/my-yas/go-mode/bench" nil nil)))
 
 
-;;; Do not edit! File generated at Sat Sep 30 12:26:03 2023
+;;; Do not edit! File generated at Mon Jan  8 13:39:59 2024
