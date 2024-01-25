@@ -152,25 +152,39 @@ npm install typescript -g
 ### c/c++ 编码需要
 基于 `ccls` 补全
 
-树莓派的pico 的 .ccls 文件如下
+树莓派的pico 的
+
+.ccls 文件如下
 ```
 %compile_commands.json
--isystem/home/jim/pico/arm-none-eabi-gcc/arm-none-eabi/include
+```
+.el 配置文件加入:
+```emacs-lisp
+  ;; 指定
+  (setq ccls-initialization-options
+        `(:clang (:extraArgs ["--gcc-toolchain=/home/jim/pico/arm-none-eabi-gcc/arm-none-eabi/bin/" "--sysroot=/home/jim/pico/arm-none-eabi-gcc/arm-none-eabi/"])))
+
+  )
 ```
 
 
 
 https://github.com/MaskRay/ccls/wiki/Build
 
-
 sudo apt install clang cmake libclang-dev llvm-dev rapidjson-dev
 cmake -H. -BRelease
 cmake --build Release
 
-apt-get install clangd-11
+#### cmake 生成 compile_commands.json
+cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1  ../
+
+
 
 #### 从make/cmake 生成补全配置
 https://edward852.github.io/post/%E7%94%9F%E6%88%90compile_commands.json%E6%96%87%E4%BB%B6/
+cmake工程生成 compile_commands.json 文件比较简单，定义 CMAKE_EXPORT_COMPILE_COMMANDS 即可。
+
+cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1
 
 compile_commands.json 文件能够有效提高一些工具(比如说ccls1, vscode2)的代码跳转、补全等功能。
 
@@ -185,7 +199,7 @@ compile_commands.json 文件能够有效提高一些工具(比如说ccls1, vscod
 具体Bear的安装这里就不赘述了，按照 官方文档 来即可。
 
 安装之后，执行以下命令即可生成：
-bear make
+bear -- make
 
 ### python
 安装 anaconda3

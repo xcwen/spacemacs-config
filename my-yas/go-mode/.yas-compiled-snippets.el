@@ -22,4 +22,4 @@
                        ("bench" "func Benchmark${1:Feature}(b *testing.B) {\n	$0\n}\n" "bench" nil nil nil "/home/jim/.spacemacs.d/my-yas/go-mode/bench" nil nil)))
 
 
-;;; Do not edit! File generated at Mon Jan  8 13:39:59 2024
+;;; Do not edit! File generated at Wed Jan 10 15:09:53 2024

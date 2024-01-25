@@ -1961,11 +1961,17 @@ object satisfying `yas--field-p' to restrict the expansion to."
 
 (defun my-trim-backups ()
   "Delete excess backups and keep only the most recent ones."
-  (let ((backup-files (directory-files my-backup-directory t ".*" t)))
-    (when (> (length backup-files) my-max-backups)
-      (dolist (file (nthcdr my-max-backups backup-files))
+  (let (
+        (sorted-backup-files (sort (directory-files my-backup-directory t "[^.].*" t)
+                                   (lambda (a b)
+                                     (not (time-less-p (nth 5 (file-attributes a))
+                                                  (nth 5 (file-attributes b)))))))
+        )
+    (when (> (length sorted-backup-files) my-max-backups)
+      (dolist (file (nthcdr my-max-backups  sorted-backup-files))
         (delete-file file)
         (message "Deleted old backup: %s" file)))))
+
 
 (add-hook 'before-save-hook 'my-save-backup)
 

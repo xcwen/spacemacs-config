@@ -39,6 +39,7 @@
 (require 'evil-states)
 (require 'eterm-256color)
 (require 'helm-projectile)
+;; (require 'ccls)
 (setq my-keyboard-input-dev "/dev/input/event7")
 
 
@@ -658,6 +659,10 @@ you should place your code here."
   (set-frame-width (selected-frame) 91)
   (set-frame-height (selected-frame) 91)
   ;; (recentf-load-list)
+
+  ;; 指定
+  (setq ccls-initialization-options
+        `(:clang (:extraArgs ["--gcc-toolchain=/home/jim/pico/arm-none-eabi-gcc/arm-none-eabi/bin/" "--sysroot=/home/jim/pico/arm-none-eabi-gcc/arm-none-eabi/"])))
 
   )
 
