@@ -29,6 +29,7 @@
 (require 'treemacs )
 (require 'lsp-sqls )
 (require 'lsp-eslint)
+(require 'phpcbf)
 (require 'company)
 (require 'flutter)
 ;;; Commentary:
@@ -417,6 +418,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
     (when  (check-in-php-mode)
 
       (setq cleanup-flag  (not cleanup-flag ) )
+      (when cleanup-flag (phpcbf))
       )
     (when (string= major-mode "vue-mode")
       (if (check-file-ts)

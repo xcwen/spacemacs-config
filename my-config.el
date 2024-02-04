@@ -579,15 +579,9 @@ you should place your code here."
   (setq yas-snippet-dirs   (list  "~/.spacemacs.d/my-yas"  )  )
 
 
-
+  ( setq phpcbf-standard (concat (getenv "HOME") "/spacemacs-config/ruleset.xml" ))
   (setq phpcbf-executable (concat (getenv "HOME") "/spacemacs-config/bin/phpcbf" ) )
 
-  (custom-set-variables
-   '(phpcbf-executable (concat (getenv "HOME") "/spacemacs-config/bin/phpcbf" ) )
-   '(flymake-phpcs-command  (concat (getenv "HOME") "/spacemacs-config/bin/phpcs" ))
-   '(phpcbf-standard (concat (getenv "HOME") "/spacemacs-config/ruleset.xml" ))
-   '(flycheck-phpcs-standard (concat (getenv "HOME") "/spacemacs-config/ruleset.xml" ))
-  )
 
   ;; ;; 设置sqlfmt : cnpm install -g sql-formatter
   ;; (setq sqlfmt-executable  "sql-formatter")
@@ -694,6 +688,7 @@ you should place your code here."
   (setq ccls-initialization-options
         `(:clang (:extraArgs ["--gcc-toolchain=/home/jim/pico/arm-none-eabi-gcc/arm-none-eabi/bin/" "--sysroot=/home/jim/pico/arm-none-eabi-gcc/arm-none-eabi/"])))
 
+  (evil-declare-change-repeat 'company-complete-common)
 
   )
 

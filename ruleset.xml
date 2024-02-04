@@ -12,5 +12,17 @@
         <exclude name="Generic.Files.LineLength.TooLong"/>
         <exclude name="Squiz.Classes"/>
     </rule>
+    <rule ref="Generic.WhiteSpace.ScopeIndent">
+        <properties>
+            <property name="indent" value="4"/>
+            <property name="exact" value="true"/>
+            <property name="tabIndent" value="false"/>
+            <property name="ignoreIndentationTokens" type="array">
+                <element value="T_HEREDOC"/>
+                <element value="T_NOWDOC"/>
+            </property>
+        </properties>
+    </rule>
 
+    <rule ref="Generic.WhiteSpace.DisallowTabIndent"/>
 </ruleset>
