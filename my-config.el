@@ -28,6 +28,7 @@
 (load  (expand-file-name "php-doc-block.el" dotspacemacs-directory) )
 
 (require 'php-mode)
+(require 'php-ts-mode)
 (require 'lsp-ui-doc)
 (require 'lsp-ui)
 (require 'lsp)
@@ -44,6 +45,8 @@
 
 
 
+(spacemacs|define-jump-handlers php-ts-mode)
+(add-to-list 'spacemacs-jump-handlers-php-ts-mode 'ac-php-find-symbol-at-point)
 
 (defun set-main-key()
   "D."
@@ -72,7 +75,7 @@
    #'(lambda()
       (interactive )
       (cond
-       ((string= major-mode "php-mode")
+       ((check-in-php-mode)
         (progn
             (helm-projectile-grep (concat (projectile-project-root) "src/app" ) )
           ))
@@ -85,7 +88,7 @@
       (interactive )
       (flycheck-explain-error-at-point   )
       (cond
-       ((string= major-mode "php-mode")
+       ((check-in-php-mode)
         (progn
           (ac-php-show-tip)
           ))
@@ -102,7 +105,7 @@
      (interactive )
      (if (ac-php--in-string-or-comment-p)
          (cond
-          ((string= major-mode "php-mode")
+          ((check-in-php-mode)
            (progn
 
              (insert  "\" . \"")
@@ -159,15 +162,32 @@
   (add-hook 'html-mode-hook 'zencoding-mode)
   (add-hook 'vue-mode-hook 'zencoding-mode)
 
+  (add-hook 'php-mode-hook
+            #'(lambda ( )
+                ;;(php-ts-mode)
+                ))
 
   (add-hook 'php-mode-hook
             #'(lambda ( )
-               (set-evil-main-state-key-on-mode php-mode-map "D" 'my-jump-table-sql  )
+                (set-evil-main-state-key-on-mode php-mode-map "D" 'my-jump-table-sql  )
+                (set-evil-main-state-key-on-mode  php-mode-map "r" 'ac-php-remake-tags )
+                (set-evil-main-state-key-on-mode  php-mode-map "f" 'ac-php-gen-def )
+                (set-evil-main-state-key-on-mode  php-mode-map "m" 'php-mode-make)
+                ))
+  (add-hook 'php-ts-mode-hook
+            #'(lambda ( )
+                (require 'company-php)
+                (company-mode t)
+                (add-to-list 'company-backends 'company-ac-php-backend)
 
-               (set-evil-main-state-key-on-mode  php-mode-map "r" 'ac-php-remake-tags )
-               (set-evil-main-state-key-on-mode  php-mode-map "f" 'ac-php-gen-def )
-               (set-evil-main-state-key-on-mode  php-mode-map "m" 'php-mode-make)
-               ))
+                (flycheck-mode)
+                (set-evil-main-state-key-on-mode php-ts-mode-map "D" 'my-jump-table-sql  )
+
+                (set-evil-main-state-key-on-mode  php-ts-mode-map "r" 'ac-php-remake-tags )
+                (set-evil-main-state-key-on-mode  php-ts-mode-map "f" 'ac-php-gen-def )
+                (set-evil-main-state-key-on-mode  php-ts-mode-map "m" 'php-mode-make)
+                ))
+
 
   (set-evil-main-state-key-on-mode  java-mode-map "m" 'restart-project)
   (set-evil-main-state-key-on-mode  java-mode-map "t" 'maven-test-method)
@@ -344,6 +364,15 @@ you should place your code here."
 
                               ))
 
+  (add-hook 'php-ts-mode-hook #'(lambda ( )
+
+                               (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
+
+                               (my-set-evil-not-insert-local-map "g\C-]"   'my-jump-merber-class )
+                               (my-set-evil-not-insert-local-map "="  'align-eq )
+
+                               ))
+
   (add-hook 'typescript-mode-hook #'(lambda ( )
 
                                      (if(get-project-root-dir "vite.config.ts"  )
@@ -447,7 +476,7 @@ you should place your code here."
                             )))))
 
   (set-evil-all-state-key  (kbd "C-<tab>")  #'(lambda () (interactive)
-                                               (if  (string= major-mode "php-mode")
+                                               (if  (check-in-php-mode)
                                                    (company-complete)
                                                  (company-complete))
                                                ))
@@ -555,6 +584,7 @@ you should place your code here."
 
   (custom-set-variables
    '(phpcbf-executable (concat (getenv "HOME") "/spacemacs-config/bin/phpcbf" ) )
+   '(flymake-phpcs-command  (concat (getenv "HOME") "/spacemacs-config/bin/phpcs" ))
    '(phpcbf-standard (concat (getenv "HOME") "/spacemacs-config/ruleset.xml" ))
    '(flycheck-phpcs-standard (concat (getenv "HOME") "/spacemacs-config/ruleset.xml" ))
   )
@@ -663,6 +693,7 @@ you should place your code here."
   ;; 指定
   (setq ccls-initialization-options
         `(:clang (:extraArgs ["--gcc-toolchain=/home/jim/pico/arm-none-eabi-gcc/arm-none-eabi/bin/" "--sysroot=/home/jim/pico/arm-none-eabi-gcc/arm-none-eabi/"])))
+
 
   )
 

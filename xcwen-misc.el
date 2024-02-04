@@ -23,7 +23,6 @@
 (require 'evil)
 (require 'multi-term)
 (require 'yasnippet)
-(require 'phpcbf)
 (require 'xref)
 (require 'flycheck)
 (require 'ac-php-core)
@@ -32,7 +31,6 @@
 (require 'lsp-eslint)
 (require 'company)
 (require 'flutter)
-
 ;;; Commentary:
 (defvar term-local-cmd-start-line-regex-str
   "^⎣ $"
@@ -61,7 +59,12 @@ localhost:~/site-lisp/config$"
   (declare (side-effect-free t))
   (s-join "" (mapcar 'capitalize (my-s-split-words s))))
 
-
+(defun check-in-php-mode  ()
+  "Check 是否在php mode."
+    (or   (string= major-mode "php-mode")
+          (string= major-mode "php-ts-mode")
+          )
+  )
 (defun my-s-snake-case (s)
   "Convert S to snake_case."
   (declare (side-effect-free t))
@@ -406,12 +409,12 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 (defun cleanup-and-goto-error ()
   "DOCSTRING."
   (interactive)
+
   (let (pos cur-pos )
     (setq cur-pos (point ) )
     (whitespace-cleanup)
 
-    (when (string= major-mode "php-mode")
-      (if cleanup-flag (phpcbf) )
+    (when  (check-in-php-mode)
 
       (setq cleanup-flag  (not cleanup-flag ) )
       )
@@ -583,7 +586,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
     (unless obj-file
       (let ((path-name (buffer-file-name)) ctrl-name action-name tmp-arr path-fix  )
         (cond
-         ((string= major-mode  "php-mode")
+         ((check-in-php-mode)
           (progn
             (setq ctrl-name (my-s-snake-case(f-base  (f-base path-name ))) )
             (save-excursion
@@ -818,7 +821,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
     (unless obj-file
       (let ((path-name (buffer-file-name)) ctrl-name action-name tmp-arr  path-fix )
         (cond
-         ((string= major-mode  "php-mode")
+         ((check-in-php-mode)
           (progn
             (setq ctrl-name (my-s-snake-case  (f-base  (f-base path-name ))) )
             (message "ctrl-name :%s" ctrl-name)
@@ -1570,7 +1573,7 @@ object satisfying `yas--field-p' to restrict the expansion to."
                           (eq ?: (char-before (1- (point)))))))
             (company-complete))
 
-           ((and (string= major-mode "php-mode")
+           ((and (check-in-php-mode)
                  (or
                   ;; ->
                   (and (eq ?> c)
