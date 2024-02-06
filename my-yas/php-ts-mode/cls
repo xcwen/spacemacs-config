@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# contributor: USAMI Kenta <tadsan@zonu.me>
+# name: class
+# key: cls
+# group: definitions
+# --
+<?php
+namespace  `(yas-php-get-namespace-name-by-file-name)`;
+
+class ${1:`(yas-php-get-class-name-by-file-name)`}
+{
+  $0
+}

@@ -1,0 +1,6 @@
+# name:  doc of var/member 
+# key: vdoc
+# --
+/**
+ * @var  $0
+ */

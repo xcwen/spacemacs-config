@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: ig
+# key: ig
+# --
+/** @phpstan-ignore-line */
