@@ -205,14 +205,14 @@ see https://www.php.net/manual/language.constants.predefined.php")
      (property_element
       (variable_name) @php-property-name)
 
-     ;; ((name) @constructor
-     ;;  (:match ,(rx-to-string '(: bos (in "A-Z")))))
+     ((name) @constructor
+      (:match ,(rx-to-string '(: bos (in "A-Z")))))
 
-     ;; (variable_name (name) @php-$this
-     ;;  (:match ,(rx bos "this" eos)
-     ;;          @php-$this))
+     (variable_name (name) @php-$this
+      (:match ,(rx bos "this" eos)
+              @php-$this))
      (member_access_expression name: (name) @php-property-name)
-     ;;(variable_name (name) @font-lock-variable-name-face)
+     (variable_name (name) @font-lock-variable-name-face)
      (variable_name (name) @php-variable-name)
      (variable_name "$" @php-variable-sigil))
 

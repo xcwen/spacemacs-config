@@ -160,6 +160,7 @@ npm install typescript -g
 ```
 .el 配置文件加入:
 ```emacs-lisp
+
   ;; 指定
   (setq ccls-initialization-options
         `(:clang (:extraArgs ["--gcc-toolchain=/home/jim/pico/arm-none-eabi-gcc/arm-none-eabi/bin/" "--sysroot=/home/jim/pico/arm-none-eabi-gcc/arm-none-eabi/"])))

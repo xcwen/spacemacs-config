@@ -164,7 +164,7 @@
 
   (add-hook 'php-mode-hook
             #'(lambda ( )
-                ;;(php-ts-mode)
+                (php-ts-mode)
                 ))
 
   (add-hook 'php-mode-hook
