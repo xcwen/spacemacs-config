@@ -46,7 +46,7 @@ localhost:~/site-lisp/config$"
   (if (executable-find "fcitx-remote" )
       (executable-find "fcitx-remote" )
     (executable-find "fcitx5-remote" )
-      )
+    )
   "兼容4 5."
   )
 
@@ -63,7 +63,7 @@ localhost:~/site-lisp/config$"
 
 (defun check-in-php-mode  ()
   "Check 是否在php mode."
-    (or   (string= major-mode "php-mode")
+  (or   (string= major-mode "php-mode")
           (string= major-mode "php-ts-mode")
           )
   )

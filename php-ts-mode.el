@@ -35,7 +35,7 @@
 (require 'treesit)
 (require 'c-ts-common)
 (require 'php nil t)
-(require 'php-face nil t)
+(require 'php-face )
 
 (declare-function php-base-mode "ext:php")
 (declare-function treesit-parser-create "treesit.c")
@@ -350,13 +350,13 @@ Currently there are `php-mode' and `php-ts-mode'."
 
   (treesit-major-mode-setup))
 
-;; (when (treesit-ready-p 'php)
-;;   (add-to-list 'auto-mode-alist '("\\.php[s345]?\\'" . php-ts-mode)))
+(when (treesit-ready-p 'php)
+  (add-to-list 'auto-mode-alist '("\\.php[s345]?\\'" . php-ts-mode)))
 
 ;;;###autoload
 (with-eval-after-load 'treesit
   (add-to-list 'treesit-language-source-alist
-               '(php "https://github.com/tree-sitter/tree-sitter-php" "master" "php/src")))
+               '(php "https://github.com/tree-sitter/tree-sitter-php" "v0.21.1" "php/src")))
 
 (provide 'php-ts-mode)
 ;;; php-ts-mode.el ends here

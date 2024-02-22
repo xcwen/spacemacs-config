@@ -27,7 +27,6 @@
 (load  (expand-file-name "init-syntax-table.el" dotspacemacs-directory) )
 (load  (expand-file-name "php-doc-block.el" dotspacemacs-directory) )
 
-(require 'php-mode)
 (require 'php-ts-mode)
 (require 'lsp-ui-doc)
 (require 'lsp-ui)
