@@ -30,7 +30,7 @@
 (require 'lsp-sqls )
 (require 'lsp-eslint)
 (require 'phpcbf)
-(require 'php-mode)
+;; (require 'php-mode)
 (require 'company)
 (require 'flutter)
 ;;; Commentary:
@@ -594,7 +594,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
             (setq ctrl-name (my-s-snake-case(f-base  (f-base path-name ))) )
             (save-excursion
               (let (line-txt  )
-                (php-beginning-of-defun)
+                (ac-php--beginning-of-defun)
                 (setq line-txt (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
                 (setq tmp-arr (s-match  ".*function[ \t]+\\([a-zA-Z0-9_]*\\)"  line-txt ) )
                 (when tmp-arr
@@ -830,7 +830,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
             (message "ctrl-name :%s" ctrl-name)
             (save-excursion
               (let (line-txt  )
-                (php-beginning-of-defun)
+                (ac-php--beginning-of-defun)
                 (setq line-txt (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
                 (setq tmp-arr (s-match  ".*function[ \t]+\\([a-zA-Z0-9_]*\\)"  line-txt ) )
                 (when tmp-arr

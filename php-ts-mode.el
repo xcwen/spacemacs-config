@@ -35,7 +35,7 @@
 (require 'treesit)
 (require 'c-ts-common)
 (require 'php nil t)
-(require 'php-face )
+(require 'php-face nil t)
 
 (declare-function php-base-mode "ext:php")
 (declare-function treesit-parser-create "treesit.c")
@@ -205,14 +205,14 @@ see https://www.php.net/manual/language.constants.predefined.php")
      (property_element
       (variable_name) @php-property-name)
 
-     ((name) @constructor
-      (:match ,(rx-to-string '(: bos (in "A-Z")))))
+     ;; ((name) @constructor
+     ;;  (:match ,(rx-to-string '(: bos (in "A-Z")))))
 
-     (variable_name (name) @php-$this
-      (:match ,(rx bos "this" eos)
-              @php-$this))
+     ;; (variable_name (name) @php-$this
+     ;;  (:match ,(rx bos "this" eos)
+     ;;          @php-$this))
      (member_access_expression name: (name) @php-property-name)
-     (variable_name (name) @font-lock-variable-name-face)
+     ;;(variable_name (name) @font-lock-variable-name-face)
      (variable_name (name) @php-variable-name)
      (variable_name "$" @php-variable-sigil))
 
@@ -332,6 +332,7 @@ Currently there are `php-mode' and `php-ts-mode'."
   (setq-local treesit-defun-name-function #'php-ts-mode--defun-name)
 
   ;; Font-lock.
+  (setq-local treesit-font-lock-level 4)
   (setq-local treesit-font-lock-settings php-ts-mode--font-lock-settings)
   (setq-local treesit-font-lock-feature-list
               '((comment definition preprocessor)
@@ -356,7 +357,7 @@ Currently there are `php-mode' and `php-ts-mode'."
 ;;;###autoload
 (with-eval-after-load 'treesit
   (add-to-list 'treesit-language-source-alist
-               '(php "https://github.com/tree-sitter/tree-sitter-php" "v0.21.1" "php/src")))
+               '(php "https://github.com/tree-sitter/tree-sitter-php" "master" "php/src")))
 
 (provide 'php-ts-mode)
 ;;; php-ts-mode.el ends here
