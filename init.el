@@ -37,9 +37,10 @@ This function should only modify configuration layer settings."
      clojure
      elixir
      systemd
-     (lsp :variables lsp-rust-server 'rust-analyzer)
      (c-c++ :variables c-c++-backend 'lsp-ccls )
 
+     (lsp)
+     ;;(lsp :variables lsp-rust-server 'rust-analyzer)
      (rust :variables rust-backend 'lsp)
 
      react
