@@ -31,6 +31,12 @@
                              (modify-syntax-entry ?_ "w" php-mode-syntax-table) ;将 _ 加入 单词中
                              ))
 
+(add-hook 'php-ts-mode-hook #'(lambda ( )
+                                (modify-syntax-entry ?$ "." php-ts-mode--syntax-table)
+                                (modify-syntax-entry ?_ "w" php-ts-mode--syntax-table ) ;将 _ 加入 单词中
+                             ))
+
+
 (add-hook 'dart-mode-hook #'(lambda ( )
                               (modify-syntax-entry ?_ "w" dart-mode-syntax-table) ;将 _ 加入 单词中
                               ))
