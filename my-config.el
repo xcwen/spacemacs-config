@@ -25,7 +25,8 @@
 (load  (expand-file-name "xcwen-misc.el" dotspacemacs-directory) )
 (require 'xcwen-misc)
 (load  (expand-file-name "init-syntax-table.el" dotspacemacs-directory) )
-(load  (expand-file-name "php-doc-block.el" dotspacemacs-directory) )
+;; (load  (expand-file-name "php-doc-block.el" dotspacemacs-directory) )
+(require'core-jump)
 
 (require 'php-ts-mode)
 (require 'lsp-ui-doc)
@@ -43,8 +44,7 @@
 (setq my-keyboard-input-dev "/dev/input/event7")
 
 
-
-(spacemacs|define-jump-handlers php-ts-mode)
+(spacemacs|define-jump-handlers php-ts-mode) 
 (add-to-list 'spacemacs-jump-handlers-php-ts-mode 'ac-php-find-symbol-at-point)
 
 (defun set-main-key()
@@ -373,14 +373,14 @@ you should place your code here."
                                ))
 
   (add-hook 'typescript-mode-hook #'(lambda ( )
-
-                                     (if(get-project-root-dir "vite.config.ts"  )
-                                        (progn
-                                          (vue-mode) ;;
-                                         )
-                                       (progn
-                                         (my-set-evil-not-insert-local-map "="  'align-eq )
-                                         (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )))
+                                      (vue-mode) ;;
+                                     ;; (if(get-project-root-dir "vite.config.ts"  )
+                                     ;;    (progn
+                                     ;;      (vue-mode) ;;
+                                     ;;     )
+                                     ;;   (progn
+                                     ;;     (my-set-evil-not-insert-local-map "="  'align-eq )
+                                     ;;     (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )))
                               ))
 
   (add-hook 'lua-mode-hook #'(lambda ( )
@@ -403,8 +403,7 @@ you should place your code here."
                                ))
 
   (add-hook 'js-mode-hook #'(lambda ( )
-                              (require 'typescript)
-                             (typescript-mode)
+                             (vue-mode)
                                ))
 
 
