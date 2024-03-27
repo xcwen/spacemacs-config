@@ -178,6 +178,7 @@
                 (require 'company-php)
                 (company-mode t)
                 (add-to-list 'company-backends 'company-ac-php-backend)
+                (add-hook 'php-mode-hook 'ac-php-core-eldoc-setup)
 
                 (flycheck-mode)
                 (set-evil-main-state-key-on-mode php-ts-mode-map "D" 'my-jump-table-sql  )
