@@ -205,6 +205,13 @@ bear -- make
 ### python
 安装 anaconda3
 
+### rust 
+安装 rust-analyzer
+```
+rustup component add rust-analyzer
+```
+
+
 
 
 ### go 补全 需要
