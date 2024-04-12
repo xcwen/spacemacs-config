@@ -211,7 +211,14 @@ bear -- make
 rustup component add rust-analyzer
 ```
 
+### vue/ts 补全
 
+需要更新安装  \@vue/language-server 1.x.x 版本, 2.0xx 无效
+```
+/usr/bin/npm view \@vue/language-server versions
+/usr/bin/npm -g --prefix /home/jim/.emacs.d/.cache/lsp/npm/\@vue/language-server install \@vue/language-server@1.9.0-alpha.3
+
+```
 
 
 ### go 补全 需要

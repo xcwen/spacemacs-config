@@ -8,4 +8,4 @@
                        ("hd" "/**\n * ============================================================\n * @file   `(file-name-nondirectory (buffer-file-name))`\n * @author `header-user-name` (`header-user-email`)\n * @date   `(format-time-string \"%Y-%m-%d %H:%M:%S\")`\n *\n * \n * @brief  $1\n * \n * ============================================================\n */\n$0\n\n" "header" nil nil nil "/home/jim/.spacemacs.d/my-yas/cc-mode/hd" nil nil)))
 
 
-;;; Do not edit! File generated at Mon Feb  5 11:43:37 2024
+;;; Do not edit! File generated at Wed Apr 10 17:23:03 2024

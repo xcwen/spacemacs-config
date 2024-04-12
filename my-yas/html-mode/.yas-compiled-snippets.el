@@ -1,2 +1,2 @@
 ;;; Compiled snippets and support files for `html-mode'
-;;; Do not edit! File generated at Mon Feb  5 11:43:37 2024
+;;; Do not edit! File generated at Wed Apr 10 17:23:03 2024
