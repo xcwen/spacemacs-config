@@ -29,6 +29,7 @@
 (require 'treemacs )
 (require 'lsp-sqls )
 (require 'lsp-eslint)
+(require 'sgml-mode)
 (require 'phpcbf)
 ;; (require 'php-mode)
 (require 'company)
@@ -429,6 +430,11 @@ The test for presence of the car of ELT-CONS is done with `equal'."
         (lsp-format-buffer))
 
       )
+    (when (string= major-mode "web-mode")
+      (message "xx web-mode"  )
+      (sgml-pretty-print 0  (point-max) )
+      )
+
 
 
     (whitespace-cleanup)
@@ -1598,7 +1604,9 @@ object satisfying `yas--field-p' to restrict the expansion to."
            ((and (string= major-mode "java-mode")  (eq ?\. c))
             (company-complete  ) )
            ((and
-                  (string= major-mode "rust-mode")
+             (or (string= major-mode "rust-mode")
+                 (string= major-mode "rustic-mode")
+                 )
                  (or
                   ;; .
                   (eq ?\. c)
@@ -1606,7 +1614,6 @@ object satisfying `yas--field-p' to restrict the expansion to."
                   (and (eq ?: c)
                        (eq ?: (char-before (1- (point)))))))
 
-            (message "do ac-source-php")
             (company-complete  ))
 
 
