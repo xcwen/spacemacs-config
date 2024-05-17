@@ -1103,15 +1103,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 ;;
 
 ;;------------------------------------------------------------
-(defun show-dict ()
-  "翻译."
-  (interactive)
-  (let ((cmd "goldendict")(word))
-    (setq word (if (and  mark-active
-      (not  (= (region-beginning) (region-end) )))
-  (buffer-substring-no-properties (region-beginning)(region-end)) (current-word )))
-    (call-process  cmd nil 0 nil  word   )
-    ))
+
 (defun fcitx-inactivate-input-method()
   "Fcitx 关闭输入法."
   (interactive)
