@@ -768,6 +768,42 @@ The test for presence of the car of ELT-CONS is done with `equal'."
     )
   ))
 
+(defun send-pot-request ( data )
+  "Send  DATA to  pot."
+  (let ((url-request-method "POST")
+        (url-request-data data))
+    (url-retrieve "http://127.0.0.1:60828"
+                  (lambda (status)
+                    (when (plist-get status :error)
+                      (message "Error: %s" (plist-get status :error)))
+                    )
+                  nil t t)))
+
+(defun show-pot-dict-at-region()
+  "DOCSTRING."
+  (interactive)
+  (let ( text reg-begin-pos  reg-end-pos  tmp-mark-pos  (cur-evil-visual-state-flag (evil-visual-state-p) )  )
+    (when cur-evil-visual-state-flag
+      (setq reg-begin-pos (region-beginning))
+      (setq reg-end-pos (region-end))
+      )
+    (unless  reg-begin-pos
+      (save-excursion
+        (backward-word)
+        (setq reg-begin-pos (point))
+        (forward-word)
+        (setq reg-end-pos (point))
+        )
+      )
+    (setq  text (buffer-substring-no-properties reg-begin-pos reg-end-pos) )
+    (setq text (s-trim text  ))
+
+    (unless(string=  text "" )
+      (send-pot-request text)
+      )
+  ))
+
+
 (defun switch-file-opt ()
   "DOCSTRING."
   (interactive)
@@ -1084,7 +1120,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
   (when (check-in-mac)
     (call-process  "input_switch" nil 0 nil  "-s" "ABC") )
 
-  (show-baidu-dict-close)
+  ;;(show-baidu-dict-close)
 
   )
 

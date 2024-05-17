@@ -44,7 +44,7 @@
 (setq my-keyboard-input-dev "/dev/input/event7")
 
 
-(spacemacs|define-jump-handlers php-ts-mode) 
+(spacemacs|define-jump-handlers php-ts-mode)
 (add-to-list 'spacemacs-jump-handlers-php-ts-mode 'ac-php-find-symbol-at-point)
 
 (defun set-main-key()
@@ -59,7 +59,8 @@
   (set-evil-main-state-key "a" 'switch-file-opt )
   (set-evil-main-state-key "A" 'switch-file-opt-proto )
   (set-evil-main-state-key "e" 'cleanup-and-goto-error)
-  (set-evil-main-state-key "d" 'show-baidu-dict-at-region)
+  ;;(set-evil-main-state-key "d" 'show-baidu-dict-at-region)
+  (set-evil-main-state-key "d" 'show-pot-dict-at-region)
   (set-evil-main-state-key "c" 'lsp-execute-code-action)
   (set-evil-main-state-key "S" 'lsp-java-open-super-implementation  )
   (set-evil-main-state-key "s" 'lsp-goto-implementation  )
