@@ -786,17 +786,13 @@ The test for presence of the car of ELT-CONS is done with `equal'."
     (when cur-evil-visual-state-flag
       (setq reg-begin-pos (region-beginning))
       (setq reg-end-pos (region-end))
+      (setq  text (buffer-substring-no-properties reg-begin-pos reg-end-pos) )
       )
     (unless  reg-begin-pos
-      (save-excursion
-        (backward-word)
-        (setq reg-begin-pos (point))
-        (forward-word)
-        (setq reg-end-pos (point))
-        )
+      (setq text (ac-php--get-cur-word) )
       )
-    (setq  text (buffer-substring-no-properties reg-begin-pos reg-end-pos) )
-    (setq text (s-trim text  ))
+    (setq text  (s-trim text  ) )
+    ;; (setq text (concat (s-trim text  ) "\n" ))
 
     (unless(string=  text "" )
       (send-pot-request text)
