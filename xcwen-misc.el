@@ -65,8 +65,8 @@ localhost:~/site-lisp/config$"
 (defun check-in-php-mode  ()
   "Check 是否在php mode."
   (or   (string= major-mode "php-mode")
-          (string= major-mode "php-ts-mode")
-          )
+        (string= major-mode "php-ts-mode")
+        )
   )
 (defun my-s-snake-case (s)
   "Convert S to snake_case."
@@ -79,7 +79,7 @@ localhost:~/site-lisp/config$"
   (interactive)
 
   (and  (s-ends-with-p ".ts" (buffer-file-name))   )
-       )
+  )
 
 (defun my-s-split-words (s)
   "Split S into list of words."
@@ -93,7 +93,7 @@ localhost:~/site-lisp/config$"
    t))
 
 (defun ts-fix-code()
-    "Doc  docstring."
+  "Doc  docstring."
   (interactive)
   (let (text)
 
@@ -102,8 +102,8 @@ localhost:~/site-lisp/config$"
         (insert "<any>")
       (insert ":any")
       )
-  ;;(message "XXX [%s]" text )
-  ))
+    ;;(message "XXX [%s]" text )
+    ))
 (defun  multi-term-goto-last-term ()
   "Doc  docstring."
   (interactive)
@@ -203,22 +203,22 @@ localhost:~/site-lisp/config$"
     ;;             (string-match term-local-cmd-start-line-regex-str line-txt ) ;;本地，处于命令行完成状态
     ;;             )
     (setq init-cmd  (concat "cd '" file-path-str  "' # goto file location   \r" ) )
-      ;;(message "send init-cmd :%s " init-cmd )
+    ;;(message "send init-cmd :%s " init-cmd )
     (term-send-raw-string init-cmd )
-      ;;)
+    ;;)
     ))
 
 
 ;;   fix test
 (defun  tramp-tramp-file-p  ( file-name )
   "Doc FILE-NAME  ."
- nil)
+  nil)
 
 ;;; Code:
 (defun check-in-linux ()
   "Doc FILE-NAME  ."
   (string= system-type "gnu/linux" )
-    )
+  )
 (defun check-in-mac ()
   "Doc FILE-NAME  ."
   (string= system-type "darwin" )
@@ -283,11 +283,11 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 (defun set-evil-main-state-key (  key func )
   "D. KEY FUNC ."
   (let ()
-  (setq key  (concat "," key ))
-  (define-key evil-normal-state-map  key  func )
-  (define-key evil-visual-state-map key  func )
-  (define-key evil-motion-state-map key  func )
-  ))
+    (setq key  (concat "," key ))
+    (define-key evil-normal-state-map  key  func )
+    (define-key evil-visual-state-map key  func )
+    (define-key evil-motion-state-map key  func )
+    ))
 
 
 (defun set-evil-main-state-key-on-mode ( mode-map  key func )
@@ -330,80 +330,80 @@ The test for presence of the car of ELT-CONS is done with `equal'."
     (align-regexp (car tmp-mark-pos  ) (cadr tmp-mark-pos  )  "\\(\\s-*\\)[=:]>?" 1 1  )
     (setq tmp-mark-pos  (get-mark-pos-ex))
     (align-regexp (car tmp-mark-pos  ) (cadr tmp-mark-pos  )  "[=:]>?\\(\\s-*\\)" 1 1 )
-  ))
+    ))
 
 
 (defun ts-get-file-at-point ()
   "D."
   (interactive)
   (let( cur-path  pos-info)
-        (save-excursion
-          (let (file-name-begin file-name-end file-name  ctrl-name )
+    (save-excursion
+      (let (file-name-begin file-name-end file-name  ctrl-name )
 
-            (message "11111111")
-            (skip-chars-backward "a-zA-Z0-9._/"   )
-            (setq file-name-begin (point))
+        (message "11111111")
+        (skip-chars-backward "a-zA-Z0-9._/"   )
+        (setq file-name-begin (point))
 
-            (skip-chars-forward "a-zA-Z0-9._/"   )
-            (message "333333")
+        (skip-chars-forward "a-zA-Z0-9._/"   )
+        (message "333333")
 
-            (setq file-name-end (point))
-            (setq cur-path (buffer-substring-no-properties file-name-begin file-name-end ))
-            (message "cur-path:%s" cur-path)
-            (get-url-path-goto-info cur-path)
-            ))
+        (setq file-name-end (point))
+        (setq cur-path (buffer-substring-no-properties file-name-begin file-name-end ))
+        (message "cur-path:%s" cur-path)
+        (get-url-path-goto-info cur-path)
         ))
+    ))
 
 
 (defun js-get-file-at-point ()
   "DEFUN."
   (interactive)
   (let( cur-path  pos-info)
-        (save-excursion
-          (let (file-name-begin file-name-end file-name  ctrl-name )
+    (save-excursion
+      (let (file-name-begin file-name-end file-name  ctrl-name )
 
-            (skip-chars-backward "a-zA-Z0-9._/"   )
-            (setq file-name-begin (point))
+        (skip-chars-backward "a-zA-Z0-9._/"   )
+        (setq file-name-begin (point))
 
-            (skip-chars-forward "a-zA-Z0-9._/"   )
+        (skip-chars-forward "a-zA-Z0-9._/"   )
 
-            (setq file-name-end (point))
-            (setq cur-path (buffer-substring-no-properties file-name-begin file-name-end ))
-            (setq ctrl-name (nth 1  (s-split "/" cur-path  )) )
-            (setq file-name ( concat  ctrl-name  ".php" ) )
-            (setq pos-info ( concat "/function[ \t]*" (nth 2  (s-split "/" cur-path  ) ) "[ \t]*(" ) )
-            (setq cur-path (concat (nth 0  (s-split "/public/" (buffer-file-name)) ) "/app/Http/Controllers/" file-name ))
-            (unless (f-exists-p cur-path )
-              (setq cur-path (concat (nth 0  (s-split "/\\(new_\\)?vue/" (buffer-file-name)) ) "/app/Http/Controllers/" file-name ))
-              )
-            ))
-        (list cur-path pos-info)
-  ))
+        (setq file-name-end (point))
+        (setq cur-path (buffer-substring-no-properties file-name-begin file-name-end ))
+        (setq ctrl-name (nth 1  (s-split "/" cur-path  )) )
+        (setq file-name ( concat  ctrl-name  ".php" ) )
+        (setq pos-info ( concat "/function[ \t]*" (nth 2  (s-split "/" cur-path  ) ) "[ \t]*(" ) )
+        (setq cur-path (concat (nth 0  (s-split "/public/" (buffer-file-name)) ) "/app/Http/Controllers/" file-name ))
+        (unless (f-exists-p cur-path )
+          (setq cur-path (concat (nth 0  (s-split "/\\(new_\\)?vue/" (buffer-file-name)) ) "/app/Http/Controllers/" file-name ))
+          )
+        ))
+    (list cur-path pos-info)
+    ))
 (defun web-get-file-at-point ()
   "D."
   (interactive)
   (let( cur-path  pos-info)
-        (save-excursion
-          (let (file-name-begin file-name-end file-name  )
+    (save-excursion
+      (let (file-name-begin file-name-end file-name  )
 
-            (skip-chars-backward "a-zA-Z0-9._/"   )
-            (setq file-name-begin (point))
+        (skip-chars-backward "a-zA-Z0-9._/"   )
+        (setq file-name-begin (point))
 
-            (skip-chars-forward "a-zA-Z0-9._/"   )
+        (skip-chars-forward "a-zA-Z0-9._/"   )
 
 
-            (setq file-name-end (point))
-            (setq cur-path (buffer-substring-no-properties file-name-begin file-name-end ))
+        (setq file-name-end (point))
+        (setq cur-path (buffer-substring-no-properties file-name-begin file-name-end ))
 
-            (if (s-match "\.js"  cur-path )
-                (setq cur-path (concat (nth 0  (s-split "/template/" (buffer-file-name)) ) "/webroot/" cur-path ))
-              (progn
-                (setq file-name ( concat  (nth 1  (s-split "/" cur-path  )) ".class.php" ) )
-                (setq pos-info ( concat "/function.*" (nth 2  (s-split "/" cur-path  )) ) )
-                (setq cur-path (concat (nth 0  (s-split "/template/" (buffer-file-name)) ) "/handler/" file-name )))
-            )
-            ))
-        (list cur-path pos-info)
+        (if (s-match "\.js"  cur-path )
+            (setq cur-path (concat (nth 0  (s-split "/template/" (buffer-file-name)) ) "/webroot/" cur-path ))
+          (progn
+            (setq file-name ( concat  (nth 1  (s-split "/" cur-path  )) ".class.php" ) )
+            (setq pos-info ( concat "/function.*" (nth 2  (s-split "/" cur-path  )) ) )
+            (setq cur-path (concat (nth 0  (s-split "/template/" (buffer-file-name)) ) "/handler/" file-name )))
+          )
+        ))
+    (list cur-path pos-info)
     ))
 
 
@@ -468,7 +468,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 (defun get-url-path-get-fix-path-from-env  (  env-key )
   "D ENV-KEY."
   (s-trim (s-replace  "\"" ""  (shell-command-to-string (concat "grep '^"  env-key  "'  "  (go-core-server--get-project-root-dir ) ".env |awk -F= '{print $2}' "  )  ))
-  ))
+          ))
 
 (defun get-route-jump-file-name  (  sub-path  route-config-str )
   "SUB-PATH, ROUTE-CONFIG-STR."
@@ -568,9 +568,9 @@ The test for presence of the car of ELT-CONS is done with `equal'."
             (setq opt-file ( get-route-jump-file-name (concat "/"  opt-file ) (get-url-path-get-fix-path-from-env "NEW_VUE_VIEW_DIR") ))
             )
 
-           (unless (f-exists-p  opt-file )
-             (setq opt-file ( get-route-jump-file-name (concat "/"  opt-file ) (get-url-path-get-fix-path-from-env "VUE_VIEW_DIR") ))
-             )
+          (unless (f-exists-p  opt-file )
+            (setq opt-file ( get-route-jump-file-name (concat "/"  opt-file ) (get-url-path-get-fix-path-from-env "VUE_VIEW_DIR") ))
+            )
 
 
           )))
@@ -680,9 +680,9 @@ The test for presence of the car of ELT-CONS is done with `equal'."
     (setq tmp-arr (s-split ":" (aref  tmp-ret  3 )))
     (setq file-list (ac-php-g--file-list tags-data))
     (setq jump-pos
-            (concat
-             (aref file-list (string-to-number (nth 0 tmp-arr )))
-             ":" (nth 1 tmp-arr)))
+          (concat
+           (aref file-list (string-to-number (nth 0 tmp-arr )))
+           ":" (nth 1 tmp-arr)))
 
     (ac-php-location-stack-push)
     ;;(message "jump-pos :%S" jump-pos)
@@ -715,14 +715,14 @@ The test for presence of the car of ELT-CONS is done with `equal'."
     (setq tmp-arr (s-split ":" (aref  (aref   class-member-list 0 ) 3 )))
     (setq file-list (ac-php-g--file-list tags-data))
     (setq jump-pos
-            (concat
-             (aref file-list (string-to-number (nth 0 tmp-arr )))
-             ":" (nth 1 tmp-arr)))
+          (concat
+           (aref file-list (string-to-number (nth 0 tmp-arr )))
+           ":" (nth 1 tmp-arr)))
 
     (ac-php-location-stack-push)
     (message "jump-pos :%S" jump-pos)
-      (ac-php-goto-location jump-pos)
-      (re-search-forward  "CREATE TABLE" )
+    (ac-php-goto-location jump-pos)
+    (re-search-forward  "CREATE TABLE" )
 
     )
   )
@@ -745,28 +745,28 @@ The test for presence of the car of ELT-CONS is done with `equal'."
   "DOCSTRING."
   (interactive)
   (let ( (cur-evil-visual-state-flag (evil-visual-state-p) )  )
-  (setq show-baidu-dict-flag t   )
-  (setq show-baidu-dict-cur-point (point) )
-  (unless  cur-evil-visual-state-flag
-    ;;(save-excursion
-    (evil-backward-word-begin )
-    (evil-visual-state)
-    (evil-forward-word-end )
-    ;;)
-    )
-  (shell-command-to-string (concat "/home/jim/desktop/key_send/send_baidu_dict  " my-keyboard-input-dev "  1") )
-  (if cur-evil-visual-state-flag
-    (evil-normal-state)
-    (progn
-      (run-at-time 1 nil
-       #'(lambda()
-          (evil-normal-state)
-          (goto-char show-baidu-dict-cur-point)
-          ))
-
+    (setq show-baidu-dict-flag t   )
+    (setq show-baidu-dict-cur-point (point) )
+    (unless  cur-evil-visual-state-flag
+      ;;(save-excursion
+      (evil-backward-word-begin )
+      (evil-visual-state)
+      (evil-forward-word-end )
+      ;;)
       )
-    )
-  ))
+    (shell-command-to-string (concat "/home/jim/desktop/key_send/send_baidu_dict  " my-keyboard-input-dev "  1") )
+    (if cur-evil-visual-state-flag
+        (evil-normal-state)
+      (progn
+        (run-at-time 1 nil
+                     #'(lambda()
+                         (evil-normal-state)
+                         (goto-char show-baidu-dict-cur-point)
+                         ))
+
+        )
+      )
+    ))
 
 (defun send-pot-request ( data )
   "Send  DATA to  pot."
@@ -797,7 +797,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
     (unless(string=  text "" )
       (send-pot-request text)
       )
-  ))
+    ))
 
 
 (defun switch-file-opt ()
@@ -815,7 +815,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
             (or
              (string-match   "SWITCH-TO:.*\"\\([^ \t]*\\)\"[ \t]*"   line-txt)
              (string-match   "SWITCH-TO:[ \t]*\\([^ \t]*\\)[ \t]*"   line-txt)
-            )
+             )
           (setq  opt-file (match-string  1 line-txt))
           ;; (message "KKKKKKKK %s=> %s" line-txt opt-file )
           (when (s-matches-p "^[a-z0-9]+$" opt-file  )
@@ -830,13 +830,13 @@ The test for presence of the car of ELT-CONS is done with `equal'."
             (setq opt-file ( get-route-jump-file-name (concat "/"  opt-file ) (get-url-path-get-fix-path-from-env "NEW_VUE_VIEW_DIR") ))
             )
 
-           (unless (f-exists-p  opt-file )
-             (setq opt-file ( get-route-jump-file-name (concat "/"  opt-file ) (get-url-path-get-fix-path-from-env "VUE_VIEW_DIR") ))
-           )
+          (unless (f-exists-p  opt-file )
+            (setq opt-file ( get-route-jump-file-name (concat "/"  opt-file ) (get-url-path-get-fix-path-from-env "VUE_VIEW_DIR") ))
+            )
 
-           (unless (f-exists-p  opt-file )
-             (setq opt-file ( get-route-jump-file-name (concat "/"  opt-file ) (get-url-path-get-fix-path-from-env "SWITCH_TO_CONFIG") ))
-             )
+          (unless (f-exists-p  opt-file )
+            (setq opt-file ( get-route-jump-file-name (concat "/"  opt-file ) (get-url-path-get-fix-path-from-env "SWITCH_TO_CONFIG") ))
+            )
 
 
 
@@ -946,7 +946,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 
                 (unless  (and  obj-file  (f-exists-p  obj-file ) )
                   (setq obj-file ( get-route-jump-file-name (concat "/" ctrl-name  "/" action-name ".vue"  ) (get-url-path-get-fix-path-from-env "VUE_VIEW_DIR") ))
-                )
+                  )
 
                 )
               (unless (and  obj-file (f-exists-p  obj-file ) ) ;;to protobuf
@@ -969,8 +969,8 @@ The test for presence of the car of ELT-CONS is done with `equal'."
               (when (string=  url "")
                 (setq url (concat "/" ctrl-name "/" action-name ) )
                 (when project-name
-                      (setq url (concat "/" project-name url ) )
-                      )
+                  (setq url (concat "/" project-name url ) )
+                  )
                 )
               )
             (ac-php--debug "path-name:%s=> %s" path-name  url )
@@ -983,33 +983,38 @@ The test for presence of the car of ELT-CONS is done with `equal'."
               (setq  obj-file  (concat "./" (file-name-base path-name ) ".vue" ) )
               (setq pos-info nil )
               )
+            (unless (and obj-file (f-exists? obj-file ) )
+              (setq  obj-file  (concat "./" (file-name-base path-name ) ".wxml" ) )
+              (setq pos-info nil )
+              )
+
             ))
 
 
          ( (or (string= major-mode  "web-mode" ) (string= major-mode  "vue-mode" )  )
-          (setq tmp-arr (s-match  "/\\([a-zA-Z0-9_-]*\\)/\\([a-zA-Z0-9_-]*\\).blade.php"  path-name ) )
-          (when tmp-arr
-            (setq  ctrl-name   (nth 1 tmp-arr) )
-            (setq  action-name   (nth 2 tmp-arr) )
+           (setq tmp-arr (s-match  "/\\([a-zA-Z0-9_-]*\\)/\\([a-zA-Z0-9_-]*\\).blade.php"  path-name ) )
+           (when tmp-arr
+             (setq  ctrl-name   (nth 1 tmp-arr) )
+             (setq  action-name   (nth 2 tmp-arr) )
 
-            (when (s-match "/views/" path-name )
-              (setq  obj-file  (concat"../../../public/page_ts/" ctrl-name  "/" action-name ".ts" ) )
+             (when (s-match "/views/" path-name )
+               (setq  obj-file  (concat"../../../public/page_ts/" ctrl-name  "/" action-name ".ts" ) )
 
-              )
-            (let (js-obj-file)
-              (when ( and (not (f-exists? obj-file )) (s-match "/views/" path-name )   )
-                (setq  js-obj-file  (concat"../../../public/page_js/" ctrl-name  "/" action-name ".js" ) )
-                (when (  f-exists? js-obj-file ) (setq obj-file js-obj-file)  )
-                )))
-          ;;check vue .vue -> .ts
-          (message "----%s" path-name)
-          (setq tmp-arr (s-match  "/\\([a-zA-Z0-9_-]*\\)/\\([a-zA-Z0-9_-]*\\)\\.vue"  path-name ) )
-          (when tmp-arr
-            (setq  ctrl-name   (nth 1 tmp-arr) )
-            (setq  action-name   (nth 2 tmp-arr) )
-            (setq  obj-file  (concat"./" action-name ".ts" ) )
-            )
-          )
+               )
+             (let (js-obj-file)
+               (when ( and (not (f-exists? obj-file )) (s-match "/views/" path-name )   )
+                 (setq  js-obj-file  (concat"../../../public/page_js/" ctrl-name  "/" action-name ".js" ) )
+                 (when (  f-exists? js-obj-file ) (setq obj-file js-obj-file)  )
+                 )))
+           ;;check vue .vue -> .ts
+           (message "----%s" path-name)
+           (setq tmp-arr (s-match  "/\\([a-zA-Z0-9_-]*\\)/\\([a-zA-Z0-9_-]*\\)\\.\\(vue\\|wxml\\)"  path-name ) )
+           (when tmp-arr
+             (setq  ctrl-name   (nth 1 tmp-arr) )
+             (setq  action-name   (nth 2 tmp-arr) )
+             (setq  obj-file  (concat"./" action-name ".ts" ) )
+             )
+           )
 
 
          ((string= major-mode  "protobuf-mode" )
@@ -1092,8 +1097,8 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 
 (defun trim-string (string)
   "STRING."
-(replace-regexp-in-string "\\`[ \t\n]*" "" (replace-regexp-in-string "[ \t\n]*\\'" "" string))
-)
+  (replace-regexp-in-string "\\`[ \t\n]*" "" (replace-regexp-in-string "[ \t\n]*\\'" "" string))
+  )
 
 
 ;;
@@ -1159,10 +1164,10 @@ The test for presence of the car of ELT-CONS is done with `equal'."
   "得到当前单词的开始和结束 ARG."
   (save-excursion
     (let ((beg
-     (progn (skip-syntax-backward "w_") (point)))
-    (end
-     (progn (skip-syntax-forward "w_") (point))
-    ))
+           (progn (skip-syntax-backward "w_") (point)))
+          (end
+           (progn (skip-syntax-forward "w_") (point))
+           ))
       (list beg end))))
 (defun copy-whole-word (&optional arg)
   "ARG."
@@ -1180,8 +1185,8 @@ The test for presence of the car of ELT-CONS is done with `equal'."
   (let ((b (if mark-active (min (point) (mark)) (point-min)))
         (e (if mark-active (max (point) (mark)) (point-max))))
     (shell-command-on-region b e
-"python -c 'import sys,json; data=json.loads(sys.stdin.read()); print json.dumps(data,sort_keys=True,indent=4).decode(\"unicode_escape\").encode(\"utf8\",\"replace\")'"
-      (current-buffer) t)))
+                             "python -c 'import sys,json; data=json.loads(sys.stdin.read()); print json.dumps(data,sort_keys=True,indent=4).decode(\"unicode_escape\").encode(\"utf8\",\"replace\")'"
+                             (current-buffer) t)))
 
 ;;删除当前单词
 (defun kill-whole-word (&optional arg)
@@ -1283,8 +1288,8 @@ The test for presence of the car of ELT-CONS is done with `equal'."
   "Go ARG to the matching paren if on a paren; otherwise insert %."
   (interactive "p")
   (cond ((looking-at "\\s(") (forward-list 1) (backward-char 1))
-  ((looking-at "\\s)") (forward-char 1) (backward-list 1))
-  (t (self-insert-command (or arg 1)))))
+        ((looking-at "\\s)") (forward-char 1) (backward-list 1))
+        (t (self-insert-command (or arg 1)))))
 ;;---------------------------------------------------------------------------
 
 (defun join-line-0 (arg)
@@ -1326,26 +1331,26 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 (defun get-mark-pos-ex ()
   "D."
   (let( reg-begin-pos start-pos reg-end-pos end-pos  )
-  "跨行，则得到所有行的开始和结束."
-  (setq reg-begin-pos (region-beginning))
-  (setq reg-end-pos (region-end))
-  (forward-char (- reg-begin-pos (point) ))
-  (beginning-of-line)
-  (setq  start-pos  (point))
-  (forward-char (- reg-end-pos (point) ))  ;;------
-  (if (= (current-column) 0 )
-      (backward-char 1 ))
-  (end-of-line)
-  (setq  end-pos  (if (= (point) (point-max) ) (point-max) (+ (point) 1 ) ))
-  (list start-pos end-pos )))
+    "跨行，则得到所有行的开始和结束."
+    (setq reg-begin-pos (region-beginning))
+    (setq reg-end-pos (region-end))
+    (forward-char (- reg-begin-pos (point) ))
+    (beginning-of-line)
+    (setq  start-pos  (point))
+    (forward-char (- reg-end-pos (point) ))  ;;------
+    (if (= (current-column) 0 )
+        (backward-char 1 ))
+    (end-of-line)
+    (setq  end-pos  (if (= (point) (point-max) ) (point-max) (+ (point) 1 ) ))
+    (list start-pos end-pos )))
 
 (defun mark-region-ex(&optional arg)
   "ARG."
   (interactive "P")
   (let ( tmp-mark-pos)
-  (setq tmp-mark-pos  (get-mark-pos-ex))
-  (forward-char (- (car tmp-mark-pos) (point) ))
-  (push-mark (cadr tmp-mark-pos) nil t )))
+    (setq tmp-mark-pos  (get-mark-pos-ex))
+    (forward-char (- (car tmp-mark-pos) (point) ))
+    (push-mark (cadr tmp-mark-pos) nil t )))
 
 
 
@@ -1354,31 +1359,31 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 (defun opt-region-or-whole-line(opt-type   arg)
   "提供高级的复制 剪切功能 OPT-TYPE ARG."
   (let ( do-region-func do-line-func  tmp-mark-pos )
-  (save-excursion
-  (cond
-   ( (string= opt-type "copy")
-     (setq do-region-func 'copy-region-as-kill do-line-func  'copy-whole-line  ))
+    (save-excursion
+      (cond
+       ( (string= opt-type "copy")
+         (setq do-region-func 'copy-region-as-kill do-line-func  'copy-whole-line  ))
 
-   ( (string= opt-type "comment")
-     (setq do-region-func 'comment-or-uncomment-region do-line-func   'comment-or-uncomment-whole-line ))
-   (t
-    (setq do-region-func 'kill-region do-line-func  'kill-whole-line  )))
+       ( (string= opt-type "comment")
+         (setq do-region-func 'comment-or-uncomment-region do-line-func   'comment-or-uncomment-whole-line ))
+       (t
+        (setq do-region-func 'kill-region do-line-func  'kill-whole-line  )))
 
-    (if (and  mark-active
-              (not  (= (region-beginning) (region-end) ))
-              )
-        (if (string-match "\n"
-                          (buffer-substring-no-properties (region-beginning)(region-end)))
-            (progn
+      (if (and  mark-active
+                (not  (= (region-beginning) (region-end) ))
+                )
+          (if (string-match "\n"
+                            (buffer-substring-no-properties (region-beginning)(region-end)))
+              (progn
 
-              (setq tmp-mark-pos  (get-mark-pos-ex))
-              (funcall do-region-func (car tmp-mark-pos) (cadr tmp-mark-pos)  )
-              ) ;-----------
-          (funcall do-region-func (region-beginning) (region-end) ))
-      (progn
-        (or arg (setq arg 1))
-        (message "%s line :%d"  opt-type arg)
-        (funcall do-line-func arg))))))
+                (setq tmp-mark-pos  (get-mark-pos-ex))
+                (funcall do-region-func (car tmp-mark-pos) (cadr tmp-mark-pos)  )
+                ) ;-----------
+            (funcall do-region-func (region-beginning) (region-end) ))
+        (progn
+          (or arg (setq arg 1))
+          (message "%s line :%d"  opt-type arg)
+          (funcall do-line-func arg))))))
 
 ;;;###autoload
 (defun copy-region-or-whole-line(&optional arg)
@@ -1444,7 +1449,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 
     (kill-new  ret-str)
     )
-)
+  )
 
 ;;;###autoload
 (defun comment-or-uncomment-region-or-whole-line(&optional arg)
@@ -1491,13 +1496,13 @@ The test for presence of the car of ELT-CONS is done with `equal'."
   "整体缩进 IS-ADD."
   (interactive)
   (let( mark-pos  is-add)
-  (save-excursion
-    (setq mark-pos  (get-mark-pos-ex))
-    (message  "%d %d" (car mark-pos) (cadr mark-pos) )
-    (if is-add
-        (replace-match "^" "    " nil (nth 0 mark-pos) (- (nth 1 mark-pos) 1) )
-      (replace-match "\\(^\t\\)\\|\\(^    \\)" "" nil (nth 0 mark-pos) (- (nth 1 mark-pos)  1)))
-    )))
+    (save-excursion
+      (setq mark-pos  (get-mark-pos-ex))
+      (message  "%d %d" (car mark-pos) (cadr mark-pos) )
+      (if is-add
+          (replace-match "^" "    " nil (nth 0 mark-pos) (- (nth 1 mark-pos) 1) )
+        (replace-match "\\(^\t\\)\\|\\(^    \\)" "" nil (nth 0 mark-pos) (- (nth 1 mark-pos)  1)))
+      )))
 (defun region-indent-add ()
   "DOCSTRING."
   (interactive)
@@ -1527,19 +1532,19 @@ The test for presence of the car of ELT-CONS is done with `equal'."
   "DOCSTRING."
   (interactive)
   (if (and  mark-active
-      (not  (= (region-beginning) (region-end) ))
-      )
+            (not  (= (region-beginning) (region-end) ))
+            )
       (kill-region (region-beginning) (region-end) )
     (progn
       (let (start-pos end-pos)
-  (setq start-pos (point))
-  (save-excursion
-    (skip-chars-backward "^a-z0-9A-Z一-龠^")
-    (skip-chars-backward "a-z0-9一-龠^")
-    (skip-chars-backward "A-Z")
-    (setq end-pos (point))
-    )
-  (kill-region start-pos end-pos)))))
+        (setq start-pos (point))
+        (save-excursion
+          (skip-chars-backward "^a-z0-9A-Z一-龠^")
+          (skip-chars-backward "a-z0-9一-龠^")
+          (skip-chars-backward "A-Z")
+          (setq end-pos (point))
+          )
+        (kill-region start-pos end-pos)))))
 
 
 
@@ -1557,17 +1562,17 @@ The test for presence of the car of ELT-CONS is done with `equal'."
   "D."
   (save-excursion
     (let ( start-pos ( end-pos (point) ) tmp-arr txt)
-    (backward-word)
-    (setq start-pos (point) )
-    (setq txt (buffer-substring-no-properties start-pos end-pos ) )
-    (message "=======[%s]" txt)
+      (backward-word)
+      (setq start-pos (point) )
+      (setq txt (buffer-substring-no-properties start-pos end-pos ) )
+      (message "=======[%s]" txt)
 
-    (setq tmp-arr (s-match  "\\([a-zA-Z0-9_]+\\)" txt) )
+      (setq tmp-arr (s-match  "\\([a-zA-Z0-9_]+\\)" txt) )
 
-    (when tmp-arr
-      (nth 1 tmp-arr)
-      )
-    )))
+      (when tmp-arr
+        (nth 1 tmp-arr)
+        )
+      )))
 
 
 (defun yas-expand-for-vim(&optional field)
@@ -1631,12 +1636,12 @@ object satisfying `yas--field-p' to restrict the expansion to."
              (or (string= major-mode "rust-mode")
                  (string= major-mode "rustic-mode")
                  )
-                 (or
-                  ;; .
-                  (eq ?\. c)
-                  ;; ::
-                  (and (eq ?: c)
-                       (eq ?: (char-before (1- (point)))))))
+             (or
+              ;; .
+              (eq ?\. c)
+              ;; ::
+              (and (eq ?: c)
+                   (eq ?: (char-before (1- (point)))))))
 
             (company-complete  ))
 
@@ -1675,11 +1680,11 @@ object satisfying `yas--field-p' to restrict the expansion to."
     ;;(setq  cmd (concat "desc   "  cur-word  ";\n show create table " cur-word ";" ) )
     (setq  cmd (concat "desc   "  cur-word  ";" ) )
     (message "==%s" cmd)
-   (lsp-sql-execute-query cmd)
-  ))
+    (lsp-sql-execute-query cmd)
+    ))
 
 (defun yas-reset ()
-    "Doc."
+  "Doc."
   (interactive)
   (let ()
     (yas-recompile-all)
@@ -1746,8 +1751,8 @@ object satisfying `yas--field-p' to restrict the expansion to."
         (setq last-dir project-root-dir
               project-root-dir (file-name-directory
                                 (directory-file-name project-root-dir)))
-          (when (string= last-dir project-root-dir)
-            (setq project-root-dir "/"))))
+        (when (string= last-dir project-root-dir)
+          (setq project-root-dir "/"))))
 
     (when (string= project-root-dir "/")
       (progn
@@ -1776,8 +1781,8 @@ object satisfying `yas--field-p' to restrict the expansion to."
         (setq last-dir project-root-dir
               project-root-dir (file-name-directory
                                 (directory-file-name project-root-dir)))
-          (when (string= last-dir project-root-dir)
-            (setq project-root-dir "/"))))
+        (when (string= last-dir project-root-dir)
+          (setq project-root-dir "/"))))
 
     (when (string= project-root-dir "/")
       (progn
@@ -1807,8 +1812,8 @@ object satisfying `yas--field-p' to restrict the expansion to."
         (setq last-dir project-root-dir
               project-root-dir (file-name-directory
                                 (directory-file-name project-root-dir)))
-          (when (string= last-dir project-root-dir)
-            (setq project-root-dir "/"))))
+        (when (string= last-dir project-root-dir)
+          (setq project-root-dir "/"))))
 
     (when (string= project-root-dir "/")
       (progn
@@ -1822,7 +1827,7 @@ object satisfying `yas--field-p' to restrict the expansion to."
 
 
 (defun core-server-make()
-    "DOCSTRING."
+  "DOCSTRING."
   (interactive)
   (let ((project-dir (core-server--get-project-root-dir )) )
     (message "====%s" project-dir)
@@ -1867,7 +1872,7 @@ object satisfying `yas--field-p' to restrict the expansion to."
 
 
 (defun my-goto-file ()
-    "DOCSTRING."
+  "DOCSTRING."
   (interactive)
   (let (line-txt  line-info filename  line deal-flag file-info)
     (setq line-txt (buffer-substring-no-properties
@@ -1884,17 +1889,17 @@ object satisfying `yas--field-p' to restrict the expansion to."
         (forward-line (1-  line ))
         (setq deal-flag t )))
 
-     (when (string= "js2-mode" major-mode)
-       (setq file-info (js-get-file-at-point) ))
+    (when (string= "js2-mode" major-mode)
+      (setq file-info (js-get-file-at-point) ))
 
-     (if (check-file-ts )
-         (progn
-           (setq file-info (ts-get-file-at-point) )
-           (message "file-info %S" file-info ))
-       (when (or (string= "web-mode" major-mode)  (string= "vue-mode" major-mode))
-         (setq file-info (web-get-file-at-point) ))
+    (if (check-file-ts )
+        (progn
+          (setq file-info (ts-get-file-at-point) )
+          (message "file-info %S" file-info ))
+      (when (or (string= "web-mode" major-mode)  (string= "vue-mode" major-mode))
+        (setq file-info (web-get-file-at-point) ))
 
-       )
+      )
 
 
 
@@ -1908,7 +1913,7 @@ object satisfying `yas--field-p' to restrict the expansion to."
             (goto-char (point-min))
             (re-search-forward  (substring-no-properties pos-info 1 ) )
             )
-        ))
+          ))
       (setq deal-flag t ))
 
     (unless deal-flag (find-file-at-point))))
@@ -1954,33 +1959,33 @@ object satisfying `yas--field-p' to restrict the expansion to."
       )
 
     (setq cur-frame-count  (length ( frame-list)) )
-  (switch-to-buffer-other-frame  "*Flutter*" )
-  (delete-other-windows)
+    (switch-to-buffer-other-frame  "*Flutter*" )
+    (delete-other-windows)
 
-  ;;新开的窗口
-  (if (= cur-frame-count 1)
-      (progn
-        (set-frame-size (selected-frame) 45 60)
-        (set-frame-position (selected-frame) 0 0)
+    ;;新开的窗口
+    (if (= cur-frame-count 1)
+        (progn
+          (set-frame-size (selected-frame) 45 60)
+          (set-frame-position (selected-frame) 0 0)
+          ))
+
+
+    (if (flutter--running-p)
+        (if (and arg ( =  arg 2) )
+            (flutter-hot-restart)
+          (flutter-hot-reload))
+
+      (flutter-run "-d  emulator-5554 " ))
+
+
+    ;; 光标移到最后
+    (goto-char (point-max))
+
+
+    ;;回到主窗口
+    (select-frame-set-input-focus (next-frame))
+
     ))
-
-
-  (if (flutter--running-p)
-      (if (and arg ( =  arg 2) )
-          (flutter-hot-restart)
-        (flutter-hot-reload))
-
-    (flutter-run "-d  emulator-5554 " ))
-
-
-  ;; 光标移到最后
-  (goto-char (point-max))
-
-
-  ;;回到主窗口
-  (select-frame-set-input-focus (next-frame))
-
-  ))
 
 (defvar my-backup-directory "~/my-backups/")
 (defvar my-max-backups 10)
@@ -2002,7 +2007,7 @@ object satisfying `yas--field-p' to restrict the expansion to."
         (sorted-backup-files (sort (directory-files my-backup-directory t "[^.].*" t)
                                    (lambda (a b)
                                      (not (time-less-p (nth 5 (file-attributes a))
-                                                  (nth 5 (file-attributes b)))))))
+                                                       (nth 5 (file-attributes b)))))))
         )
     (when (> (length sorted-backup-files) my-max-backups)
       (dolist (file (nthcdr my-max-backups  sorted-backup-files))

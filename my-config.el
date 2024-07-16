@@ -683,8 +683,8 @@ you should place your code here."
   (add-to-list 'auto-mode-alist '( "\\.blade\\.php\\'" . web-mode))
 
   (set-frame-position (selected-frame) 1920 0)
-  (set-frame-width (selected-frame) 91)
-  (set-frame-height (selected-frame) 91)
+  (set-frame-width (selected-frame) 80)
+  (set-frame-height (selected-frame) 110)
   ;; (recentf-load-list)
 
   ;; 指定
