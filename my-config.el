@@ -32,7 +32,7 @@
 (require 'lsp-ui-doc)
 (require 'lsp-ui)
 (require 'lsp)
-(require 'undo-tree)
+;(require 'undo-tree)
 (require 'evil-org)
 (require 'info+)
 (require 'evil-commands)
@@ -310,8 +310,8 @@ you should place your code here."
 
 
   (global-set-key (kbd  "C-/"  ) nil)
-  (require 'undo-tree)
-  (define-key undo-tree-map (kbd "C-/")  nil)
+  ;(require 'undo-tree)
+  ;(define-key undo-tree-map (kbd "C-/")  nil)
   (global-set-key  (kbd  "C-/"  )   'comment-or-uncomment-region-or-whole-line )
 
 
@@ -675,7 +675,7 @@ you should place your code here."
                                                new-line
                                                mode-enabled))
 
-  (setq undo-tree-auto-save-history nil)
+  ;(setq undo-tree-auto-save-history nil)
 
 
   (setq multi-term-program "/bin/bash")

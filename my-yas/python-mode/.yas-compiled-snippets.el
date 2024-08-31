@@ -281,4 +281,4 @@
                        ("__" "__${init}__" "__...__" nil nil nil "/home/jim/.spacemacs.d/my-yas/python-mode/__" nil nil)))
 
 
-;;; Do not edit! File generated at Mon Apr 22 17:34:15 2024
+;;; Do not edit! File generated at Fri Aug 30 11:03:48 2024
