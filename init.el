@@ -23,6 +23,8 @@ This function should only modify configuration layer settings."
    ;; installation feature and you have to explicitly list a layer in the
    ;; variable `dotspacemacs-configuration-layers' to install it.
    ;; (default 'unused)
+   evil-undo-system 'undo-tree
+   dotspacemacs-undo-system 'undo-tree
    dotspacemacs-enable-lazy-installation 'unused
    ;; If non-nil then Spacemacs will ask for confirmation before installing
    ;; a layer lazily. (default t)
@@ -75,9 +77,10 @@ This function should only modify configuration layer settings."
      docker
      (auto-completion :variables
                       auto-completion-enable-help-tooltip t
-      )
+                      )
 
      yaml
+     ;;xml
      ;;erlang
      (php )
      (go :variables
@@ -98,8 +101,8 @@ This function should only modify configuration layer settings."
 
                  typescript-fmt-on-save t)
      ;; elixir
-    ;; (java :variables java-backend 'meghanada)
-      (java :variables java-backend 'lsp)
+     ;; (java :variables java-backend 'meghanada)
+     (java :variables java-backend 'lsp)
      ;;(java )
      ruby
      javascript
@@ -122,21 +125,21 @@ This function should only modify configuration layer settings."
      emacs-lisp
      ;; git
      helm
-      markdown
+     markdown
 
-      (vue :variables
-           vue-backend 'lsp
-           )
+     (vue :variables
+          vue-backend 'lsp
+          )
 
      ;;multiple-cursors
-      ;;(multiple-cursors :variables multiple-cursors-backend 'evil-mc)
-      (org
-       :variables org-enable-appear-support t)
+     ;;(multiple-cursors :variables multiple-cursors-backend 'evil-mc)
+     (org
+      :variables org-enable-appear-support t)
      ;; (shell :variables
      ;;       shell-default-height 30
      ;;      shell-default-position 'bottom)
      ;; spell-checking
-      syntax-checking
+     syntax-checking
      ;; version-control
      treemacs)
 
@@ -151,7 +154,7 @@ This function should only modify configuration layer settings."
    ;; Also include the dependencies as they will not be resolved automatically.
    ;;dotspacemacs-additional-packages '()
    dotspacemacs-additional-packages '(multi-term zencoding-mode ox-twbs eterm-256color   )
-				     
+
 
 
    ;; A list of packages that cannot be updated.
@@ -347,12 +350,12 @@ It should only modify the values of Spacemacs settings."
                               ;;"MesloLGS NF"
                               "XHei Mono.Ubuntu"
                               ;;"Source Code Pro"
-                                   ;;:size  (if (string= (system-name) "jim-PC" )  48 24  )
-                                   :size (max (round(* 24 (string-to-number (shell-command-to-string "grep ScreenScaleFactors  ~/.config/deepin/qt-theme.ini | awk -F= '{print $2}' ") ))) 24 )
+                              ;;:size  (if (string= (system-name) "jim-PC" )  48 24  )
+                              :size (max (round(* 24 (string-to-number (shell-command-to-string "grep ScreenScaleFactors  ~/.config/deepin/qt-theme.ini | awk -F= '{print $2}' ") ))) 24 )
 
-                                   :weight 'normal
-                                   :width 'normal
-                                   :powerline-scale 1.1)
+                              :weight 'normal
+                              :width 'normal
+                              :powerline-scale 1.1)
    ;; The leader key
    dotspacemacs-leader-key "SPC"
 
@@ -630,23 +633,23 @@ configuration.
 It is mostly for variables that should be set before packages are loaded.
 If you are unsure, try setting them in `dotspacemacs/user-config' first."
 
-(message "load user-init ===========")
+  (message "load user-init ===========")
 
- (setq configuration-layer-elpa-archives
-     '(("melpa-cn" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/")
-     ;; ("org-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/org/")
-     ("gnu-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")))
+  (setq configuration-layer-elpa-archives
+        '(("melpa-cn" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/")
+          ;; ("org-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/org/")
+          ("gnu-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")))
 
- ;; (setq url-proxy-services nil)
- ;; (setq url-proxy-services
- ;; '(("no_proxy" . "^\\(localhost\\|10.*\\)")
- ;; ("http" . "127.0.0.1:7890")
- ;; ("https" . "127.0.0.1:7890")))
- ;; (setq lsp-java-jdt-download-url "http://127.0.0.1:8080/jdt-language-server-1.15.0-202208290205.tar.gz")
- ;; (setq  lsp-java--download-root  "http://127.0.0.1:8080/")
+  ;; (setq url-proxy-services nil)
+  ;; (setq url-proxy-services
+  ;; '(("no_proxy" . "^\\(localhost\\|10.*\\)")
+  ;; ("http" . "127.0.0.1:7890")
+  ;; ("https" . "127.0.0.1:7890")))
+  ;; (setq lsp-java-jdt-download-url "http://127.0.0.1:8080/jdt-language-server-1.15.0-202208290205.tar.gz")
+  ;; (setq  lsp-java--download-root  "http://127.0.0.1:8080/")
 
- ;; (setq lsp-java-jdt-download-url "https://download.eclipse.org/jdtls/milestones/1.12.0/jdt-language-server-1.12.0-202206011637.tar.gz")
-)
+  ;; (setq lsp-java-jdt-download-url "https://download.eclipse.org/jdtls/milestones/1.12.0/jdt-language-server-1.12.0-202206011637.tar.gz")
+  )
 
 
 
@@ -671,4 +674,4 @@ This is an auto-generated function, do not modify its content directly, use
 Emacs customize menu instead.
 This function is called at the very end of Spacemacs initialization."
 
-)
+  )

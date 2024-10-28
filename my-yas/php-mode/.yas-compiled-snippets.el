@@ -62,9 +62,6 @@
                        ("stdout" "fwrite(STDOUT, ${1:$var}${2: . PHP_EOL});" "fwrite(STDOUT)" nil
                         ("generic")
                         nil "/home/jim/.spacemacs.d/my-yas/php-mode/stdout" nil nil)
-                       ("set" "public function set${1:$(upcase-initials yas-text)}(\\$$1)\n{\n    \\$this->$1 = \\$$1;\n}" "set" nil
-                        ("definitions")
-                        nil "/home/jim/.spacemacs.d/my-yas/php-mode/set" nil nil)
                        ("s" "\\App\\Service\\" "s" nil nil nil "/home/jim/.spacemacs.d/my-yas/php-mode/s" nil nil)
                        ("*return" "* @return ${1:type} ${2:description}" "PHPDoc @return" nil
                         ("annotation")
@@ -103,9 +100,6 @@
                        ("if" "if (${1:condition}) {\n    $0\n}" "if" nil
                         ("control structure")
                         nil "/home/jim/.spacemacs.d/my-yas/php-mode/if" nil nil)
-                       ("get" "public function get${1:$(upcase-initials yas-text)}()\n{\n    return \\$this->$1;\n}" "get" nil
-                        ("definitions")
-                        nil "/home/jim/.spacemacs.d/my-yas/php-mode/get" nil nil)
                        ("function:" "${4:public }function ${1:name}(${2:$arg, ...}): ${3:type}\n{\n    $0\n}" "function :type" nil
                         ("control structure")
                         nil "/home/jim/.spacemacs.d/my-yas/php-mode/function-return-type" nil nil)
@@ -164,4 +158,4 @@
                         nil "/home/jim/.spacemacs.d/my-yas/php-mode/__call" nil nil)))
 
 
-;;; Do not edit! File generated at Fri Aug 30 11:03:48 2024
+;;; Do not edit! File generated at Sat Aug 31 14:50:48 2024
