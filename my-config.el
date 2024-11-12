@@ -310,8 +310,8 @@ you should place your code here."
 
 
   (global-set-key (kbd  "C-/"  ) nil)
-                                        ;(require 'undo-tree)
-                                        ;(define-key undo-tree-map (kbd "C-/")  nil)
+  ;; (require 'undo-tree)
+  ;; (define-key undo-tree-map (kbd "C-/")  nil)
   (global-set-key  (kbd  "C-/"  )   'comment-or-uncomment-region-or-whole-line )
 
 

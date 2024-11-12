@@ -23,8 +23,8 @@ This function should only modify configuration layer settings."
    ;; installation feature and you have to explicitly list a layer in the
    ;; variable `dotspacemacs-configuration-layers' to install it.
    ;; (default 'unused)
-   evil-undo-system 'undo-tree
-   dotspacemacs-undo-system 'undo-tree
+   ;; evil-undo-system 'undo-tree
+   ;; dotspacemacs-undo-system 'undo-tree
    dotspacemacs-enable-lazy-installation 'unused
    ;; If non-nil then Spacemacs will ask for confirmation before installing
    ;; a layer lazily. (default t)
@@ -44,6 +44,8 @@ This function should only modify configuration layer settings."
      (lsp)
      ;;(lsp :variables lsp-rust-server 'rust-analyzer)
      (rust :variables rust-backend 'lsp)
+
+     (kotlin :variables)
 
      react
      csv
