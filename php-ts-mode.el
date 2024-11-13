@@ -104,10 +104,10 @@
 
 (defvar php-ts-mode--operators
   '("!=" "!==" "%" "%=" "&" "&&" "&=" "*" "**" "*="
-     "+" "++" "+=" "," "-" "-" "--" "-=" "->" "."
-     ".=" "/" "/=" ":" "::" "<" "<<" "<<=" "<=" "<=>"
-     "<>" "=" "==" "===" "=>" ">" ">=" ">>" ">>=" "?"
-     "??" "??=" "?->" "@" "\\" "^" "^=" "|" "|=" "||")
+    "+" "++" "+=" "," "-" "-" "--" "-=" "->" "."
+    ".=" "/" "/=" ":" "::" "<" "<<" "<<=" "<=" "<=>"
+    "<>" "=" "==" "===" "=>" ">" ">=" ">>" ">>=" "?"
+    "??" "??=" "?->" "@" "\\" "^" "^=" "|" "|=" "||")
   "PHP operators for tree-sitter font-locking.")
 
 (defconst php-ts-mode--magical-constants
@@ -351,8 +351,8 @@ Currently there are `php-mode' and `php-ts-mode'."
 
   (treesit-major-mode-setup))
 
-(when (treesit-ready-p 'php)
-  (add-to-list 'auto-mode-alist '("\\.php[s345]?\\'" . php-ts-mode)))
+;;(when (treesit-ready-p 'php)
+;;  (add-to-list 'auto-mode-alist '("\\.php[s345]?\\'" . php-ts-mode)))
 
 ;;;###autoload
 (with-eval-after-load 'treesit

@@ -1110,8 +1110,8 @@ The test for presence of the car of ELT-CONS is done with `equal'."
   (interactive)
   (when (check-in-linux)
     (call-process  fcitx-remote nil 0 nil  "-c") )
-  (when (check-in-mac)
-    (call-process  "input_switch" nil 0 nil  "-s" "ABC") )
+  ;;(when (check-in-mac)
+  ;; (call-process  "input_switch" nil 0 nil  "-s" "ABC") )
 
   ;;(show-baidu-dict-close)
 
@@ -1123,8 +1123,8 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 
   (when (check-in-linux)
     (call-process  fcitx-remote nil 0 nil  "-o"))
-  (when (check-in-mac)
-    (call-process  "input_switch" nil 0 nil  "-s" "搜狗拼音") )
+  ;;(when (check-in-mac)
+  ;;  (call-process  "input_switch" nil 0 nil  "-s" "搜狗拼音") )
 
   )
 

@@ -32,7 +32,7 @@
 (require 'lsp-ui-doc)
 (require 'lsp-ui)
 (require 'lsp)
-                                        ;(require 'undo-tree)
+(require 'undo-tree)
 (require 'evil-org)
 (require 'info+)
 (require 'evil-commands)
@@ -164,7 +164,7 @@
 
   (add-hook 'php-mode-hook
             #'(lambda ( )
-                (php-ts-mode)
+                ;;(php-ts-mode)
                 ))
 
   (add-hook 'php-mode-hook
@@ -187,6 +187,8 @@
                 (set-evil-main-state-key-on-mode  php-ts-mode-map "r" 'ac-php-remake-tags )
                 (set-evil-main-state-key-on-mode  php-ts-mode-map "f" 'ac-php-gen-def )
                 (set-evil-main-state-key-on-mode  php-ts-mode-map "m" 'php-mode-make)
+
+                (setq-local treesit-font-lock-level 4)
                 ))
 
 
@@ -310,8 +312,8 @@ you should place your code here."
 
 
   (global-set-key (kbd  "C-/"  ) nil)
-                                        ;(require 'undo-tree)
-                                        ;(define-key undo-tree-map (kbd "C-/")  nil)
+  (require 'undo-tree)
+  (define-key undo-tree-map (kbd "C-/")  nil)
   (global-set-key  (kbd  "C-/"  )   'comment-or-uncomment-region-or-whole-line )
 
 
