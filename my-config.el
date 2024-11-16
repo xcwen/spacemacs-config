@@ -32,7 +32,7 @@
 (require 'lsp-ui-doc)
 (require 'lsp-ui)
 (require 'lsp)
-(require 'undo-tree)
+;;(require 'undo-tree)
 (require 'evil-org)
 (require 'info+)
 (require 'evil-commands)
@@ -312,8 +312,8 @@ you should place your code here."
 
 
   (global-set-key (kbd  "C-/"  ) nil)
-  (require 'undo-tree)
-  (define-key undo-tree-map (kbd "C-/")  nil)
+  ;;(require 'undo-tree)
+  ;;(define-key undo-tree-map (kbd "C-/")  nil)
   (global-set-key  (kbd  "C-/"  )   'comment-or-uncomment-region-or-whole-line )
 
 
@@ -683,6 +683,7 @@ you should place your code here."
   (setq multi-term-program "/bin/bash")
   (setq multi-term-program "/bin/zsh")
   (add-to-list 'auto-mode-alist '( "\\.blade\\.php\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '( "\\.xml\\'" . web-mode))
 
   (set-frame-position (selected-frame) 1920 0)
   (set-frame-width (selected-frame) 80)

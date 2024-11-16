@@ -155,7 +155,7 @@ This function should only modify configuration layer settings."
    ;; `:location' property: '(your-package :location "~/path/to/your-package/")
    ;; Also include the dependencies as they will not be resolved automatically.
    ;;dotspacemacs-additional-packages '()
-   dotspacemacs-additional-packages '(multi-term zencoding-mode ox-twbs eterm-256color   )
+   dotspacemacs-additional-packages '(multi-term zencoding-mode ox-twbs eterm-256color undo-tree  )
 
 
 

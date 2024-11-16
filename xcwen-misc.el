@@ -1110,11 +1110,8 @@ The test for presence of the car of ELT-CONS is done with `equal'."
   (interactive)
   (when (check-in-linux)
     (call-process  fcitx-remote nil 0 nil  "-c") )
-  ;;(when (check-in-mac)
-  ;; (call-process  "input_switch" nil 0 nil  "-s" "ABC") )
-
-  ;;(show-baidu-dict-close)
-
+  (when (check-in-mac)
+    (call-process  "im-select" nil 0 nil  "com.apple.keylayout.ABC") )
   )
 
 (defun fcitx-activate-input-method()
