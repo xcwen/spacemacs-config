@@ -685,9 +685,9 @@ you should place your code here."
   (add-to-list 'auto-mode-alist '( "\\.blade\\.php\\'" . web-mode))
   (add-to-list 'auto-mode-alist '( "\\.xml\\'" . web-mode))
 
-  (set-frame-position (selected-frame) 1920 0)
-  (set-frame-width (selected-frame) 80)
-  (set-frame-height (selected-frame) 110)
+  ;; (set-frame-position (selected-frame) 1920 0)
+  ;; (set-frame-width (selected-frame) 80)
+  ;; (set-frame-height (selected-frame) 110)
   ;; (recentf-load-list)
 
   ;; 指定
