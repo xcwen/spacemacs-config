@@ -38,7 +38,7 @@
 (require 'evil-commands)
 (require 'evil-matchit)
 (require 'evil-states)
-(require 'eterm-256color)
+;; (require 'eterm-256color)
 (require 'helm-projectile)
 ;; (require 'ccls)
 (setq my-keyboard-input-dev "/dev/input/event7")
@@ -491,8 +491,12 @@ you should place your code here."
   (set-evil-all-state-key  (kbd "s-h") 'backward-kill-word-without-_)
   (set-evil-all-state-key (kbd "C-v") 'yank )
   (set-evil-all-state-key (kbd "C-c") 'copy-region-or-whole-line )
-  (set-evil-all-state-key (kbd "C-S-h") 'multi-term-prev )
-  (set-evil-all-state-key (kbd "C-S-l") 'multi-term-next )
+  ;; (set-evil-all-state-key (kbd "C-S-h") 'multi-term-prev )
+  ;; (set-evil-all-state-key (kbd "C-S-l") 'multi-term-next )
+
+  (set-evil-all-state-key (kbd "C-S-h") 'multi-vterm-prev )
+  (set-evil-all-state-key (kbd "C-S-l") 'multi-vterm-next )
+
 
   ;;查找时,使用trim-string,去掉前后空格
   (define-key isearch-mode-map (kbd "C-y")  #'(lambda()(interactive)
@@ -593,12 +597,57 @@ you should place your code here."
   ;; (setq sqlfmt-options  '())
 
 
+  (add-hook
+   'vterm-mode-hook
+   #'(lambda()
+       ;; 禁用 yas-minor-mode
+       (yas-minor-mode -1)
+
+       ;; 绑定键到 vterm-mode-map 或 evil-insert-state-local-map
+       (define-key evil-insert-state-local-map (kbd "C-y") 'vterm-yank)
+       (define-key evil-insert-state-local-map (kbd "C-v") 'vterm-yank)
+       (define-key evil-insert-state-local-map (kbd "s-v") 'vterm-yank)
+       (define-key evil-insert-state-local-map (kbd "C-c") 'copy-region-or-whole-line)
+       (define-key evil-insert-state-local-map (kbd "C-S-c") 'vterm-send-C-c)
+       (define-key evil-insert-state-local-map (kbd "C-p") 'vterm-send-up)
+       (define-key evil-insert-state-local-map (kbd "C-n") 'vterm-send-down)
+       (define-key evil-insert-state-local-map (kbd "C-a") 'vterm-send-C-a)
+       (define-key evil-insert-state-local-map (kbd "C-e") 'vterm-send-C-e)
+       (define-key evil-insert-state-local-map (kbd "C-h") 'vterm-send-C-h)
+       (define-key evil-insert-state-local-map (kbd "C-l") 'vterm-send-C-l)
+       (define-key evil-insert-state-local-map (kbd "C-k") 'vterm-send-C-k)
+       (define-key evil-insert-state-local-map (kbd "C-u") 'vterm-send-C-u)
+       (define-key evil-insert-state-local-map (kbd "C-w") 'vterm-send-C-w)
+       (define-key evil-insert-state-local-map (kbd "C-d") 'vterm-send-C-d)
+       (define-key evil-insert-state-local-map (kbd "C-t") 'vterm-send-C-t)
+
+       ;; 绑定自定义命令
+       (define-key evil-insert-state-local-map (kbd "C-S-t") 'multi-vterm)
+       (define-key evil-insert-state-local-map (kbd "C-S-h") 'multi-vterm-prev)
+       (define-key evil-insert-state-local-map (kbd "C-S-l") 'multi-vterm-next)
+
+       ;; Meta 键绑定
+       (define-key evil-insert-state-local-map (kbd "M-h") 'vterm-send-M-h)
+       (define-key evil-insert-state-local-map (kbd "s-h") 'vterm-send-M-h)
+
+       ;; 自定义功能按键绑定
+       (define-key vterm-mode-map (kbd "M-x") 'helm-M-x)
+       (define-key vterm-mode-map (kbd "s-x") 'helm-M-x)
+       (define-key vterm-mode-map (kbd "C-^") 'helm-mini)
+       (define-key vterm-mode-map (kbd "M-w") 'copy-region-or-whole-line)
+       (define-key vterm-mode-map (kbd "s-w") 'copy-region-or-whole-line)
+
+       ;; 禁用特定键
+       (setq vterm-keymap-exceptions '("C-x"))
+       ))
+
+
 
 
   (add-hook
    'term-mode-hook
    #'(lambda()
-       (eterm-256color-mode)
+       ;; (eterm-256color-mode)
        (yas-minor-mode -1 )
        ;; (message "=== selected: %s"  (selected-frame )  )
        ;;  (set-face-attribute 'default (selected-frame ) :font "MesloLGS NF:weight=normal")

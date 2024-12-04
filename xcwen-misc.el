@@ -209,6 +209,44 @@ localhost:~/site-lisp/config$"
     ))
 
 
+(defun multi-vterm-goto-last-vterm ()
+  "Switch to an existing vterm buffer matching the current file directory, or create a new one."
+  (interactive)
+  (let (find-flag opt-file-name file-path-str init-cmd line-txt)
+
+    ;; 获取当前文件的路径
+    (setq opt-file-name (buffer-file-name))
+    (when opt-file-name
+      (setq opt-file-name (s-replace-regexp ".*:" "" opt-file-name)))
+
+    ;; 如果文件存在，使用其目录；否则使用 HOME 目录
+    (setq file-path-str
+          (if (and opt-file-name (file-exists-p opt-file-name))
+              (file-name-directory opt-file-name)
+            (concat (getenv "HOME") "/")))
+
+    ;; 检查是否存在匹配的 vterm 缓冲区
+    (cl-dolist (opt-buffer (buffer-list))
+      (with-current-buffer opt-buffer
+        (when (and (string= "vterm-mode" major-mode)
+                   ;; 检查是否在相同的目录
+                   (string= file-path-str default-directory))
+          (switch-to-buffer opt-buffer)
+          (setq find-flag t)
+          (cl-return))))
+
+    ;; 如果未找到，创建一个新的 vterm 缓冲区
+    (unless find-flag
+      (multi-vterm)
+      (setq find-flag t))
+
+    ;; 在 vterm 中切换到文件所在目录
+    (when (and find-flag
+               (not (string= file-path-str default-directory)))
+      (setq init-cmd (concat "cd '" file-path-str "' # goto file location\r"))
+      (vterm-send-string init-cmd)
+      (vterm-send-return))))
+
 ;;   fix test
 (defun  tramp-tramp-file-p  ( file-name )
   "Doc FILE-NAME  ."
@@ -1549,10 +1587,11 @@ The test for presence of the car of ELT-CONS is done with `equal'."
   "交换终端和文件."
   (interactive)
   ;;(message "%s %s %s" "====" opt-file-name "kkk")
-  (if (string= major-mode  "term-mode")
+  (if (string= major-mode  "vterm-mode")
       (evil-buffer nil )
-    (multi-term-goto-last-term)
+    (multi-vterm-goto-last-vterm)
     ))
+
 
 
 (defun get-cur-pkg()

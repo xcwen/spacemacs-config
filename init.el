@@ -141,6 +141,10 @@ This function should only modify configuration layer settings."
      ;;       shell-default-height 30
      ;;      shell-default-position 'bottom)
      ;; spell-checking
+     (shell :variables
+            shell-default-height 30
+            shell-default-position 'bottom
+            shell-default-shell 'vterm)
      syntax-checking
      ;; version-control
      treemacs)
@@ -155,7 +159,7 @@ This function should only modify configuration layer settings."
    ;; `:location' property: '(your-package :location "~/path/to/your-package/")
    ;; Also include the dependencies as they will not be resolved automatically.
    ;;dotspacemacs-additional-packages '()
-   dotspacemacs-additional-packages '(multi-term zencoding-mode ox-twbs eterm-256color undo-tree  )
+   dotspacemacs-additional-packages '(multi-term multi-vterm zencoding-mode ox-twbs  undo-tree  )
 
 
 
@@ -163,6 +167,7 @@ This function should only modify configuration layer settings."
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
    dotspacemacs-excluded-packages '( php-extras
+                                     eat
                                      ;;phpcbf
                                      ;;auto-highlight-symbol
                                      gendoxy
