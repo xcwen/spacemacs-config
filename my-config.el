@@ -631,6 +631,7 @@ you should place your code here."
        (define-key evil-insert-state-local-map (kbd "s-h") 'vterm-send-M-h)
 
        ;; 自定义功能按键绑定
+       (define-key vterm-mode-map (kbd "C-z") nil)
        (define-key vterm-mode-map (kbd "M-x") 'helm-M-x)
        (define-key vterm-mode-map (kbd "s-x") 'helm-M-x)
        (define-key vterm-mode-map (kbd "C-^") 'helm-mini)
@@ -744,6 +745,7 @@ you should place your code here."
         `(:clang (:extraArgs ["--gcc-toolchain=/home/jim/pico/arm-none-eabi-gcc/arm-none-eabi/bin/" "--sysroot=/home/jim/pico/arm-none-eabi-gcc/arm-none-eabi/"])))
 
   (evil-declare-change-repeat 'company-complete-common)
+  (define-key evil-motion-state-map (kbd "C-z") nil)
 
   )
 

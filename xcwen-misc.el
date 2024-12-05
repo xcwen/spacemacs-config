@@ -229,10 +229,7 @@ localhost:~/site-lisp/config$"
     (cl-dolist (opt-buffer (buffer-list))
       (with-current-buffer opt-buffer
 
-        (when (and (string= "vterm-mode" major-mode)
-                   ;; 检查是否在相同的目录
-                   (string= file-path-str default-directory))
-
+        (when (and (string= "vterm-mode" major-mode))
           (let ((last-line
                  (save-excursion
                    (goto-char (point-max))
@@ -248,18 +245,21 @@ localhost:~/site-lisp/config$"
           (cl-return))
         ))
 
-    (message "find-flag %S" find-flag )
     ;; 如果未找到，创建一个新的 vterm 缓冲区
     (unless find-flag
       (multi-vterm)
       (setq find-flag t))
 
-    ;; 在 vterm 中切换到文件所在目录
-    (when (and find-flag
-               (not (string= file-path-str default-directory)))
-      (setq init-cmd (concat "cd '" file-path-str "' # goto file location\r"))
-      (vterm-send-string init-cmd)
-      (vterm-send-return))))
+    (when find-flag
+      (setq init-cmd (concat "cd '" file-path-str "' # goto file location"))
+      (message "init-cmd:%s" init-cmd)
+      (run-with-timer
+       0.2 nil
+       (lambda ( init-cmd)
+         (when (derived-mode-p 'vterm-mode)
+           (vterm-insert init-cmd)
+           (vterm-send-return))) init-cmd)
+      )))
 
 ;;   fix test
 (defun  tramp-tramp-file-p  ( file-name )
