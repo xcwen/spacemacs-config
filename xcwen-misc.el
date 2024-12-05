@@ -228,13 +228,27 @@ localhost:~/site-lisp/config$"
     ;; 检查是否存在匹配的 vterm 缓冲区
     (cl-dolist (opt-buffer (buffer-list))
       (with-current-buffer opt-buffer
+
         (when (and (string= "vterm-mode" major-mode)
                    ;; 检查是否在相同的目录
                    (string= file-path-str default-directory))
-          (switch-to-buffer opt-buffer)
-          (setq find-flag t)
-          (cl-return))))
 
+          (let ((last-line
+                 (save-excursion
+                   (goto-char (point-max))
+                   (buffer-substring-no-properties
+                    (- (line-beginning-position) 10)
+                    (line-end-position)))))
+            (when (s-matches-p "⎣" last-line )
+              (switch-to-buffer opt-buffer)
+              (setq find-flag t)
+
+              )
+            )
+          (cl-return))
+        ))
+
+    (message "find-flag %S" find-flag )
     ;; 如果未找到，创建一个新的 vterm 缓冲区
     (unless find-flag
       (multi-vterm)
