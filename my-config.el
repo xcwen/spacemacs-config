@@ -595,6 +595,9 @@ you should place your code here."
   ;; ;; 设置sqlfmt : cnpm install -g sql-formatter
   ;; (setq sqlfmt-executable  "sql-formatter")
   ;; (setq sqlfmt-options  '())
+  (with-eval-after-load 'evil-collection
+    (evil-collection-define-key 'insert 'vterm-mode-map
+      (kbd "<escape>") 'vterm--self-insert)) ; 将 ESC 绑定为自插入，发送到终端
 
 
   (add-hook
@@ -602,6 +605,7 @@ you should place your code here."
    #'(lambda()
        ;; 禁用 yas-minor-mode
        (yas-minor-mode -1)
+
 
        ;; 绑定键到 vterm-mode-map 或 evil-insert-state-local-map
        (define-key evil-insert-state-local-map (kbd "C-y") 'vterm-yank)
@@ -620,6 +624,7 @@ you should place your code here."
        (define-key evil-insert-state-local-map (kbd "C-w") 'vterm-send-C-w)
        (define-key evil-insert-state-local-map (kbd "C-d") 'vterm-send-C-d)
        (define-key evil-insert-state-local-map (kbd "C-t") 'vterm-send-C-t)
+       (define-key evil-insert-state-local-map (kbd "<escape>") #'vterm--self-insert)
 
        ;; 绑定自定义命令
        (define-key evil-insert-state-local-map (kbd "C-S-t") 'multi-vterm)

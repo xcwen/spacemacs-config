@@ -308,6 +308,14 @@ The test for presence of the car of ELT-CONS is done with `equal'."
   (term-send-raw-string "\e"))
 
 
+(defun vterm-send-esc ()
+  "Send ESC in term mode."
+  (interactive)
+  (message "xxxxxxxxxxxxx ")
+  )
+
+
+
 
 
 
