@@ -2084,10 +2084,10 @@ object satisfying `yas--field-p' to restrict the expansion to."
       ;; 使用 xmlstarlet 格式化 XML 内容
       (insert xml-content)
       (setq pos-start (point-max))
-      (setq ret (call-process-region (point-min) (point-max) "xmlstarlet" nil t nil "fo"))
+      (setq ret (call-process-region (point-min) (point-max) "xmlstarlet" t t nil "fo"))
       (if (eq ret 0 )
-          (setq formatted-xml (buffer-substring-no-properties pos-start (point-max) ))
-        (message "出错\n:%s" (buffer-substring-no-properties pos-start (point-max) ) )
+          (setq formatted-xml (buffer-substring-no-properties (point-min) (point-max) ))
+        (message "出错\n:%s" (buffer-substring-no-properties (point-min) (point-max) ) )
         ))
     ;; 用格式化后的内容替换当前 buffer
     ( when formatted-xml
