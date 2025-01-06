@@ -159,9 +159,7 @@ This function should only modify configuration layer settings."
    ;; `:location' property: '(your-package :location "~/path/to/your-package/")
    ;; Also include the dependencies as they will not be resolved automatically.
    ;;dotspacemacs-additional-packages '()
-   dotspacemacs-additional-packages '(multi-term multi-vterm zencoding-mode ox-twbs  undo-tree  )
-
-
+   dotspacemacs-additional-packages '(multi-term multi-vterm zencoding-mode ox-twbs )
 
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()

@@ -2075,6 +2075,28 @@ object satisfying `yas--field-p' to restrict the expansion to."
 
 (add-hook 'before-save-hook 'my-save-backup)
 
+
+(defun format-xml-with-xmlstarlet ()
+  "Format the current XML buffer using xmlstarlet and replace the buffer content."
+  (interactive)
+  (let ((xml-content (buffer-string) )  pos-start  formatted-xml ret )  ;; 获取当前 buffer 的内容
+    (with-temp-buffer
+      ;; 使用 xmlstarlet 格式化 XML 内容
+      (insert xml-content)
+      (setq pos-start (point-max))
+      (setq ret (call-process-region (point-min) (point-max) "xmlstarlet" nil t nil "fo"))
+      (if (eq ret 0 )
+          (setq formatted-xml (buffer-substring-no-properties pos-start (point-max) ))
+        (message "出错\n:%s" (buffer-substring-no-properties pos-start (point-max) ) )
+        ))
+    ;; 用格式化后的内容替换当前 buffer
+    ( when formatted-xml
+      (erase-buffer)
+      (insert formatted-xml)
+      )
+    ))
+
+
 (provide 'xcwen-misc)
 
 
