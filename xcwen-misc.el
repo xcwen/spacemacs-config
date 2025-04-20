@@ -1165,6 +1165,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 
 ;;------------------------------------------------------------
 
+
 (defun fcitx-inactivate-input-method()
   "Fcitx 关闭输入法."
   (interactive)

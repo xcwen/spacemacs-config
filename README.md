@@ -4,7 +4,8 @@
 **测试过的环境**
 
 
-`deepin v23`
+`deepin v23` `macos`
+
 
 
 
@@ -23,6 +24,9 @@
 * 使用  `rtags` + `clang` 作 `c++` 代码补全
 
 * `rtags` : 基于llvm . 真正实现了能编译，就能补全，跳转 :https://github.com/Andersbakken/rtags/
+
+## macos说明
+https://github.com/daipeihust/im-select
 
 ## 安装
 
@@ -89,7 +93,6 @@ function git_branch {
 PS1='localhost:\w$(git_branch)$ '
 
 ```
-
 
 ### multi-term
 
