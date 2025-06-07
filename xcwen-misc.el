@@ -963,7 +963,6 @@ PROJECT-NAME, PROJECT-ROOT-DIR CTRL-NAME, ACTION-NAME."
                  )
                 (setq obj-file  (concat opt-file "/" check-file-name) ))))
       (setq obj-file opt-file))
-    ;;check for   php html js
     (unless obj-file
       (let ((path-name (buffer-file-name)) ctrl-name action-name tmp-arr  path-fix )
         (cond
@@ -1000,20 +999,6 @@ PROJECT-NAME, PROJECT-ROOT-DIR CTRL-NAME, ACTION-NAME."
               (message "========%s"  obj-file )
               )
 
-            (unless (and  obj-file (f-exists-p  obj-file ) )
-              ;;larverl
-              (when (and (s-match "/Controllers/" path-name )  (not (string= action-name "__construct")) )
-
-                (setq  obj-file  (concat "../../../new_vue/src/views/" ctrl-name  "/" action-name ".vue" ) )
-                (unless  (f-exists-p  obj-file )
-                  (setq  obj-file  (concat "../../../vue/src/views/" ctrl-name  "/" action-name ".vue" ) )
-                  ;;check vue .php -> .vue
-                  (unless (and obj-file (f-exists-p  obj-file ) )
-                    (setq  obj-file  (concat "../../../resources/views/" ctrl-name  "/" action-name ".blade.php" ) )
-                    )
-                  )
-                )
-              )
 
 
             (unless (and  obj-file (f-exists-p  obj-file ) ) ;;to protobuf
@@ -1154,15 +1139,7 @@ PROJECT-NAME, PROJECT-ROOT-DIR CTRL-NAME, ACTION-NAME."
 
 
               )
-
-
-
-
-
-            )
-          )
-
-
+            ))
          )))
 
     (when obj-file
