@@ -30,6 +30,7 @@
 (require 'lsp-sqls )
 (require 'lsp-eslint)
 (require 'sgml-mode)
+(require 'multi-vterm)
 (require 'phpcbf)
 ;; (require 'php-mode)
 (require 'company)
@@ -210,7 +211,9 @@ localhost:~/site-lisp/config$"
 
 
 (defun multi-vterm-goto-last-vterm ()
-  "Switch to an existing vterm buffer matching the current file directory, or create a new one."
+  "Doc.
+Switch to an existing vterm buffer matching the current file directory,
+or create a new one."
   (interactive)
   (let (find-flag opt-file-name file-path-str init-cmd line-txt)
 
@@ -860,10 +863,52 @@ The test for presence of the car of ELT-CONS is done with `equal'."
     ))
 
 
+(defun switch-file-opt-ctrl-to-vue-or-profile ( project-root-dir project-name ctrl-name action-name)
+  "DOCSTRING.
+PROJECT-NAME, PROJECT-ROOT-DIR CTRL-NAME, ACTION-NAME."
+  (let(
+       obj-file
+       (view-file-name (concat "/" project-name "/" ctrl-name "/" action-name ".ts"  ) )
+       (profile-file-name (concat "/" project-name "/" ctrl-name "/" action-name ".ts"  ) )
+       )
+
+    (setq obj-file ( get-route-jump-file-name view-file-name (get-url-path-get-fix-path-from-env "VUE_VIEW_DIR") ))
+
+    (unless (f-exists-p  obj-file  ) ;;to protobuf
+      (setq obj-file (concat  project-root-dir  "/proto/src/" project-name "/" ctrl-name "__" action-name ".proto" )  )
+      )
+    (message "switch-file-opt-ctrl-to-vue-or-profile:%s" obj-file )
+    (list obj-file nil)
+    )
+  )
+
+(defun switch-file-opt-node-ctrl ( project-root-dir path-name)
+  "DOCSTRING. PROJECT-ROOT-DIR. PATH-NAME."
+  (let (project-name tmp-arr ctrl-name action-name line-txt    )
+    ;;TODO NODE CORE
+    (setq tmp-arr (s-match  "/controllers/\\([a-zA-Z0-9_-]*\\)/\\([a-zA-Z0-9_-]*\\).ts"  path-name ))
+    (setq  ctrl-name   (nth 2 tmp-arr) )
+    (setq  project-name (nth 1 tmp-arr) )
+
+    (save-excursion
+      (search-backward-regexp "^[ \t]+async[ \t]"  )
+      (setq line-txt (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
+      (setq tmp-arr (s-match  ".*async[ \t]+\\([a-zA-Z0-9_]*\\)"  line-txt ) )
+      (when tmp-arr
+        (setq action-name (nth 1 tmp-arr) )
+        ))
+    (if action-name
+        (switch-file-opt-ctrl-to-vue-or-profile project-root-dir project-name ctrl-name  action-name)
+      (list nil nil)
+      )
+    )
+  )
 (defun switch-file-opt ()
   "DOCSTRING."
   (interactive)
   (let (  line-txt  opt-file  file-list obj-file check-file-name file-name file-name-fix  (use-default t) pos-info  (goto-gocore-flag nil)  (goto-phpcore-flag nil ) (switch-flag) project-root-dir  )
+
+    (setq project-root-dir (get-project-root-dir ".env") )
     (save-excursion
       (goto-char (point-min))
       (setq switch-flag  (search-forward-regexp "SWITCH-TO:" nil t  ) )
@@ -978,7 +1023,6 @@ The test for presence of the car of ELT-CONS is done with `equal'."
               (when tmp-arr
                 (setq  path-fix (concat "/" (my-s-snake-case(nth 1 tmp-arr)) path-fix) ))
 
-              (setq project-root-dir (get-project-root-dir ".env") )
               (setq obj-file (concat  project-root-dir "/proto/src/"  path-fix )  )
               (message "jump %s" obj-file)
               )
@@ -1017,9 +1061,18 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 
 
               )))
+         ;; node core ctrl ts
+         ((and (check-file-ts  ) (s-match  "/controllers/\\([a-zA-Z0-9_-]*\\)/\\([a-zA-Z0-9_-]*\\).ts"  path-name )  )
+          (setq  tmp-arr  (switch-file-opt-node-ctrl project-root-dir  path-name ) )
+          (setq  obj-file (nth 0 tmp-arr))
+          (setq pos-info  (nth 1 tmp-arr))
 
+
+          )
+         ;; vue view ts
          ((check-file-ts  )
           (let (url file-info project-name)
+
             (setq tmp-arr (s-match  "/views/\\(\\([a-zA-Z0-9_-]*\\)/\\)?\\([a-zA-Z0-9_-]*\\)/\\([a-zA-Z0-9_-]*\\).ts"  path-name ) )
             (when tmp-arr
               (setq  ctrl-name   (nth 3 tmp-arr) )
@@ -1092,21 +1145,18 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 
               (setq project-root-dir (get-project-root-dir ".env") )
               (setq  obj-file (concat project-root-dir "/src/app/Controllers"   path-fix ) )
-              (message "=====: %s"  obj-file)
               (setq pos-info ( concat "/function[ \t]*" action-name "[ \t]*(" ) )
+              (unless (and obj-file (f-exists? obj-file ) )
+                ;; check node-core
+                (setq  obj-file (concat project-root-dir "/src/controllers/"  project-name "/" ctrl-name ".ts"  ) )
+                (setq pos-info ( concat "/async[ \t]*" action-name "[ \t]*(" ) )
+                )
 
 
               )
 
 
 
-            ;; (unless (and obj-file (f-exists? obj-file ) )
-            ;;   (setq  ctrl-name   (nth 1 tmp-arr) )
-            ;;   (setq  action-name   (nth 2 tmp-arr) )
-            ;;   (setq  obj-file (concat "../../app/controllers/" ctrl-name ".go" ) )
-            ;;   (setq pos-info ( concat "/func[ \t]*.*)[ \t]*" (my-s-upper-camel-case  action-name) "[ \t]*(" ) )
-
-            ;;   )
 
 
             )

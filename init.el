@@ -168,6 +168,7 @@ This function should only modify configuration layer settings."
                                      eat
                                      ;;phpcbf
                                      ;;auto-highlight-symbol
+                                     code-review
                                      gendoxy
                                      version-control
                                      git-modes
@@ -640,16 +641,16 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
 
   (message "load user-init ===========")
 
-;  (setq configuration-layer-elpa-archives
-;        '(("melpa-cn" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/")
-;          ;; ("org-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/org/")
-;          ("gnu-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")))
+                                        ;  (setq configuration-layer-elpa-archives
+                                        ;        '(("melpa-cn" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/")
+                                        ;          ;; ("org-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/org/")
+                                        ;          ("gnu-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")))
 
   ;; (setq url-proxy-services nil)
-   (setq url-proxy-services
-   '(("no_proxy" . "^\\(localhost\\|10.*\\)")
-   ("http" . "127.0.0.1:7890")
-   ("https" . "127.0.0.1:7890")))
+  (setq url-proxy-services
+        '(("no_proxy" . "^\\(localhost\\|10.*\\)")
+          ("http" . "127.0.0.1:7890")
+          ("https" . "127.0.0.1:7890")))
   ;; (setq lsp-java-jdt-download-url "http://127.0.0.1:8080/jdt-language-server-1.15.0-202208290205.tar.gz")
   ;; (setq  lsp-java--download-root  "http://127.0.0.1:8080/")
 
