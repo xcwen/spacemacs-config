@@ -2124,6 +2124,45 @@ object satisfying `yas--field-p' to restrict the expansion to."
       )
     ))
 
+(defun format-sql-with-sql-formatter ()
+  "Format the current sql buffer .
+ using  sql-formatter and replace the buffer content."
+  (interactive)
+  (let ((sql-content (buffer-string) )  pos-start  formatted-sql ret )  ;; 获取当前 buffer 的内容
+    (with-temp-buffer
+      ;; 使用 格式化 SQL 内容
+      (insert sql-content)
+      (setq pos-start (point-max))
+      (setq ret (call-process-region (point-min) (point-max) "sql-formatter" t t nil "-l" "mysql" ))
+      (if (eq ret 0 )
+          (setq formatted-sql (buffer-substring-no-properties (point-min) (point-max) ))
+        (message "出错\n:%s" (buffer-substring-no-properties (point-min) (point-max) ) )
+        ))
+    ;; 用格式化后的内容替换当前 buffer
+    ( when formatted-sql
+      (erase-buffer)
+      (insert formatted-sql)
+      )
+    ))
+
+(defun format-sql-region-with-sql-formatter (start end)
+  "使用 sql-formatter 格式化选中的 SQL 区域并替换."
+  (interactive "r")
+  (let ((sql-content (buffer-substring-no-properties start end))
+        formatted-sql ret)
+    (with-temp-buffer
+      (insert sql-content)
+      (setq ret (call-process-region (point-min) (point-max) "sql-formatter" t t nil "-l" "mysql"))
+      (if (eq ret 0)
+          (setq formatted-sql (buffer-substring-no-properties (point-min) (point-max)))
+        (message "格式化出错:\n%s"
+                 (buffer-substring-no-properties (point-min) (point-max)))))
+    (when formatted-sql
+      (delete-region start end)
+      (goto-char start)
+      (insert formatted-sql))))
+
+
 
 (provide 'xcwen-misc)
 
