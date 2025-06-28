@@ -214,6 +214,16 @@ you should place your code here."
   (set-buffer-file-coding-system 'utf-8)
   (add-to-list 'file-coding-system-alist '("\\.php" . utf-8) )
   (add-to-list 'file-coding-system-alist '("\\.go" . utf-8) )
+  (with-eval-after-load 'lsp-mode
+    (lsp-register-client
+     (make-lsp-client
+      :new-connection (lsp-stdio-connection '("/Users/jim/brainrot-lsp/brainrot-lsp")) ;; 替换为你的路径
+      :activation-fn (lambda (filename _mode)
+                       (or (string-match-p "\\.txt\\'" filename)
+                           (string-match-p "\\.md\\'" filename)))
+      :priority -1
+      :server-id 'brainrot)))
+
 
   (setq left-fringe-width 48)
 
