@@ -1,4 +1,4 @@
-;;; Compiled snippets and support files for `php-ts-mode'
+;;; "Compiled" snippets and support files for `php-ts-mode'  -*- lexical-binding:t -*-
 ;;; contents of the .yas-setup.el support file:
 ;;;
 ;;; .yas-setup.el --- Yasnippet helper functions for PHP snippets
@@ -245,4 +245,4 @@
                         nil)))
 
 
-;;; Do not edit! File generated at Mon Jun  2 12:24:39 2025
+;;; Do not edit! File generated at Thu Jul 10 16:45:57 2025

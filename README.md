@@ -127,6 +127,9 @@ PS1='localhost:\w$(git_branch)$ '
 #php 代码检查
 sudo apt-get install phpmd php-cli php-xml php-codesniffer
 
+#  本地变量未使用: phpmd
+brew insatll phpmd
+
 cd /project/to/path # 项目根目录
 ```
 emacs php-mode 快捷键

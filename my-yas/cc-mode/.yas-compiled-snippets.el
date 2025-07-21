@@ -1,4 +1,4 @@
-;;; Compiled snippets and support files for `cc-mode'
+;;; "Compiled" snippets and support files for `cc-mode'  -*- lexical-binding:t -*-
 ;;; Snippet definitions:
 ;;;
 (yas-define-snippets 'cc-mode
@@ -20,4 +20,4 @@
                         "/Users/jim/.spacemacs.d/my-yas/cc-mode/hd" nil nil)))
 
 
-;;; Do not edit! File generated at Mon Jun  2 12:24:39 2025
+;;; Do not edit! File generated at Thu Jul 10 16:45:57 2025

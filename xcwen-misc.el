@@ -2124,6 +2124,7 @@ object satisfying `yas--field-p' to restrict the expansion to."
       )
     ))
 
+;;sudo yarn global add sql-formatter
 (defun format-sql-with-sql-formatter ()
   "Format the current sql buffer .
  using  sql-formatter and replace the buffer content."
