@@ -469,17 +469,18 @@ you should place your code here."
                         ((string= major-mode "sql-mode")
 
 
-                         (unless mark-active
+                         (my/send-sql-to-current-vterm)
+                         ;; (unless mark-active
 
-                           (beginning-of-line  )
-                           (push-mark  (line-end-position) nil t  )
-                           )
+                         ;;   (beginning-of-line  )
+                         ;;   (push-mark  (line-end-position) nil t  )
+                         ;;   )
 
 
-                         (if (>  (-  (region-end) (region-beginning)) 2)
-                             (lsp-sql-execute-query)
-                           (message " null ")
-                           )
+                         ;; (if (>  (-  (region-end) (region-beginning)) 2)
+                         ;;     (lsp-sql-execute-query)
+                         ;;   (message " null ")
+                         ;;   )
                          )
 
                         (t (let (line-txt ret)
@@ -567,7 +568,8 @@ you should place your code here."
 
   (define-key  company-search-map (kbd "s-p")  'company-select-previous)
   (define-key  company-search-map (kbd "s-n")  'company-select-next)
-
+  (with-eval-after-load 'sql
+    (define-key  sql-mode-map (kbd "C-S-I")  'my/toggle-sql-editor-smart))
 
 
 
@@ -640,6 +642,7 @@ you should place your code here."
        (define-key evil-insert-state-local-map (kbd "C-S-t") 'multi-vterm)
        (define-key evil-insert-state-local-map (kbd "C-S-h") 'multi-vterm-prev)
        (define-key evil-insert-state-local-map (kbd "C-S-l") 'multi-vterm-next)
+       (define-key evil-insert-state-local-map (kbd "C-S-I") 'my/toggle-sql-editor-smart )
 
        ;; Meta 键绑定
        (define-key evil-insert-state-local-map (kbd "M-h") 'vterm-send-M-h)
