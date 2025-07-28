@@ -562,20 +562,25 @@ The test for presence of the car of ELT-CONS is done with `equal'."
       (setq url (nth 3 tmp-arr)))
     (setq tmp-arr (s-match "\\(/\\([^/]*\\)\\)?/\\([^/]*\\)/\\([^/]*\\)$" url ) )
 
-    (setq ctrl-name  (my-s-upper-camel-case (nth 3  tmp-arr)))
+    (setq ctrl-name  (nth 3  tmp-arr))
     (setq action-name   (nth 4  tmp-arr))
     (setq project-name  (nth 2  tmp-arr))
-    (setq php-file-path  (concat "/"  ctrl-name  ".php"))
+    (setq php-file-path  (concat "/" (my-s-upper-camel-case  ctrl-name ) ".php"))
     (when project-name
       (setq php-file-path  (concat "/" (my-s-upper-camel-case  project-name) php-file-path ))
       )
     (cond
-     ((string= server-type  "route__default"  )
+     ( (or (string= server-type  "route__menu_similarity")
+
+           )
+       (setq  obj-file  (concat (get-url-path-get-fix-path-from-env  "NODE_CONTROLLERS_DIR" ) "/"  project-name "/" ctrl-name ".ts"  ) )
+       (setq pos-info ( concat "/async[ \t]+" action-name "[ \t]*("  ) )
+
+       )
+     (t
       (setq  obj-file  (concat (get-url-path-get-fix-path-from-env  "PHP_CONTROLLERS_DIR" )  php-file-path ) )
       (setq pos-info ( concat "/function[ \t]+" action-name "[ \t]*("  ) )
-      (message " check  11: %s" obj-file)
-      )
-     )
+      ))
 
     (message "server-type:%s => %s" server-type obj-file )
     (list  obj-file  pos-info )
@@ -2163,6 +2168,41 @@ object satisfying `yas--field-p' to restrict the expansion to."
       (goto-char start)
       (insert formatted-sql))))
 
+
+
+(defun insert-line-begin-space ()
+  "在选中区域每行前插入4个空格，处理后保留选区."
+  (interactive)
+  (let* ((start (region-beginning))
+         (end (region-end))
+         (insert-str "    ")
+         (deactivate-mark nil))  ;; 保持选区
+    (save-excursion
+      (goto-char start)
+      (let ((end-marker (copy-marker end)))
+        (while (< (point) end-marker)
+          (beginning-of-line)
+          (insert insert-str)
+          ;; 每次插入会改变区域结束位置，因此需要更新 marker
+          (setq end-marker (+ end-marker (length insert-str)))
+          (forward-line 1))))))
+(defun remove-line-begin-space ()
+  "在选中区域每行前移除4个空格或一个TAB，处理后保留选区."
+  (interactive)
+  (let* ((start (region-beginning))
+         (end (region-end))
+         (deactivate-mark nil))  ;; 保持选区
+    (save-excursion
+      (goto-char start)
+      (let ((end-marker (copy-marker end)))
+        (while (< (point) end-marker)
+          (beginning-of-line)
+          (cond
+           ((looking-at "^\t")
+            (delete-char 1))
+           ((looking-at "^    ")
+            (delete-char 4)))
+          (forward-line 1))))))
 
 
 (provide 'xcwen-misc)

@@ -505,7 +505,21 @@ you should place your code here."
   ;; (set-evil-all-state-key (kbd "C-S-l") 'multi-term-next )
 
   (set-evil-all-state-key (kbd "C-S-h") 'multi-vterm-prev )
-  (set-evil-all-state-key (kbd "C-S-l") 'multi-vterm-next )
+  (set-evil-all-state-key (kbd "C-S-l") #'(lambda ()(interactive)
+
+                                            (if (string= major-mode "vterm-mode")
+                                                (multi-vterm-next)
+                                              (insert-line-begin-space)
+                                              )
+                                            ))
+  (set-evil-all-state-key (kbd "C-S-h") #'(lambda ()(interactive)
+
+                                            (if (string= major-mode "vterm-mode")
+                                                (multi-vterm-prev)
+                                              (remove-line-begin-space)
+                                              )
+                                            ))
+
 
 
   ;;查找时,使用trim-string,去掉前后空格
