@@ -2169,7 +2169,6 @@ object satisfying `yas--field-p' to restrict the expansion to."
       (insert formatted-sql))))
 
 
-
 (defun insert-line-begin-space ()
   "在选中区域每行前插入4个空格，处理后保留选区."
   (interactive)
@@ -2204,6 +2203,86 @@ object satisfying `yas--field-p' to restrict the expansion to."
             (delete-char 4)))
           (forward-line 1))))))
 
+
+(defun my/toggle-sql-editor-smart ()
+  "根据当前窗口尺寸自动选择在右侧或下方显示 term.sql（/Users/jim/bin/term.sql）。
+如果已经显示则关闭；如果在下方显示，则设置高度为6行。"
+  (interactive)
+  (let* ((file-path "/Users/jim/bin/term.sql")
+         (buffer (or (find-buffer-visiting file-path)
+                     (find-file-noselect file-path)))
+         (sql-window (get-buffer-window buffer))
+         (current-window (selected-window))
+         (win-height (window-total-height current-window))
+         (win-width  (window-total-width current-window))
+         (split-direction (if (> win-width (* win-height 3 )) 'right 'below))
+         (target-window (window-in-direction split-direction)))
+
+
+    (if (and sql-window
+             (window-live-p sql-window)
+             )
+        ;; 已经在对应方向显示 term.sql → 关闭窗口
+        (delete-window sql-window)
+
+      ;; 否则打开并切换
+      (progn
+        (if (and target-window (window-live-p target-window))
+            (select-window target-window)
+          (if (eq split-direction 'right)
+              (split-window-right)
+            (split-window-below))
+          (other-window 1))
+
+        ;; 切换并设置 sql-mode
+        (switch-to-buffer buffer)
+        (sql-mode)
+
+        ;; 如果是向下打开 → 调整窗口高度为6行
+        (when (eq split-direction 'below)
+          (let ((target-height 12)
+                (current-height (window-total-height)))
+            (when (/= current-height target-height)
+              (window-resize nil (- target-height current-height) nil)))) ; 垂直方向
+
+        (message "已在%s方打开 term.sql %d %d"
+                 (if (eq split-direction 'right) "右" "下") win-width win-height ) ))))
+
+
+
+
+(defun my/send-sql-to-current-vterm ()
+  "将选中区域或当前行发送到当前可见的 vterm buffer，并进行内容校验。"
+  (interactive)
+  (let* ((text (if (use-region-p)
+                   (buffer-substring-no-properties (region-beginning) (region-end))
+                 (buffer-substring-no-properties (line-beginning-position) (line-end-position))))
+         (clean-text (replace-regexp-in-string "--.*$" "" text))  ;; 去掉注释
+         (stripped (string-trim clean-text))
+         (vterm-win (seq-find
+                     (lambda (win)
+                       (with-current-buffer (window-buffer win)
+                         (derived-mode-p 'vterm-mode)))
+                     (window-list))))
+
+    (cond
+     ;; 无有效 SQL
+     ((or (not stripped)
+          (string= stripped "")
+          (string-match-p "^;+\\s-*$" stripped))
+      (message "未检测到有效 SQL 内容，取消发送。"))
+
+     ;; 没有可见的 vterm
+     ((not vterm-win)
+      (message "当前没有可见的 vterm buffer，取消发送。"))
+
+     ;; 正常发送
+     (t
+      (with-current-buffer (window-buffer vterm-win)
+        (goto-char (point-max))
+        (vterm-send-string text)
+        (vterm-send-return))
+      (message "SQL 已发送到当前可见 vterm")))))
 
 (provide 'xcwen-misc)
 
