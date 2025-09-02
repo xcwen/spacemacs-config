@@ -26,26 +26,23 @@
               expand-region eyebrowse fancy-battery flutter flycheck-credo
               flycheck-elsa flycheck-kotlin flycheck-package flycheck-pos-tip
               geben gh-md git-link git-messenger git-timemachine
-              gitignore-templates gnuplot go-eldoc go-fill-struct go-gen-test
-              go-guru go-impl go-rename go-tag godoctor golden-ratio
-              google-c-style google-translate groovy-imports groovy-mode helm-ag
+              gitignore-templates go-eldoc go-fill-struct go-gen-test go-guru
+              go-impl go-rename go-tag godoctor golden-ratio google-c-style
+              google-translate groovy-imports groovy-mode helm-ag
               helm-c-yasnippet helm-cider helm-comint helm-company helm-css-scss
               helm-descbinds helm-git-grep helm-ls-git helm-lsp helm-make
-              helm-mode-manager helm-org helm-org-rifle helm-projectile
-              helm-purpose helm-pydoc helm-swoop helm-themes helm-xref
-              hide-comnt highlight-indentation highlight-numbers
-              highlight-parentheses hl-todo holy-mode hungry-delete
-              impatient-mode indent-guide info+ inspector journalctl-mode js-doc
-              js2-refactor json-mode json-navigator json-reformat keycast
-              kotlin-mode link-hint live-py-mode livid-mode lorem-ipsum lsp-dart
-              lsp-java lsp-mode lsp-origami lsp-pyright lsp-ui lua-mode
-              macrostep markdown-toc maven-test-mode minitest multi-line
-              multi-term multi-vterm mvn mwim nameless nginx-mode nodejs-repl
-              npm-mode ob-elixir open-junk-file org-appear org-cliplink
-              org-download org-mime org-pomodoro org-present org-projectile
-              org-rich-yank org-superstar orgit overseer ox-twbs
-              page-break-lines paradox password-generator phpunit
-              pip-requirements pipenv pippel poetry popwin powershell
+              helm-mode-manager helm-org helm-projectile helm-purpose helm-pydoc
+              helm-swoop helm-themes helm-xref hide-comnt highlight-indentation
+              highlight-numbers highlight-parentheses hl-todo holy-mode
+              hungry-delete impatient-mode indent-guide info+ inspector
+              journalctl-mode js-doc js2-refactor json-mode json-navigator
+              json-reformat keycast kotlin-mode link-hint live-py-mode
+              livid-mode lorem-ipsum lsp-dart lsp-java lsp-origami lsp-pyright
+              lsp-ui lua-mode macrostep markdown-toc maven-test-mode minitest
+              multi-line multi-term multi-vterm mvn mwim nameless nginx-mode
+              nodejs-repl npm-mode ob-elixir open-junk-file org-superstar
+              overseer ox-twbs page-break-lines paradox password-generator
+              phpunit pip-requirements pipenv pippel poetry popwin powershell
               prettier-js protobuf-mode pug-mode py-isort pydoc pyenv-mode
               pylookup pytest quickrun rainbow-delimiters rake restart-emacs
               rjsx-mode ron-mode rspec-mode rubocop rubocopfmt ruby-hash-syntax

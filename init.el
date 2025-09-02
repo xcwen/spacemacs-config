@@ -4,8 +4,12 @@
 ;;; Code:
 
 ;;(load  (expand-file-name "init-ex.el" dotspacemacs-directory) t t  t nil )
+;;(load  (expand-file-name "shell-config.el" dotspacemacs-directory) t t  t nil )
 
 (add-to-list 'image-types 'svg)
+(load (concat (file-name-directory load-file-name) "../.emacs.d/layers/+tools/shell/config")
+      nil t )
+
 (defun dotspacemacs/layers ()
   "Layer configuration:
 This function should only modify configuration layer settings."
@@ -135,8 +139,8 @@ This function should only modify configuration layer settings."
 
      ;;multiple-cursors
      ;;(multiple-cursors :variables multiple-cursors-backend 'evil-mc)
-     (org
-      :variables org-enable-appear-support t)
+     ;; (org
+     ;; :variables org-enable-appear-support t)
      ;; (shell :variables
      ;;       shell-default-height 30
      ;;      shell-default-position 'bottom)
@@ -159,7 +163,9 @@ This function should only modify configuration layer settings."
    ;; `:location' property: '(your-package :location "~/path/to/your-package/")
    ;; Also include the dependencies as they will not be resolved automatically.
    ;;dotspacemacs-additional-packages '()
-   dotspacemacs-additional-packages '(multi-term multi-vterm zencoding-mode ox-twbs )
+   dotspacemacs-additional-packages '(multi-term multi-vterm zencoding-mode ox-twbs
+
+                                                 evil-org)
 
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
