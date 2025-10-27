@@ -1,6 +1,5 @@
-;;; xcwen-misc.el --- Some basic utility function of xcwen
+;;; xcwen-misc.el --- Some basic utility function of xcwen -*- lexical-binding: t; -*-
 ;; -*- Emacs-Lisp -*-
-
 ;; Time-stamp: <2010-09-11 09:53:02 Saturday by taoshanwen>
 
 ;; This  file is free  software; you  can redistribute  it and/or
@@ -108,7 +107,7 @@ localhost:~/site-lisp/config$"
 (defun  multi-term-goto-last-term ()
   "Doc  docstring."
   (interactive)
-  (let (find-flag opt-file-name find-path-str init-cmd  line-txt file-path-str)
+  (let (find-flag opt-file-name init-cmd  file-path-str)
 
 
 
@@ -193,9 +192,9 @@ localhost:~/site-lisp/config$"
 
     ;;(end-of-buffer)
     ;;(previous-line)
-    (setq line-txt (buffer-substring-no-properties
-                    (line-beginning-position)
-                    (line-end-position )))
+    ;; (setq line-txt (buffer-substring-no-properties
+    ;;                 (line-beginning-position)
+    ;;                 (line-end-position )))
 
     ;;(message "===%s %s" default-directory file-path-str )
     ;;(message "22 ===%s %s"  term-local-cmd-start-line-regex-str line-txt  )
@@ -215,7 +214,7 @@ localhost:~/site-lisp/config$"
 Switch to an existing vterm buffer matching the current file directory,
 or create a new one."
   (interactive)
-  (let (find-flag opt-file-name file-path-str init-cmd line-txt)
+  (let (find-flag opt-file-name file-path-str init-cmd )
 
     ;; 获取当前文件的路径
     (setq opt-file-name (buffer-file-name))
@@ -264,10 +263,6 @@ or create a new one."
            (vterm-send-return))) init-cmd)
       )))
 
-;;   fix test
-(defun  tramp-tramp-file-p  ( file-name )
-  "Doc FILE-NAME  ."
-  nil)
 
 ;;; Code:
 (defun check-in-linux ()
@@ -399,9 +394,9 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 (defun ts-get-file-at-point ()
   "D."
   (interactive)
-  (let( cur-path  pos-info)
+  (let( cur-path  )
     (save-excursion
-      (let (file-name-begin file-name-end file-name  ctrl-name )
+      (let (file-name-begin file-name-end )
 
         (message "11111111")
         (skip-chars-backward "a-zA-Z0-9._/"   )
@@ -551,7 +546,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 
 (defun get-url-path-goto-info(url)
   "URL."
-  (let (obj-file pos-info  tmp-arr project-name  ctrl-name action-name (server-type "route__default") server-type-str php-file-path)
+  (let (obj-file pos-info  tmp-arr project-name  ctrl-name action-name (server-type "route__default") php-file-path)
     (message "server-type:%s" server-type )
     ;;"/route__xx/admin/admin_manage/config_list"
     ;;"/admin/admin_manage/config_list"
@@ -618,7 +613,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 (defun switch-file-opt-proto ()
   "DOCSTRING."
   (interactive)
-  (let (  line-txt  opt-file  file-list obj-file check-file-name file-name file-name-fix  (use-default t) pos-info  (goto-gocore-flag nil) project-root-dir  (goto-phpcore-flag nil ) (switch-flag) )
+  (let (  line-txt  opt-file  file-list obj-file check-file-name file-name file-name-fix   (pos-info nil)  project-root-dir   (switch-flag) )
     (save-excursion
       (goto-char (point-min))
       (setq project-root-dir (get-project-root-dir ".env") )
@@ -692,7 +687,6 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 
     (when obj-file
       (unless (f-exists? obj-file)
-        (setq use-default  nil)
         (setq obj-file nil)
         )
       )
@@ -729,10 +723,10 @@ The test for presence of the car of ELT-CONS is done with `equal'."
   "DOCSTRING."
   (interactive)
   (let ((tags-data (ac-php-get-tags-data))
-        symbol-ret check-class-list  class-name inherit-map class-map z-class-name class-member-list  file-list  tmp-arr jump-pos function-map  tmp-ret )
+        symbol-ret  class-name   file-list  tmp-arr jump-pos function-map  tmp-ret )
 
-    (setq inherit-map (ac-php-g--inherit-map tags-data))
-    (setq class-map (ac-php-g--class-map tags-data))
+    ;; (setq inherit-map (ac-php-g--inherit-map tags-data))
+    ;; (setq class-map (ac-php-g--class-map tags-data))
     (setq function-map (ac-php-g--function-map tags-data))
     (setq symbol-ret (ac-php-find-symbol-at-point-pri tags-data))
 
@@ -850,7 +844,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 (defun show-pot-dict-at-region()
   "DOCSTRING."
   (interactive)
-  (let ( text reg-begin-pos  reg-end-pos  tmp-mark-pos  (cur-evil-visual-state-flag (evil-visual-state-p) )  )
+  (let ( text reg-begin-pos  reg-end-pos   (cur-evil-visual-state-flag (evil-visual-state-p) )  )
     (when cur-evil-visual-state-flag
       (setq reg-begin-pos (region-beginning))
       (setq reg-end-pos (region-end))
@@ -874,7 +868,7 @@ PROJECT-NAME, PROJECT-ROOT-DIR CTRL-NAME, ACTION-NAME."
   (let(
        obj-file
        (view-file-name (concat "/" project-name "/" ctrl-name "/" action-name ".ts"  ) )
-       (profile-file-name (concat "/" project-name "/" ctrl-name "/" action-name ".ts"  ) )
+                                        ;(profile-file-name (concat "/" project-name "/" ctrl-name "/" action-name ".ts"  ) )
        )
 
     (setq obj-file ( get-route-jump-file-name view-file-name (get-url-path-get-fix-path-from-env "VUE_VIEW_DIR") ))
@@ -911,7 +905,7 @@ PROJECT-NAME, PROJECT-ROOT-DIR CTRL-NAME, ACTION-NAME."
 (defun switch-file-opt ()
   "DOCSTRING."
   (interactive)
-  (let (  line-txt  opt-file  file-list obj-file check-file-name file-name file-name-fix  (use-default t) pos-info  (goto-gocore-flag nil)  (goto-phpcore-flag nil ) (switch-flag) project-root-dir  )
+  (let (  line-txt  opt-file  file-list obj-file check-file-name file-name file-name-fix   (pos-info nil )  (switch-flag) project-root-dir  )
 
     (setq project-root-dir (get-project-root-dir ".env") )
     (save-excursion
@@ -1031,7 +1025,7 @@ PROJECT-NAME, PROJECT-ROOT-DIR CTRL-NAME, ACTION-NAME."
                   (setq action-name (my-s-snake-case go-action-name ) )
                   )))
             (when (and (s-match "/controllers/" path-name )   )
-              (let (view-dir)
+              (let ()
 
                 (setq obj-file  (get-action-switch-to go-action-name ) )
                 (unless  (and  obj-file  (f-exists-p  obj-file ) )
@@ -1121,7 +1115,7 @@ PROJECT-NAME, PROJECT-ROOT-DIR CTRL-NAME, ACTION-NAME."
 
 
          ((string= major-mode  "protobuf-mode" )
-          (let (url file-info path-fix project-name )
+          (let (path-fix project-name )
             (message "------------- %s " path-name)
             (setq tmp-arr (s-match  "/proto/src\\(/\\([^/]*\\)\\)?/\\([a-zA-Z0-9_-]*\\)__\\([a-zA-Z0-9_-]*\\).proto"  path-name ) )
             (when tmp-arr
@@ -1149,7 +1143,6 @@ PROJECT-NAME, PROJECT-ROOT-DIR CTRL-NAME, ACTION-NAME."
 
     (when obj-file
       (unless (f-exists? obj-file)
-        (setq use-default  nil)
         (setq obj-file nil)
         )
       )
@@ -1225,9 +1218,9 @@ PROJECT-NAME, PROJECT-ROOT-DIR CTRL-NAME, ACTION-NAME."
   "D."
   (interactive)
   (when (check-in-linux)
-    (x-send-client-message
-     nil 0 nil "_NET_WM_STATE" 32
-     '(2 "_NET_WM_STATE_FULLSCREEN" 0)) )
+    (with-no-warnings (x-send-client-message
+                       nil 0 nil "_NET_WM_STATE" 32
+                       '(2 "_NET_WM_STATE_FULLSCREEN" 0))) )
   )
 (defun my-delete-other-windows ()
   "D."
@@ -1241,16 +1234,16 @@ PROJECT-NAME, PROJECT-ROOT-DIR CTRL-NAME, ACTION-NAME."
   "D."
   (interactive)
   (when (check-in-linux )
-    (x-send-client-message
-     nil 0 nil "_NET_WM_STATE" 32
-     '(2 "_NET_WM_STATE_MAXIMIZED_HORZ" 0))
-    (x-send-client-message
-     nil 0 nil "_NET_WM_STATE" 32
-     '(2 "_NET_WM_STATE_MAXIMIZED_VERT" 0)) )
+    (with-no-warnings  (x-send-client-message
+                        nil 0 nil "_NET_WM_STATE" 32
+                        '(2 "_NET_WM_STATE_MAXIMIZED_HORZ" 0)))
+    (with-no-warnings   (x-send-client-message
+                         nil 0 nil "_NET_WM_STATE" 32
+                         '(2 "_NET_WM_STATE_MAXIMIZED_VERT" 0))) )
   )
 ;;(progn (skip-syntax-backward "w_") (point))
 
-(defun get-whole-word-pos (&optional arg)
+(defun get-whole-word-pos ()
   "得到当前单词的开始和结束 ARG."
   (save-excursion
     (let ((beg
@@ -1259,7 +1252,7 @@ PROJECT-NAME, PROJECT-ROOT-DIR CTRL-NAME, ACTION-NAME."
            (progn (skip-syntax-forward "w_") (point))
            ))
       (list beg end))))
-(defun copy-whole-word (&optional arg)
+(defun copy-whole-word ()
   "ARG."
   (interactive)
   (let ( pos )
@@ -1279,16 +1272,16 @@ PROJECT-NAME, PROJECT-ROOT-DIR CTRL-NAME, ACTION-NAME."
                              (current-buffer) t)))
 
 ;;删除当前单词
-(defun kill-whole-word (&optional arg)
+(defun kill-whole-word ()
   "ARG."
   (interactive)
   (let (pos)
     (setq pos (get-whole-word-pos))
     (kill-region (car pos) (cadr pos))))
-(defun upper-or-lower-whole-word (count &optional arg)
+(defun upper-or-lower-whole-word (count )
   "COUNT, ARG."
   (interactive "p")
-  (let (pos cur_char word next_word (cur-point (point) ) )
+  (let (pos word next_word (cur-point (point) ) )
     (message "xxxxxxxx %d" count)
 
 
@@ -1382,23 +1375,88 @@ PROJECT-NAME, PROJECT-ROOT-DIR CTRL-NAME, ACTION-NAME."
         (t (self-insert-command (or arg 1)))))
 ;;---------------------------------------------------------------------------
 
-(defun join-line-0 (arg)
-  "ARG."
-  (interactive "p")
-  (join-line 0))
 
-(defun json2php (arg)
-  "D ARG."
-  (interactive "p")
-  (let (txt)
-    (setq txt (buffer-substring-no-properties (region-beginning)(region-end)) )
+(defun json-to-php-escape-string (s)
+  "转义 PHP 字符串中的单引号和反斜线。S."
+  (replace-regexp-in-string
+   "'" "\\\\'"
+   (replace-regexp-in-string "\\\\" "\\\\\\\\" s)))
 
-    (setq txt (s-replace "}" "]" txt  ))
-    (setq txt (s-replace "{" "[" txt  ))
-    (setq txt (s-replace ":" "=>" txt  ))
-    (kill-new  txt)
-    )
-  )
+(defun json-to-php-array (json &optional indent)
+  "递归地把 JSON 对象转成带缩进的 PHP 数组字符串，使用 [ ] 表示。JSON INDENT."
+  (let ((indent (or indent 0))
+        (next-indent (+ indent 4)))
+    (cond
+     ;; 对象（alist）
+     ((and (listp json) (not (arrayp json)))
+      (concat "[\n"
+              (mapconcat
+               (lambda (pair)
+                 (format "%s'%s' => %s"
+                         (make-string next-indent ?\s)
+                         (car pair)
+                         (json-to-php-array (cdr pair) next-indent)))
+               json
+               ",\n")
+              (format "\n%s]" (make-string indent ?\s))))
+     ;; 数组（vector）
+     ((vectorp json)
+      (concat "[\n"
+              (mapconcat
+               (lambda (v)
+                 (format "%s%s"
+                         (make-string next-indent ?\s)
+                         (json-to-php-array v next-indent)))
+               (append json nil)
+               ",\n")
+              (format "\n%s]" (make-string indent ?\s))))
+     ;; 字符串，自动转义
+     ((stringp json)
+      (format "'%s'" (json-to-php-escape-string json)))
+     ;; 数字或布尔
+     ((numberp json) (number-to-string json))
+     ((eq json t) "true")
+     ((eq json :json-false) "false")
+     ;; 其他类型
+     (t "null"))))
+
+
+(defun js-like-fix-unquoted-keys (text)
+  "自动为未加引号的 key 添加双引号，使其成为合法 JSON。 TEXT."
+  (replace-regexp-in-string
+   "\\([,{[:space:]]*\\)\\([A-Za-z0-9_]+\\)[[:space:]]*:"
+   "\\1\"\\2\":"
+   text))
+(defun js-like-fix-template-strings (text)
+  "将反引号字符串 `` 转换为普通 JSON 字符串。TEXT."
+  (let ((pos 0))
+    (while (string-match "`\\([^`]*\\)`" text pos)
+      (setq text
+            (replace-match
+             (format "\"%s\""
+                     (replace-regexp-in-string "\"" "\\\\\"" (match-string 1 text)))
+             t t text))
+      (setq pos (match-end 0))))
+  text)
+
+(defun json-region-to-php-clipboard (start end)
+  "将选中的 JSON 文本转换为格式化 PHP 数组代码，并复制到系统剪贴板。START, END."
+  (interactive "r")
+  (let* ((raw-text (buffer-substring-no-properties start end))
+         ;; 修复无引号 key
+         (fixed-keys (js-like-fix-unquoted-keys raw-text))
+         ;; 修复反引号字符串
+         ;; (fixed-text (js-like-fix-template-strings fixed-keys))
+         (json-object-type 'alist)
+         (json-array-type 'vector)
+         (parsed-json (ignore-errors (json-read-from-string fixed-keys ))))
+    (if (not parsed-json)
+        (message "❌ 无法解析 JSON/JS 对象，请检查格式。:%s" fixed-keys)
+      (let ((php-code (json-to-php-array parsed-json 0)))
+        (kill-new php-code)
+        (message "✅ PHP 数组代码已复制到剪贴板（支持无引号 key）。")))))
+
+
 
 (defun comment-or-uncomment-whole-line(num)
   "NUM."
@@ -1434,7 +1492,7 @@ PROJECT-NAME, PROJECT-ROOT-DIR CTRL-NAME, ACTION-NAME."
     (setq  end-pos  (if (= (point) (point-max) ) (point-max) (+ (point) 1 ) ))
     (list start-pos end-pos )))
 
-(defun mark-region-ex(&optional arg)
+(defun mark-region-ex()
   "ARG."
   (interactive "P")
   (let ( tmp-mark-pos)
@@ -1575,7 +1633,7 @@ PROJECT-NAME, PROJECT-ROOT-DIR CTRL-NAME, ACTION-NAME."
 
 ;;------------------------------------------------------------
 
-(defun begin-line-and-insert-line ( arg)
+(defun begin-line-and-insert-line ( )
   "ARG."
   (interactive "P")
   (move-beginning-of-line 1)
@@ -1585,7 +1643,7 @@ PROJECT-NAME, PROJECT-ROOT-DIR CTRL-NAME, ACTION-NAME."
 (defun  region-indent-ex ( is-add )
   "整体缩进 IS-ADD."
   (interactive)
-  (let( mark-pos  is-add)
+  (let( mark-pos  )
     (save-excursion
       (setq mark-pos  (get-mark-pos-ex))
       (message  "%d %d" (car mark-pos) (cadr mark-pos) )
@@ -1781,11 +1839,11 @@ object satisfying `yas--field-p' to restrict the expansion to."
     (yas-recompile-all)
     (yas-reload-all)
     ))
-(defadvice find-function (before jim-find-funtion  activate compile)
-  "D."
-  (interactive (find-function-read))
-  (xref-push-marker-stack )
-  )
+;; (defadvice find-function (before jim-find-funtion  activate compile)
+;;   "D."
+;;   (interactive (find-function-read))
+;;   (xref-push-marker-stack )
+;;   )
 
 
 (defun my-set-evil-local-map( key fun  )
@@ -1824,7 +1882,7 @@ object satisfying `yas--field-p' to restrict the expansion to."
 (defun core-server--get-project-root-dir ()
   "Get the project root directory of the curent opened buffer."
   ;;(ac-php--debug "Lookup for the project root...")
-  (let (project-root-dir tags-file (file-name buffer-file-name))
+  (let (project-root-dir (file-name buffer-file-name))
 
     ;; 1. Get working directory using `buffer-file-name' or `default-directory'
     (if file-name
@@ -1854,7 +1912,7 @@ object satisfying `yas--field-p' to restrict the expansion to."
 (defun get-project-root-dir (find-file-name)
   "Get the project root directory of the curent opened buffer FIND-FILE-NAME."
   ;;(ac-php--debug "Lookup for the project root...")
-  (let (project-root-dir tags-file (file-name buffer-file-name))
+  (let (project-root-dir (file-name buffer-file-name))
 
     ;; 1. Get working directory using `buffer-file-name' or `default-directory'
     (if file-name
@@ -1885,7 +1943,7 @@ object satisfying `yas--field-p' to restrict the expansion to."
 (defun go-core-server--get-project-root-dir ()
   "Get the project root directory of the curent opened buffer."
   ;;(ac-php--debug "Lookup for the project root...")
-  (let (project-root-dir tags-file (file-name buffer-file-name))
+  (let (project-root-dir (file-name buffer-file-name))
 
     ;; 1. Get working directory using `buffer-file-name' or `default-directory'
     (if file-name
@@ -1950,7 +2008,7 @@ object satisfying `yas--field-p' to restrict the expansion to."
 (defun my-join-line ()
   "DOCSTRING."
   (interactive)
-  (let (var1 pos-start pos-end buf)
+  (let (pos-start pos-end buf)
     (setq pos-start (region-beginning)   )
     (setq pos-end   (region-end) )
     (copy-region-as-kill pos-start pos-end )
@@ -2011,12 +2069,6 @@ object satisfying `yas--field-p' to restrict the expansion to."
 
 
 
-(defadvice edts-find-source-under-point (before  jim-edts-find-source-under-point activate compile)
-  "D."
-  (interactive)
-  (message "xxxx  edts-find-source-under-point ")
-  (xref-push-marker-stack )
-  )
 
 (defun java-gen-get-set-code()
   "DOCSTRING."
@@ -2112,11 +2164,10 @@ object satisfying `yas--field-p' to restrict the expansion to."
 (defun format-xml-with-xmlstarlet ()
   "Format the current XML buffer using xmlstarlet and replace the buffer content."
   (interactive)
-  (let ((xml-content (buffer-string) )  pos-start  formatted-xml ret )  ;; 获取当前 buffer 的内容
+  (let ((xml-content (buffer-string) ) (formatted-xml  nil) ret )  ;; 获取当前 buffer 的内容
     (with-temp-buffer
       ;; 使用 xmlstarlet 格式化 XML 内容
       (insert xml-content)
-      (setq pos-start (point-max))
       (setq ret (call-process-region (point-min) (point-max) "xmlstarlet" t t nil "fo"))
       (if (eq ret 0 )
           (setq formatted-xml (buffer-substring-no-properties (point-min) (point-max) ))
@@ -2132,13 +2183,12 @@ object satisfying `yas--field-p' to restrict the expansion to."
 ;;sudo yarn global add sql-formatter
 (defun format-sql-with-sql-formatter ()
   "Format the current sql buffer .
- using  sql-formatter and replace the buffer content."
+Using  sql-formatter and replace the buffer content."
   (interactive)
-  (let ((sql-content (buffer-string) )  pos-start  formatted-sql ret )  ;; 获取当前 buffer 的内容
+  (let ((sql-content (buffer-string) )  formatted-sql ret )  ;; 获取当前 buffer 的内容
     (with-temp-buffer
       ;; 使用 格式化 SQL 内容
       (insert sql-content)
-      (setq pos-start (point-max))
       (setq ret (call-process-region (point-min) (point-max) "sql-formatter" t t nil "-l" "mysql" ))
       (if (eq ret 0 )
           (setq formatted-sql (buffer-substring-no-properties (point-min) (point-max) ))
@@ -2152,7 +2202,7 @@ object satisfying `yas--field-p' to restrict the expansion to."
     ))
 
 (defun format-sql-region-with-sql-formatter (start end)
-  "使用 sql-formatter 格式化选中的 SQL 区域并替换."
+  "使用 sql-formatter 格式化选中的 SQL 区域并替换. START END."
   (interactive "r")
   (let ((sql-content (buffer-substring-no-properties start end))
         formatted-sql ret)
@@ -2205,7 +2255,7 @@ object satisfying `yas--field-p' to restrict the expansion to."
 
 
 (defun my/toggle-sql-editor-smart ()
-  "根据当前窗口尺寸自动选择在右侧或下方显示 term.sql（/Users/jim/bin/term.sql）。
+  "根据当前窗口尺寸自动选择在右侧或下方显示 term.sql（/Users/jim/bin/term.sql）。.
 如果已经显示则关闭；如果在下方显示，则设置高度为6行。"
   (interactive)
   (let* ((file-path "/Users/jim/bin/term.sql")
@@ -2252,7 +2302,7 @@ object satisfying `yas--field-p' to restrict the expansion to."
 
 
 (defun my/send-sql-to-current-vterm ()
-  "将选中区域或当前行发送到当前可见的 vterm buffer，并进行内容校验。"
+  "将选中区域或当前行发送到当前可见的 vterm buffer，并进行内容校验。."
   (interactive)
   (let* ((text (if (use-region-p)
                    (buffer-substring-no-properties (region-beginning) (region-end))
@@ -2283,6 +2333,19 @@ object satisfying `yas--field-p' to restrict the expansion to."
         (vterm-send-string text)
         (vterm-send-return))
       (message "SQL 已发送到当前可见 vterm")))))
+
+(defun json2php ()
+  "D ARG."
+  (interactive "p")
+  (let (txt)
+    (setq txt (buffer-substring-no-properties (region-beginning)(region-end)) )
+    (setq txt (s-replace "}" "]" txt  ))
+    (setq txt (s-replace "{" "[" txt  ))
+    (setq txt (s-replace ":" "=>" txt  ))
+    (kill-new  txt)
+    )
+  )
+
 
 (provide 'xcwen-misc)
 

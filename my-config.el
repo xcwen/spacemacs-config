@@ -780,8 +780,8 @@ you should place your code here."
   (define-key evil-motion-state-map (kbd "C-z") nil)
 
   ;; lsp vue3
-  (setq lsp-volar-take-over-mode  t )
-  (setq lsp-volar-hybrid-mode  nil )
+  ;; (setq lsp-volar-take-over-mode  t )
+  ;; (setq lsp-volar-hybrid-mode  nil )
 
   )
 
