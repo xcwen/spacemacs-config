@@ -1439,22 +1439,6 @@ PROJECT-NAME, PROJECT-ROOT-DIR CTRL-NAME, ACTION-NAME."
       (setq pos (match-end 0))))
   text)
 
-(defun json-region-to-php-clipboard (start end)
-  "将选中的 JSON 文本转换为格式化 PHP 数组代码，并复制到系统剪贴板。START, END."
-  (interactive "r")
-  (let* ((raw-text (buffer-substring-no-properties start end))
-         ;; 修复无引号 key
-         (fixed-keys (js-like-fix-unquoted-keys raw-text))
-         ;; 修复反引号字符串
-         ;; (fixed-text (js-like-fix-template-strings fixed-keys))
-         (json-object-type 'alist)
-         (json-array-type 'vector)
-         (parsed-json (ignore-errors (json-read-from-string fixed-keys ))))
-    (if (not parsed-json)
-        (message "❌ 无法解析 JSON/JS 对象，请检查格式。:%s" fixed-keys)
-      (let ((php-code (json-to-php-array parsed-json 0)))
-        (kill-new php-code)
-        (message "✅ PHP 数组代码已复制到剪贴板（支持无引号 key）。")))))
 
 
 
@@ -2334,6 +2318,7 @@ Using  sql-formatter and replace the buffer content."
         (vterm-send-return))
       (message "SQL 已发送到当前可见 vterm")))))
 
+
 (defun json2php ()
   "D ARG."
   (interactive "p")
@@ -2346,6 +2331,39 @@ Using  sql-formatter and replace the buffer content."
     )
   )
 
+(defun json-region-to-php-clipboard (start end)
+  "选中 JS/JSON 内容，用 Node.js 解析后转为 PHP 数组并复制。 START END."
+  (interactive "r")
+  (let* ((raw-text (buffer-substring-no-properties start end))
+         (node-script "
+const fs = require('fs');
+const input = fs.readFileSync(0, 'utf8');
+try {
+  // 使用 eval 安全地解析 JS 对象（包裹在括号中）
+  const obj = eval('(' + input + ')');
+  console.log(JSON.stringify(obj));
+} catch (e) {
+  console.error('ParseError:' + e.message);
+  process.exit(1);
+}
+"))
+    (with-temp-buffer
+      (insert node-script)
+      (write-region (point-min) (point-max) "/tmp/json_to_php_node.js" nil 'silent))
+    (let* ((json-output
+            (with-temp-buffer
+              (if (= (call-process-region
+                      raw-text nil "node" nil (current-buffer) nil
+                      "/tmp/json_to_php_node.js")
+                     0)
+                  (buffer-string)
+                (error "❌ Node.js 解析失败：%s" (buffer-string))))))
+      (let* ((json-object-type 'alist)
+             (json-array-type 'vector)
+             (parsed-json (json-read-from-string json-output))
+             (php-code (json-to-php-array parsed-json 0)))
+        (kill-new php-code)
+        (message "✅ 已复制 PHP 数组代码到剪贴板。")))))
 
 (provide 'xcwen-misc)
 
