@@ -59,14 +59,10 @@
   (set-evil-main-state-key "a" 'switch-file-opt )
   (set-evil-main-state-key "A" 'switch-file-opt-proto )
   (set-evil-main-state-key "e" 'cleanup-and-goto-error)
-  ;;(set-evil-main-state-key "d" 'show-baidu-dict-at-region)
   (set-evil-main-state-key "d" 'show-pot-dict-at-region)
   (set-evil-main-state-key "c" 'lsp-execute-code-action)
-  (set-evil-main-state-key "S" 'lsp-java-open-super-implementation  )
-  (set-evil-main-state-key "s" 'lsp-goto-implementation  )
   (set-evil-main-state-key "o" 'other-window  )
   (set-evil-main-state-key "m" 'restart-project  )
-  (set-evil-main-state-key "p" 'treemacs  )
 
 
 
@@ -138,22 +134,25 @@
          )
        ))
 
+
   (set-evil-main-state-key
-   ","
+   "D"
    #'(lambda()
        (interactive )
-       (let (line-txt)
-         (when (string= major-mode "go-mode")
-           (save-excursion
-             (setq line-txt (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
-             (beginning-of-line)
-             (re-search-forward  "[a-zA-Z)_](" )
-             (if (s-starts-with-p "func" line-txt )
-                 (insert "ctx context.Context, ")
-               (insert "ctx, ")
-               )
-             ))
-         )))
+       (when (string= major-mode "php-mode")
+         (my-jump-table-sql)
+         )
+       ))
+  (set-evil-main-state-key
+   "r"
+   #'(lambda()
+       (interactive )
+       (when (string= major-mode "php-mode")
+         (ac-php-remake-tags )
+         )
+       ))
+
+
 
 
 
@@ -167,29 +166,29 @@
                 ;;(php-ts-mode)
                 ))
 
-  (add-hook 'php-mode-hook
-            #'(lambda ( )
-                (set-evil-main-state-key-on-mode php-mode-map "D" 'my-jump-table-sql  )
-                (set-evil-main-state-key-on-mode  php-mode-map "r" 'ac-php-remake-tags )
-                (set-evil-main-state-key-on-mode  php-mode-map "f" 'ac-php-gen-def )
-                (set-evil-main-state-key-on-mode  php-mode-map "m" 'php-mode-make)
-                ))
-  (add-hook 'php-ts-mode-hook
-            #'(lambda ( )
-                (require 'company-php)
-                (company-mode t)
-                (add-to-list 'company-backends 'company-ac-php-backend)
-                (add-hook 'php-mode-hook 'ac-php-core-eldoc-setup)
+  ;; (add-hook 'php-mode-hook
+  ;;           #'(lambda ( )
+  ;;               (set-evil-main-state-key-on-mode php-mode-map "D" 'my-jump-table-sql  )
+  ;;               (set-evil-main-state-key-on-mode  php-mode-map "r" 'ac-php-remake-tags )
+  ;;               (set-evil-main-state-key-on-mode  php-mode-map "f" 'ac-php-gen-def )
+  ;;               (set-evil-main-state-key-on-mode  php-mode-map "m" 'php-mode-make)
+  ;;               ))
+  ;; (add-hook 'php-ts-mode-hook
+  ;;           #'(lambda ( )
+  ;;               (require 'company-php)
+  ;;               (company-mode t)
+  ;;               (add-to-list 'company-backends 'company-ac-php-backend)
+  ;;               (add-hook 'php-mode-hook 'ac-php-core-eldoc-setup)
 
-                (flycheck-mode)
-                (set-evil-main-state-key-on-mode php-ts-mode-map "D" 'my-jump-table-sql  )
+  ;;               (flycheck-mode)
+  ;;               (set-evil-main-state-key-on-mode php-ts-mode-map "D" 'my-jump-table-sql  )
 
-                (set-evil-main-state-key-on-mode  php-ts-mode-map "r" 'ac-php-remake-tags )
-                (set-evil-main-state-key-on-mode  php-ts-mode-map "f" 'ac-php-gen-def )
-                (set-evil-main-state-key-on-mode  php-ts-mode-map "m" 'php-mode-make)
+  ;;               (set-evil-main-state-key-on-mode  php-ts-mode-map "r" 'ac-php-remake-tags )
+  ;;               (set-evil-main-state-key-on-mode  php-ts-mode-map "f" 'ac-php-gen-def )
+  ;;               (set-evil-main-state-key-on-mode  php-ts-mode-map "m" 'php-mode-make)
 
-                (setq-local treesit-font-lock-level 4)
-                ))
+  ;;               (setq-local treesit-font-lock-level 4)
+  ;;               ))
 
 
   (set-evil-main-state-key-on-mode  java-mode-map "m" 'restart-project)
