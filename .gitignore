@@ -1,3 +1,4 @@
 init-ex.el
 .DS_Store
 .spacemacs.env
+.yas-compiled-snippets.el

@@ -471,7 +471,9 @@ The test for presence of the car of ELT-CONS is done with `equal'."
   "DOCSTRING."
   (interactive)
 
-  (let (pos cur-pos )
+  (let (pos cur-pos
+            (flycheck-navigation-minimum-level 'error)
+            )
     (setq cur-pos (point ) )
     (whitespace-cleanup)
 
@@ -497,6 +499,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 
     (whitespace-cleanup)
     (flycheck-buffer)
+
 
 
     (setq  pos (flycheck-next-error-pos 1 t ))
