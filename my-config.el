@@ -26,7 +26,7 @@
 (require 'xcwen-misc)
 (load  (expand-file-name "init-syntax-table.el" dotspacemacs-directory) )
 ;; (load  (expand-file-name "php-doc-block.el" dotspacemacs-directory) )
-(require'core-jump)
+(require 'core-jump)
 
 (require 'php-ts-mode)
 (require 'lsp-ui-doc)
@@ -153,6 +153,17 @@
        ))
 
 
+  (set-evil-main-state-key
+   "f"
+   #'(lambda()
+       (interactive )
+       (when (string= major-mode "php-mode")
+         (ac-php-gen-def )
+         )
+       ))
+
+
+
 
 
 
@@ -163,7 +174,8 @@
 
   (add-hook 'php-mode-hook
             #'(lambda ( )
-                ;;(php-ts-mode)
+                (eldoc-mode -1)
+                ;; (php-ts-mode)
                 ))
 
   ;; (add-hook 'php-mode-hook
@@ -616,6 +628,8 @@ you should place your code here."
   ( setq phpcbf-standard (concat (getenv "HOME") "/spacemacs-config/ruleset.xml" ))
   (setq phpcbf-executable (concat (getenv "HOME") "/spacemacs-config/bin/phpcbf" ) )
 
+  ;; 使用 PHP 8
+  (setq php-mode-coding-style 'psr2)
 
   ;; ;; 设置sqlfmt : cnpm install -g sql-formatter
   ;; (setq sqlfmt-executable  "sql-formatter")
@@ -765,6 +779,8 @@ you should place your code here."
   (setq multi-term-program "/bin/zsh")
   (add-to-list 'auto-mode-alist '( "\\.blade\\.php\\'" . web-mode))
   (add-to-list 'auto-mode-alist '( "\\.xml\\'" . web-mode))
+
+  (setq lsp-gopls-build-flags [ "--tags=mod_all" ] )
 
   ;; (set-frame-position (selected-frame) 1920 0)
   ;; (set-frame-width (selected-frame) 80)
