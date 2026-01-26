@@ -2322,8 +2322,9 @@ Using  sql-formatter and replace the buffer content."
       (message "SQL 已发送到当前可见 vterm")))))
 
 
+;;
 (defun json2php ()
-  "D ARG."
+  "D ARG.  弃用,请使用 json-region-to-php-clipboard."
   (interactive "p")
   (let (txt)
     (setq txt (buffer-substring-no-properties (region-beginning)(region-end)) )

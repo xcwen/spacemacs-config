@@ -38,6 +38,7 @@
 (require 'evil-commands)
 (require 'evil-matchit)
 (require 'evil-states)
+(require 'yasnippet)
 ;; (require 'eterm-256color)
 (require 'helm-projectile)
 ;; (require 'ccls)
@@ -794,9 +795,7 @@ you should place your code here."
   (evil-declare-change-repeat 'company-complete-common)
   (define-key evil-motion-state-map (kbd "C-z") nil)
 
-  ;; lsp vue3
-  ;; (setq lsp-volar-take-over-mode  t )
-  ;; (setq lsp-volar-hybrid-mode  nil )
+  (yas-reload-all)
 
   )
 
