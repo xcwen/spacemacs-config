@@ -26,7 +26,7 @@
 (require 'xcwen-misc)
 (load  (expand-file-name "init-syntax-table.el" dotspacemacs-directory) )
 ;; (load  (expand-file-name "php-doc-block.el" dotspacemacs-directory) )
-(require'core-jump)
+(require 'core-jump)
 
 (require 'php-ts-mode)
 (require 'lsp-ui-doc)
@@ -38,6 +38,7 @@
 (require 'evil-commands)
 (require 'evil-matchit)
 (require 'evil-states)
+(require 'yasnippet)
 ;; (require 'eterm-256color)
 (require 'helm-projectile)
 ;; (require 'ccls)
@@ -59,14 +60,10 @@
   (set-evil-main-state-key "a" 'switch-file-opt )
   (set-evil-main-state-key "A" 'switch-file-opt-proto )
   (set-evil-main-state-key "e" 'cleanup-and-goto-error)
-  ;;(set-evil-main-state-key "d" 'show-baidu-dict-at-region)
   (set-evil-main-state-key "d" 'show-pot-dict-at-region)
   (set-evil-main-state-key "c" 'lsp-execute-code-action)
-  (set-evil-main-state-key "S" 'lsp-java-open-super-implementation  )
-  (set-evil-main-state-key "s" 'lsp-goto-implementation  )
   (set-evil-main-state-key "o" 'other-window  )
   (set-evil-main-state-key "m" 'restart-project  )
-  (set-evil-main-state-key "p" 'treemacs  )
 
 
 
@@ -138,22 +135,36 @@
          )
        ))
 
+
   (set-evil-main-state-key
-   ","
+   "D"
    #'(lambda()
        (interactive )
-       (let (line-txt)
-         (when (string= major-mode "go-mode")
-           (save-excursion
-             (setq line-txt (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
-             (beginning-of-line)
-             (re-search-forward  "[a-zA-Z)_](" )
-             (if (s-starts-with-p "func" line-txt )
-                 (insert "ctx context.Context, ")
-               (insert "ctx, ")
-               )
-             ))
-         )))
+       (when (string= major-mode "php-mode")
+         (my-jump-table-sql)
+         )
+       ))
+  (set-evil-main-state-key
+   "r"
+   #'(lambda()
+       (interactive )
+       (when (string= major-mode "php-mode")
+         (ac-php-remake-tags )
+         )
+       ))
+
+
+  (set-evil-main-state-key
+   "f"
+   #'(lambda()
+       (interactive )
+       (when (string= major-mode "php-mode")
+         (ac-php-gen-def )
+         )
+       ))
+
+
+
 
 
 
@@ -164,32 +175,33 @@
 
   (add-hook 'php-mode-hook
             #'(lambda ( )
-                ;;(php-ts-mode)
+                (eldoc-mode -1)
+                ;; (php-ts-mode)
                 ))
 
-  (add-hook 'php-mode-hook
-            #'(lambda ( )
-                (set-evil-main-state-key-on-mode php-mode-map "D" 'my-jump-table-sql  )
-                (set-evil-main-state-key-on-mode  php-mode-map "r" 'ac-php-remake-tags )
-                (set-evil-main-state-key-on-mode  php-mode-map "f" 'ac-php-gen-def )
-                (set-evil-main-state-key-on-mode  php-mode-map "m" 'php-mode-make)
-                ))
-  (add-hook 'php-ts-mode-hook
-            #'(lambda ( )
-                (require 'company-php)
-                (company-mode t)
-                (add-to-list 'company-backends 'company-ac-php-backend)
-                (add-hook 'php-mode-hook 'ac-php-core-eldoc-setup)
+  ;; (add-hook 'php-mode-hook
+  ;;           #'(lambda ( )
+  ;;               (set-evil-main-state-key-on-mode php-mode-map "D" 'my-jump-table-sql  )
+  ;;               (set-evil-main-state-key-on-mode  php-mode-map "r" 'ac-php-remake-tags )
+  ;;               (set-evil-main-state-key-on-mode  php-mode-map "f" 'ac-php-gen-def )
+  ;;               (set-evil-main-state-key-on-mode  php-mode-map "m" 'php-mode-make)
+  ;;               ))
+  ;; (add-hook 'php-ts-mode-hook
+  ;;           #'(lambda ( )
+  ;;               (require 'company-php)
+  ;;               (company-mode t)
+  ;;               (add-to-list 'company-backends 'company-ac-php-backend)
+  ;;               (add-hook 'php-mode-hook 'ac-php-core-eldoc-setup)
 
-                (flycheck-mode)
-                (set-evil-main-state-key-on-mode php-ts-mode-map "D" 'my-jump-table-sql  )
+  ;;               (flycheck-mode)
+  ;;               (set-evil-main-state-key-on-mode php-ts-mode-map "D" 'my-jump-table-sql  )
 
-                (set-evil-main-state-key-on-mode  php-ts-mode-map "r" 'ac-php-remake-tags )
-                (set-evil-main-state-key-on-mode  php-ts-mode-map "f" 'ac-php-gen-def )
-                (set-evil-main-state-key-on-mode  php-ts-mode-map "m" 'php-mode-make)
+  ;;               (set-evil-main-state-key-on-mode  php-ts-mode-map "r" 'ac-php-remake-tags )
+  ;;               (set-evil-main-state-key-on-mode  php-ts-mode-map "f" 'ac-php-gen-def )
+  ;;               (set-evil-main-state-key-on-mode  php-ts-mode-map "m" 'php-mode-make)
 
-                (setq-local treesit-font-lock-level 4)
-                ))
+  ;;               (setq-local treesit-font-lock-level 4)
+  ;;               ))
 
 
   (set-evil-main-state-key-on-mode  java-mode-map "m" 'restart-project)
@@ -214,6 +226,16 @@ you should place your code here."
   (set-buffer-file-coding-system 'utf-8)
   (add-to-list 'file-coding-system-alist '("\\.php" . utf-8) )
   (add-to-list 'file-coding-system-alist '("\\.go" . utf-8) )
+  (with-eval-after-load 'lsp-mode
+    (lsp-register-client
+     (make-lsp-client
+      :new-connection (lsp-stdio-connection '("/Users/jim/brainrot-lsp/brainrot-lsp")) ;; 替换为你的路径
+      :activation-fn (lambda (filename _mode)
+                       (or (string-match-p "\\.txt\\'" filename)
+                           (string-match-p "\\.md\\'" filename)))
+      :priority -1
+      :server-id 'brainrot)))
+
 
   (setq left-fringe-width 48)
 
@@ -459,17 +481,18 @@ you should place your code here."
                         ((string= major-mode "sql-mode")
 
 
-                         (unless mark-active
+                         (my/send-sql-to-current-vterm)
+                         ;; (unless mark-active
 
-                           (beginning-of-line  )
-                           (push-mark  (line-end-position) nil t  )
-                           )
+                         ;;   (beginning-of-line  )
+                         ;;   (push-mark  (line-end-position) nil t  )
+                         ;;   )
 
 
-                         (if (>  (-  (region-end) (region-beginning)) 2)
-                             (lsp-sql-execute-query)
-                           (message " null ")
-                           )
+                         ;; (if (>  (-  (region-end) (region-beginning)) 2)
+                         ;;     (lsp-sql-execute-query)
+                         ;;   (message " null ")
+                         ;;   )
                          )
 
                         (t (let (line-txt ret)
@@ -495,7 +518,21 @@ you should place your code here."
   ;; (set-evil-all-state-key (kbd "C-S-l") 'multi-term-next )
 
   (set-evil-all-state-key (kbd "C-S-h") 'multi-vterm-prev )
-  (set-evil-all-state-key (kbd "C-S-l") 'multi-vterm-next )
+  (set-evil-all-state-key (kbd "C-S-l") #'(lambda ()(interactive)
+
+                                            (if (string= major-mode "vterm-mode")
+                                                (multi-vterm-next)
+                                              (insert-line-begin-space)
+                                              )
+                                            ))
+  (set-evil-all-state-key (kbd "C-S-h") #'(lambda ()(interactive)
+
+                                            (if (string= major-mode "vterm-mode")
+                                                (multi-vterm-prev)
+                                              (remove-line-begin-space)
+                                              )
+                                            ))
+
 
 
   ;;查找时,使用trim-string,去掉前后空格
@@ -557,7 +594,8 @@ you should place your code here."
 
   (define-key  company-search-map (kbd "s-p")  'company-select-previous)
   (define-key  company-search-map (kbd "s-n")  'company-select-next)
-
+  (with-eval-after-load 'sql
+    (define-key  sql-mode-map (kbd "C-S-I")  'my/toggle-sql-editor-smart))
 
 
 
@@ -591,6 +629,8 @@ you should place your code here."
   ( setq phpcbf-standard (concat (getenv "HOME") "/spacemacs-config/ruleset.xml" ))
   (setq phpcbf-executable (concat (getenv "HOME") "/spacemacs-config/bin/phpcbf" ) )
 
+  ;; 使用 PHP 8
+  (setq php-mode-coding-style 'psr2)
 
   ;; ;; 设置sqlfmt : cnpm install -g sql-formatter
   ;; (setq sqlfmt-executable  "sql-formatter")
@@ -630,6 +670,7 @@ you should place your code here."
        (define-key evil-insert-state-local-map (kbd "C-S-t") 'multi-vterm)
        (define-key evil-insert-state-local-map (kbd "C-S-h") 'multi-vterm-prev)
        (define-key evil-insert-state-local-map (kbd "C-S-l") 'multi-vterm-next)
+       (define-key evil-insert-state-local-map (kbd "C-S-I") 'my/toggle-sql-editor-smart )
 
        ;; Meta 键绑定
        (define-key evil-insert-state-local-map (kbd "M-h") 'vterm-send-M-h)
@@ -740,6 +781,8 @@ you should place your code here."
   (add-to-list 'auto-mode-alist '( "\\.blade\\.php\\'" . web-mode))
   (add-to-list 'auto-mode-alist '( "\\.xml\\'" . web-mode))
 
+  (setq lsp-gopls-build-flags [ "--tags=mod_all" ] )
+
   ;; (set-frame-position (selected-frame) 1920 0)
   ;; (set-frame-width (selected-frame) 80)
   ;; (set-frame-height (selected-frame) 110)
@@ -751,6 +794,8 @@ you should place your code here."
 
   (evil-declare-change-repeat 'company-complete-common)
   (define-key evil-motion-state-map (kbd "C-z") nil)
+
+  (yas-reload-all)
 
   )
 

@@ -1,6 +1,5 @@
-;;; xcwen-misc.el --- Some basic utility function of xcwen
+;;; xcwen-misc.el --- Some basic utility function of xcwen -*- lexical-binding: t; -*-
 ;; -*- Emacs-Lisp -*-
-
 ;; Time-stamp: <2010-09-11 09:53:02 Saturday by taoshanwen>
 
 ;; This  file is free  software; you  can redistribute  it and/or
@@ -30,6 +29,7 @@
 (require 'lsp-sqls )
 (require 'lsp-eslint)
 (require 'sgml-mode)
+(require 'multi-vterm)
 (require 'phpcbf)
 ;; (require 'php-mode)
 (require 'company)
@@ -107,7 +107,7 @@ localhost:~/site-lisp/config$"
 (defun  multi-term-goto-last-term ()
   "Doc  docstring."
   (interactive)
-  (let (find-flag opt-file-name find-path-str init-cmd  line-txt file-path-str)
+  (let (find-flag opt-file-name init-cmd  file-path-str)
 
 
 
@@ -192,9 +192,9 @@ localhost:~/site-lisp/config$"
 
     ;;(end-of-buffer)
     ;;(previous-line)
-    (setq line-txt (buffer-substring-no-properties
-                    (line-beginning-position)
-                    (line-end-position )))
+    ;; (setq line-txt (buffer-substring-no-properties
+    ;;                 (line-beginning-position)
+    ;;                 (line-end-position )))
 
     ;;(message "===%s %s" default-directory file-path-str )
     ;;(message "22 ===%s %s"  term-local-cmd-start-line-regex-str line-txt  )
@@ -210,9 +210,11 @@ localhost:~/site-lisp/config$"
 
 
 (defun multi-vterm-goto-last-vterm ()
-  "Switch to an existing vterm buffer matching the current file directory, or create a new one."
+  "Doc.
+Switch to an existing vterm buffer matching the current file directory,
+or create a new one."
   (interactive)
-  (let (find-flag opt-file-name file-path-str init-cmd line-txt)
+  (let (find-flag opt-file-name file-path-str init-cmd )
 
     ;; 获取当前文件的路径
     (setq opt-file-name (buffer-file-name))
@@ -261,10 +263,6 @@ localhost:~/site-lisp/config$"
            (vterm-send-return))) init-cmd)
       )))
 
-;;   fix test
-(defun  tramp-tramp-file-p  ( file-name )
-  "Doc FILE-NAME  ."
-  nil)
 
 ;;; Code:
 (defun check-in-linux ()
@@ -396,9 +394,9 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 (defun ts-get-file-at-point ()
   "D."
   (interactive)
-  (let( cur-path  pos-info)
+  (let( cur-path  )
     (save-excursion
-      (let (file-name-begin file-name-end file-name  ctrl-name )
+      (let (file-name-begin file-name-end )
 
         (message "11111111")
         (skip-chars-backward "a-zA-Z0-9._/"   )
@@ -473,7 +471,9 @@ The test for presence of the car of ELT-CONS is done with `equal'."
   "DOCSTRING."
   (interactive)
 
-  (let (pos cur-pos )
+  (let (pos cur-pos
+            (flycheck-navigation-minimum-level 'error)
+            )
     (setq cur-pos (point ) )
     (whitespace-cleanup)
 
@@ -499,6 +499,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 
     (whitespace-cleanup)
     (flycheck-buffer)
+
 
 
     (setq  pos (flycheck-next-error-pos 1 t ))
@@ -548,7 +549,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 
 (defun get-url-path-goto-info(url)
   "URL."
-  (let (obj-file pos-info  tmp-arr project-name  ctrl-name action-name (server-type "route__default") server-type-str php-file-path)
+  (let (obj-file pos-info  tmp-arr project-name  ctrl-name action-name (server-type "route__default") php-file-path)
     (message "server-type:%s" server-type )
     ;;"/route__xx/admin/admin_manage/config_list"
     ;;"/admin/admin_manage/config_list"
@@ -559,20 +560,25 @@ The test for presence of the car of ELT-CONS is done with `equal'."
       (setq url (nth 3 tmp-arr)))
     (setq tmp-arr (s-match "\\(/\\([^/]*\\)\\)?/\\([^/]*\\)/\\([^/]*\\)$" url ) )
 
-    (setq ctrl-name  (my-s-upper-camel-case (nth 3  tmp-arr)))
+    (setq ctrl-name  (nth 3  tmp-arr))
     (setq action-name   (nth 4  tmp-arr))
     (setq project-name  (nth 2  tmp-arr))
-    (setq php-file-path  (concat "/"  ctrl-name  ".php"))
+    (setq php-file-path  (concat "/" (my-s-upper-camel-case  ctrl-name ) ".php"))
     (when project-name
       (setq php-file-path  (concat "/" (my-s-upper-camel-case  project-name) php-file-path ))
       )
     (cond
-     ((string= server-type  "route__default"  )
+     ( (or (string= server-type  "route__menu_similarity")
+
+           )
+       (setq  obj-file  (concat (get-url-path-get-fix-path-from-env  "NODE_CONTROLLERS_DIR" ) "/"  project-name "/" ctrl-name ".ts"  ) )
+       (setq pos-info ( concat "/async[ \t]+" action-name "[ \t]*("  ) )
+
+       )
+     (t
       (setq  obj-file  (concat (get-url-path-get-fix-path-from-env  "PHP_CONTROLLERS_DIR" )  php-file-path ) )
       (setq pos-info ( concat "/function[ \t]+" action-name "[ \t]*("  ) )
-      (message " check  11: %s" obj-file)
-      )
-     )
+      ))
 
     (message "server-type:%s => %s" server-type obj-file )
     (list  obj-file  pos-info )
@@ -610,7 +616,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 (defun switch-file-opt-proto ()
   "DOCSTRING."
   (interactive)
-  (let (  line-txt  opt-file  file-list obj-file check-file-name file-name file-name-fix  (use-default t) pos-info  (goto-gocore-flag nil) project-root-dir  (goto-phpcore-flag nil ) (switch-flag) )
+  (let (  line-txt  opt-file  file-list obj-file check-file-name file-name file-name-fix   (pos-info nil)  project-root-dir   (switch-flag) )
     (save-excursion
       (goto-char (point-min))
       (setq project-root-dir (get-project-root-dir ".env") )
@@ -684,7 +690,6 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 
     (when obj-file
       (unless (f-exists? obj-file)
-        (setq use-default  nil)
         (setq obj-file nil)
         )
       )
@@ -721,10 +726,10 @@ The test for presence of the car of ELT-CONS is done with `equal'."
   "DOCSTRING."
   (interactive)
   (let ((tags-data (ac-php-get-tags-data))
-        symbol-ret check-class-list  class-name inherit-map class-map z-class-name class-member-list  file-list  tmp-arr jump-pos function-map  tmp-ret )
+        symbol-ret  class-name   file-list  tmp-arr jump-pos function-map  tmp-ret )
 
-    (setq inherit-map (ac-php-g--inherit-map tags-data))
-    (setq class-map (ac-php-g--class-map tags-data))
+    ;; (setq inherit-map (ac-php-g--inherit-map tags-data))
+    ;; (setq class-map (ac-php-g--class-map tags-data))
     (setq function-map (ac-php-g--function-map tags-data))
     (setq symbol-ret (ac-php-find-symbol-at-point-pri tags-data))
 
@@ -842,7 +847,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 (defun show-pot-dict-at-region()
   "DOCSTRING."
   (interactive)
-  (let ( text reg-begin-pos  reg-end-pos  tmp-mark-pos  (cur-evil-visual-state-flag (evil-visual-state-p) )  )
+  (let ( text reg-begin-pos  reg-end-pos   (cur-evil-visual-state-flag (evil-visual-state-p) )  )
     (when cur-evil-visual-state-flag
       (setq reg-begin-pos (region-beginning))
       (setq reg-end-pos (region-end))
@@ -860,10 +865,52 @@ The test for presence of the car of ELT-CONS is done with `equal'."
     ))
 
 
+(defun switch-file-opt-ctrl-to-vue-or-profile ( project-root-dir project-name ctrl-name action-name)
+  "DOCSTRING.
+PROJECT-NAME, PROJECT-ROOT-DIR CTRL-NAME, ACTION-NAME."
+  (let(
+       obj-file
+       (view-file-name (concat "/" project-name "/" ctrl-name "/" action-name ".ts"  ) )
+                                        ;(profile-file-name (concat "/" project-name "/" ctrl-name "/" action-name ".ts"  ) )
+       )
+
+    (setq obj-file ( get-route-jump-file-name view-file-name (get-url-path-get-fix-path-from-env "VUE_VIEW_DIR") ))
+
+    (unless (f-exists-p  obj-file  ) ;;to protobuf
+      (setq obj-file (concat  project-root-dir  "/proto/src/" project-name "/" ctrl-name "__" action-name ".proto" )  )
+      )
+    (message "switch-file-opt-ctrl-to-vue-or-profile:%s" obj-file )
+    (list obj-file nil)
+    )
+  )
+
+(defun switch-file-opt-node-ctrl ( project-root-dir path-name)
+  "DOCSTRING. PROJECT-ROOT-DIR. PATH-NAME."
+  (let (project-name tmp-arr ctrl-name action-name line-txt    )
+    ;;TODO NODE CORE
+    (setq tmp-arr (s-match  "/controllers/\\([a-zA-Z0-9_-]*\\)/\\([a-zA-Z0-9_-]*\\).ts"  path-name ))
+    (setq  ctrl-name   (nth 2 tmp-arr) )
+    (setq  project-name (nth 1 tmp-arr) )
+
+    (save-excursion
+      (search-backward-regexp "^[ \t]+async[ \t]"  )
+      (setq line-txt (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
+      (setq tmp-arr (s-match  ".*async[ \t]+\\([a-zA-Z0-9_]*\\)"  line-txt ) )
+      (when tmp-arr
+        (setq action-name (nth 1 tmp-arr) )
+        ))
+    (if action-name
+        (switch-file-opt-ctrl-to-vue-or-profile project-root-dir project-name ctrl-name  action-name)
+      (list nil nil)
+      )
+    )
+  )
 (defun switch-file-opt ()
   "DOCSTRING."
   (interactive)
-  (let (  line-txt  opt-file  file-list obj-file check-file-name file-name file-name-fix  (use-default t) pos-info  (goto-gocore-flag nil)  (goto-phpcore-flag nil ) (switch-flag) project-root-dir  )
+  (let (  line-txt  opt-file  file-list obj-file check-file-name file-name file-name-fix   (pos-info nil )  (switch-flag) project-root-dir  )
+
+    (setq project-root-dir (get-project-root-dir ".env") )
     (save-excursion
       (goto-char (point-min))
       (setq switch-flag  (search-forward-regexp "SWITCH-TO:" nil t  ) )
@@ -918,7 +965,6 @@ The test for presence of the car of ELT-CONS is done with `equal'."
                  )
                 (setq obj-file  (concat opt-file "/" check-file-name) ))))
       (setq obj-file opt-file))
-    ;;check for   php html js
     (unless obj-file
       (let ((path-name (buffer-file-name)) ctrl-name action-name tmp-arr  path-fix )
         (cond
@@ -955,20 +1001,6 @@ The test for presence of the car of ELT-CONS is done with `equal'."
               (message "========%s"  obj-file )
               )
 
-            (unless (and  obj-file (f-exists-p  obj-file ) )
-              ;;larverl
-              (when (and (s-match "/Controllers/" path-name )  (not (string= action-name "__construct")) )
-
-                (setq  obj-file  (concat "../../../new_vue/src/views/" ctrl-name  "/" action-name ".vue" ) )
-                (unless  (f-exists-p  obj-file )
-                  (setq  obj-file  (concat "../../../vue/src/views/" ctrl-name  "/" action-name ".vue" ) )
-                  ;;check vue .php -> .vue
-                  (unless (and obj-file (f-exists-p  obj-file ) )
-                    (setq  obj-file  (concat "../../../resources/views/" ctrl-name  "/" action-name ".blade.php" ) )
-                    )
-                  )
-                )
-              )
 
 
             (unless (and  obj-file (f-exists-p  obj-file ) ) ;;to protobuf
@@ -978,7 +1010,6 @@ The test for presence of the car of ELT-CONS is done with `equal'."
               (when tmp-arr
                 (setq  path-fix (concat "/" (my-s-snake-case(nth 1 tmp-arr)) path-fix) ))
 
-              (setq project-root-dir (get-project-root-dir ".env") )
               (setq obj-file (concat  project-root-dir "/proto/src/"  path-fix )  )
               (message "jump %s" obj-file)
               )
@@ -997,7 +1028,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
                   (setq action-name (my-s-snake-case go-action-name ) )
                   )))
             (when (and (s-match "/controllers/" path-name )   )
-              (let (view-dir)
+              (let ()
 
                 (setq obj-file  (get-action-switch-to go-action-name ) )
                 (unless  (and  obj-file  (f-exists-p  obj-file ) )
@@ -1017,9 +1048,18 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 
 
               )))
+         ;; node core ctrl ts
+         ((and (check-file-ts  ) (s-match  "/controllers/\\([a-zA-Z0-9_-]*\\)/\\([a-zA-Z0-9_-]*\\).ts"  path-name )  )
+          (setq  tmp-arr  (switch-file-opt-node-ctrl project-root-dir  path-name ) )
+          (setq  obj-file (nth 0 tmp-arr))
+          (setq pos-info  (nth 1 tmp-arr))
 
+
+          )
+         ;; vue view ts
          ((check-file-ts  )
           (let (url file-info project-name)
+
             (setq tmp-arr (s-match  "/views/\\(\\([a-zA-Z0-9_-]*\\)/\\)?\\([a-zA-Z0-9_-]*\\)/\\([a-zA-Z0-9_-]*\\).ts"  path-name ) )
             (when tmp-arr
               (setq  ctrl-name   (nth 3 tmp-arr) )
@@ -1078,7 +1118,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 
 
          ((string= major-mode  "protobuf-mode" )
-          (let (url file-info path-fix project-name )
+          (let (path-fix project-name )
             (message "------------- %s " path-name)
             (setq tmp-arr (s-match  "/proto/src\\(/\\([^/]*\\)\\)?/\\([a-zA-Z0-9_-]*\\)__\\([a-zA-Z0-9_-]*\\).proto"  path-name ) )
             (when tmp-arr
@@ -1092,32 +1132,20 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 
               (setq project-root-dir (get-project-root-dir ".env") )
               (setq  obj-file (concat project-root-dir "/src/app/Controllers"   path-fix ) )
-              (message "=====: %s"  obj-file)
               (setq pos-info ( concat "/function[ \t]*" action-name "[ \t]*(" ) )
+              (unless (and obj-file (f-exists? obj-file ) )
+                ;; check node-core
+                (setq  obj-file (concat project-root-dir "/src/controllers/"  project-name "/" ctrl-name ".ts"  ) )
+                (setq pos-info ( concat "/async[ \t]*" action-name "[ \t]*(" ) )
+                )
 
 
               )
-
-
-
-            ;; (unless (and obj-file (f-exists? obj-file ) )
-            ;;   (setq  ctrl-name   (nth 1 tmp-arr) )
-            ;;   (setq  action-name   (nth 2 tmp-arr) )
-            ;;   (setq  obj-file (concat "../../app/controllers/" ctrl-name ".go" ) )
-            ;;   (setq pos-info ( concat "/func[ \t]*.*)[ \t]*" (my-s-upper-camel-case  action-name) "[ \t]*(" ) )
-
-            ;;   )
-
-
-            )
-          )
-
-
+            ))
          )))
 
     (when obj-file
       (unless (f-exists? obj-file)
-        (setq use-default  nil)
         (setq obj-file nil)
         )
       )
@@ -1193,9 +1221,9 @@ The test for presence of the car of ELT-CONS is done with `equal'."
   "D."
   (interactive)
   (when (check-in-linux)
-    (x-send-client-message
-     nil 0 nil "_NET_WM_STATE" 32
-     '(2 "_NET_WM_STATE_FULLSCREEN" 0)) )
+    (with-no-warnings (x-send-client-message
+                       nil 0 nil "_NET_WM_STATE" 32
+                       '(2 "_NET_WM_STATE_FULLSCREEN" 0))) )
   )
 (defun my-delete-other-windows ()
   "D."
@@ -1209,16 +1237,16 @@ The test for presence of the car of ELT-CONS is done with `equal'."
   "D."
   (interactive)
   (when (check-in-linux )
-    (x-send-client-message
-     nil 0 nil "_NET_WM_STATE" 32
-     '(2 "_NET_WM_STATE_MAXIMIZED_HORZ" 0))
-    (x-send-client-message
-     nil 0 nil "_NET_WM_STATE" 32
-     '(2 "_NET_WM_STATE_MAXIMIZED_VERT" 0)) )
+    (with-no-warnings  (x-send-client-message
+                        nil 0 nil "_NET_WM_STATE" 32
+                        '(2 "_NET_WM_STATE_MAXIMIZED_HORZ" 0)))
+    (with-no-warnings   (x-send-client-message
+                         nil 0 nil "_NET_WM_STATE" 32
+                         '(2 "_NET_WM_STATE_MAXIMIZED_VERT" 0))) )
   )
 ;;(progn (skip-syntax-backward "w_") (point))
 
-(defun get-whole-word-pos (&optional arg)
+(defun get-whole-word-pos ()
   "得到当前单词的开始和结束 ARG."
   (save-excursion
     (let ((beg
@@ -1227,7 +1255,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
            (progn (skip-syntax-forward "w_") (point))
            ))
       (list beg end))))
-(defun copy-whole-word (&optional arg)
+(defun copy-whole-word ()
   "ARG."
   (interactive)
   (let ( pos )
@@ -1247,16 +1275,16 @@ The test for presence of the car of ELT-CONS is done with `equal'."
                              (current-buffer) t)))
 
 ;;删除当前单词
-(defun kill-whole-word (&optional arg)
+(defun kill-whole-word ()
   "ARG."
   (interactive)
   (let (pos)
     (setq pos (get-whole-word-pos))
     (kill-region (car pos) (cadr pos))))
-(defun upper-or-lower-whole-word (count &optional arg)
+(defun upper-or-lower-whole-word (count )
   "COUNT, ARG."
   (interactive "p")
-  (let (pos cur_char word next_word (cur-point (point) ) )
+  (let (pos word next_word (cur-point (point) ) )
     (message "xxxxxxxx %d" count)
 
 
@@ -1350,23 +1378,72 @@ The test for presence of the car of ELT-CONS is done with `equal'."
         (t (self-insert-command (or arg 1)))))
 ;;---------------------------------------------------------------------------
 
-(defun join-line-0 (arg)
-  "ARG."
-  (interactive "p")
-  (join-line 0))
 
-(defun json2php (arg)
-  "D ARG."
-  (interactive "p")
-  (let (txt)
-    (setq txt (buffer-substring-no-properties (region-beginning)(region-end)) )
+(defun json-to-php-escape-string (s)
+  "转义 PHP 字符串中的单引号和反斜线。S."
+  (replace-regexp-in-string
+   "'" "\\\\'"
+   (replace-regexp-in-string "\\\\" "\\\\\\\\" s)))
 
-    (setq txt (s-replace "}" "]" txt  ))
-    (setq txt (s-replace "{" "[" txt  ))
-    (setq txt (s-replace ":" "=>" txt  ))
-    (kill-new  txt)
-    )
-  )
+(defun json-to-php-array (json &optional indent)
+  "递归地把 JSON 对象转成带缩进的 PHP 数组字符串，使用 [ ] 表示。JSON INDENT."
+  (let ((indent (or indent 0))
+        (next-indent (+ indent 4)))
+    (cond
+     ;; 对象（alist）
+     ((and (listp json) (not (arrayp json)))
+      (concat "[\n"
+              (mapconcat
+               (lambda (pair)
+                 (format "%s'%s' => %s"
+                         (make-string next-indent ?\s)
+                         (car pair)
+                         (json-to-php-array (cdr pair) next-indent)))
+               json
+               ",\n")
+              (format "\n%s]" (make-string indent ?\s))))
+     ;; 数组（vector）
+     ((vectorp json)
+      (concat "[\n"
+              (mapconcat
+               (lambda (v)
+                 (format "%s%s"
+                         (make-string next-indent ?\s)
+                         (json-to-php-array v next-indent)))
+               (append json nil)
+               ",\n")
+              (format "\n%s]" (make-string indent ?\s))))
+     ;; 字符串，自动转义
+     ((stringp json)
+      (format "'%s'" (json-to-php-escape-string json)))
+     ;; 数字或布尔
+     ((numberp json) (number-to-string json))
+     ((eq json t) "true")
+     ((eq json :json-false) "false")
+     ;; 其他类型
+     (t "null"))))
+
+
+(defun js-like-fix-unquoted-keys (text)
+  "自动为未加引号的 key 添加双引号，使其成为合法 JSON。 TEXT."
+  (replace-regexp-in-string
+   "\\([,{[:space:]]*\\)\\([A-Za-z0-9_]+\\)[[:space:]]*:"
+   "\\1\"\\2\":"
+   text))
+(defun js-like-fix-template-strings (text)
+  "将反引号字符串 `` 转换为普通 JSON 字符串。TEXT."
+  (let ((pos 0))
+    (while (string-match "`\\([^`]*\\)`" text pos)
+      (setq text
+            (replace-match
+             (format "\"%s\""
+                     (replace-regexp-in-string "\"" "\\\\\"" (match-string 1 text)))
+             t t text))
+      (setq pos (match-end 0))))
+  text)
+
+
+
 
 (defun comment-or-uncomment-whole-line(num)
   "NUM."
@@ -1402,7 +1479,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
     (setq  end-pos  (if (= (point) (point-max) ) (point-max) (+ (point) 1 ) ))
     (list start-pos end-pos )))
 
-(defun mark-region-ex(&optional arg)
+(defun mark-region-ex()
   "ARG."
   (interactive "P")
   (let ( tmp-mark-pos)
@@ -1543,7 +1620,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 
 ;;------------------------------------------------------------
 
-(defun begin-line-and-insert-line ( arg)
+(defun begin-line-and-insert-line ( )
   "ARG."
   (interactive "P")
   (move-beginning-of-line 1)
@@ -1553,7 +1630,7 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 (defun  region-indent-ex ( is-add )
   "整体缩进 IS-ADD."
   (interactive)
-  (let( mark-pos  is-add)
+  (let( mark-pos  )
     (save-excursion
       (setq mark-pos  (get-mark-pos-ex))
       (message  "%d %d" (car mark-pos) (cadr mark-pos) )
@@ -1749,11 +1826,11 @@ object satisfying `yas--field-p' to restrict the expansion to."
     (yas-recompile-all)
     (yas-reload-all)
     ))
-(defadvice find-function (before jim-find-funtion  activate compile)
-  "D."
-  (interactive (find-function-read))
-  (xref-push-marker-stack )
-  )
+;; (defadvice find-function (before jim-find-funtion  activate compile)
+;;   "D."
+;;   (interactive (find-function-read))
+;;   (xref-push-marker-stack )
+;;   )
 
 
 (defun my-set-evil-local-map( key fun  )
@@ -1792,7 +1869,7 @@ object satisfying `yas--field-p' to restrict the expansion to."
 (defun core-server--get-project-root-dir ()
   "Get the project root directory of the curent opened buffer."
   ;;(ac-php--debug "Lookup for the project root...")
-  (let (project-root-dir tags-file (file-name buffer-file-name))
+  (let (project-root-dir (file-name buffer-file-name))
 
     ;; 1. Get working directory using `buffer-file-name' or `default-directory'
     (if file-name
@@ -1822,7 +1899,7 @@ object satisfying `yas--field-p' to restrict the expansion to."
 (defun get-project-root-dir (find-file-name)
   "Get the project root directory of the curent opened buffer FIND-FILE-NAME."
   ;;(ac-php--debug "Lookup for the project root...")
-  (let (project-root-dir tags-file (file-name buffer-file-name))
+  (let (project-root-dir (file-name buffer-file-name))
 
     ;; 1. Get working directory using `buffer-file-name' or `default-directory'
     (if file-name
@@ -1853,7 +1930,7 @@ object satisfying `yas--field-p' to restrict the expansion to."
 (defun go-core-server--get-project-root-dir ()
   "Get the project root directory of the curent opened buffer."
   ;;(ac-php--debug "Lookup for the project root...")
-  (let (project-root-dir tags-file (file-name buffer-file-name))
+  (let (project-root-dir (file-name buffer-file-name))
 
     ;; 1. Get working directory using `buffer-file-name' or `default-directory'
     (if file-name
@@ -1918,7 +1995,7 @@ object satisfying `yas--field-p' to restrict the expansion to."
 (defun my-join-line ()
   "DOCSTRING."
   (interactive)
-  (let (var1 pos-start pos-end buf)
+  (let (pos-start pos-end buf)
     (setq pos-start (region-beginning)   )
     (setq pos-end   (region-end) )
     (copy-region-as-kill pos-start pos-end )
@@ -1979,12 +2056,6 @@ object satisfying `yas--field-p' to restrict the expansion to."
 
 
 
-(defadvice edts-find-source-under-point (before  jim-edts-find-source-under-point activate compile)
-  "D."
-  (interactive)
-  (message "xxxx  edts-find-source-under-point ")
-  (xref-push-marker-stack )
-  )
 
 (defun java-gen-get-set-code()
   "DOCSTRING."
@@ -2080,11 +2151,10 @@ object satisfying `yas--field-p' to restrict the expansion to."
 (defun format-xml-with-xmlstarlet ()
   "Format the current XML buffer using xmlstarlet and replace the buffer content."
   (interactive)
-  (let ((xml-content (buffer-string) )  pos-start  formatted-xml ret )  ;; 获取当前 buffer 的内容
+  (let ((xml-content (buffer-string) ) (formatted-xml  nil) ret )  ;; 获取当前 buffer 的内容
     (with-temp-buffer
       ;; 使用 xmlstarlet 格式化 XML 内容
       (insert xml-content)
-      (setq pos-start (point-max))
       (setq ret (call-process-region (point-min) (point-max) "xmlstarlet" t t nil "fo"))
       (if (eq ret 0 )
           (setq formatted-xml (buffer-substring-no-properties (point-min) (point-max) ))
@@ -2097,6 +2167,207 @@ object satisfying `yas--field-p' to restrict the expansion to."
       )
     ))
 
+;;sudo yarn global add sql-formatter
+(defun format-sql-with-sql-formatter ()
+  "Format the current sql buffer .
+Using  sql-formatter and replace the buffer content."
+  (interactive)
+  (let ((sql-content (buffer-string) )  formatted-sql ret )  ;; 获取当前 buffer 的内容
+    (with-temp-buffer
+      ;; 使用 格式化 SQL 内容
+      (insert sql-content)
+      (setq ret (call-process-region (point-min) (point-max) "sql-formatter" t t nil "-l" "mysql" ))
+      (if (eq ret 0 )
+          (setq formatted-sql (buffer-substring-no-properties (point-min) (point-max) ))
+        (message "出错\n:%s" (buffer-substring-no-properties (point-min) (point-max) ) )
+        ))
+    ;; 用格式化后的内容替换当前 buffer
+    ( when formatted-sql
+      (erase-buffer)
+      (insert formatted-sql)
+      )
+    ))
+
+(defun format-sql-region-with-sql-formatter (start end)
+  "使用 sql-formatter 格式化选中的 SQL 区域并替换. START END."
+  (interactive "r")
+  (let ((sql-content (buffer-substring-no-properties start end))
+        formatted-sql ret)
+    (with-temp-buffer
+      (insert sql-content)
+      (setq ret (call-process-region (point-min) (point-max) "sql-formatter" t t nil "-l" "mysql"))
+      (if (eq ret 0)
+          (setq formatted-sql (buffer-substring-no-properties (point-min) (point-max)))
+        (message "格式化出错:\n%s"
+                 (buffer-substring-no-properties (point-min) (point-max)))))
+    (when formatted-sql
+      (delete-region start end)
+      (goto-char start)
+      (insert formatted-sql))))
+
+
+(defun insert-line-begin-space ()
+  "在选中区域每行前插入4个空格，处理后保留选区."
+  (interactive)
+  (let* ((start (region-beginning))
+         (end (region-end))
+         (insert-str "    ")
+         (deactivate-mark nil))  ;; 保持选区
+    (save-excursion
+      (goto-char start)
+      (let ((end-marker (copy-marker end)))
+        (while (< (point) end-marker)
+          (beginning-of-line)
+          (insert insert-str)
+          ;; 每次插入会改变区域结束位置，因此需要更新 marker
+          (setq end-marker (+ end-marker (length insert-str)))
+          (forward-line 1))))))
+(defun remove-line-begin-space ()
+  "在选中区域每行前移除4个空格或一个TAB，处理后保留选区."
+  (interactive)
+  (let* ((start (region-beginning))
+         (end (region-end))
+         (deactivate-mark nil))  ;; 保持选区
+    (save-excursion
+      (goto-char start)
+      (let ((end-marker (copy-marker end)))
+        (while (< (point) end-marker)
+          (beginning-of-line)
+          (cond
+           ((looking-at "^\t")
+            (delete-char 1))
+           ((looking-at "^    ")
+            (delete-char 4)))
+          (forward-line 1))))))
+
+
+(defun my/toggle-sql-editor-smart ()
+  "根据当前窗口尺寸自动选择在右侧或下方显示 term.sql（/Users/jim/bin/term.sql）。.
+如果已经显示则关闭；如果在下方显示，则设置高度为6行。"
+  (interactive)
+  (let* ((file-path "/Users/jim/bin/term.sql")
+         (buffer (or (find-buffer-visiting file-path)
+                     (find-file-noselect file-path)))
+         (sql-window (get-buffer-window buffer))
+         (current-window (selected-window))
+         (win-height (window-total-height current-window))
+         (win-width  (window-total-width current-window))
+         (split-direction (if (> win-width (* win-height 3 )) 'right 'below))
+         (target-window (window-in-direction split-direction)))
+
+
+    (if (and sql-window
+             (window-live-p sql-window)
+             )
+        ;; 已经在对应方向显示 term.sql → 关闭窗口
+        (delete-window sql-window)
+
+      ;; 否则打开并切换
+      (progn
+        (if (and target-window (window-live-p target-window))
+            (select-window target-window)
+          (if (eq split-direction 'right)
+              (split-window-right)
+            (split-window-below))
+          (other-window 1))
+
+        ;; 切换并设置 sql-mode
+        (switch-to-buffer buffer)
+        (sql-mode)
+
+        ;; 如果是向下打开 → 调整窗口高度为6行
+        (when (eq split-direction 'below)
+          (let ((target-height 12)
+                (current-height (window-total-height)))
+            (when (/= current-height target-height)
+              (window-resize nil (- target-height current-height) nil)))) ; 垂直方向
+
+        (message "已在%s方打开 term.sql %d %d"
+                 (if (eq split-direction 'right) "右" "下") win-width win-height ) ))))
+
+
+
+
+(defun my/send-sql-to-current-vterm ()
+  "将选中区域或当前行发送到当前可见的 vterm buffer，并进行内容校验。."
+  (interactive)
+  (let* ((text (if (use-region-p)
+                   (buffer-substring-no-properties (region-beginning) (region-end))
+                 (buffer-substring-no-properties (line-beginning-position) (line-end-position))))
+         (clean-text (replace-regexp-in-string "--.*$" "" text))  ;; 去掉注释
+         (stripped (string-trim clean-text))
+         (vterm-win (seq-find
+                     (lambda (win)
+                       (with-current-buffer (window-buffer win)
+                         (derived-mode-p 'vterm-mode)))
+                     (window-list))))
+
+    (cond
+     ;; 无有效 SQL
+     ((or (not stripped)
+          (string= stripped "")
+          (string-match-p "^;+\\s-*$" stripped))
+      (message "未检测到有效 SQL 内容，取消发送。"))
+
+     ;; 没有可见的 vterm
+     ((not vterm-win)
+      (message "当前没有可见的 vterm buffer，取消发送。"))
+
+     ;; 正常发送
+     (t
+      (with-current-buffer (window-buffer vterm-win)
+        (goto-char (point-max))
+        (vterm-send-string text)
+        (vterm-send-return))
+      (message "SQL 已发送到当前可见 vterm")))))
+
+
+;;
+(defun json2php ()
+  "D ARG.  弃用,请使用 json-region-to-php-clipboard."
+  (interactive "p")
+  (let (txt)
+    (setq txt (buffer-substring-no-properties (region-beginning)(region-end)) )
+    (setq txt (s-replace "}" "]" txt  ))
+    (setq txt (s-replace "{" "[" txt  ))
+    (setq txt (s-replace ":" "=>" txt  ))
+    (kill-new  txt)
+    )
+  )
+
+(defun json-region-to-php-clipboard (start end)
+  "选中 JS/JSON 内容，用 Node.js 解析后转为 PHP 数组并复制。 START END."
+  (interactive "r")
+  (let* ((raw-text (buffer-substring-no-properties start end))
+         (node-script "
+const fs = require('fs');
+const input = fs.readFileSync(0, 'utf8');
+try {
+  // 使用 eval 安全地解析 JS 对象（包裹在括号中）
+  const obj = eval('(' + input + ')');
+  console.log(JSON.stringify(obj));
+} catch (e) {
+  console.error('ParseError:' + e.message);
+  process.exit(1);
+}
+"))
+    (with-temp-buffer
+      (insert node-script)
+      (write-region (point-min) (point-max) "/tmp/json_to_php_node.js" nil 'silent))
+    (let* ((json-output
+            (with-temp-buffer
+              (if (= (call-process-region
+                      raw-text nil "node" nil (current-buffer) nil
+                      "/tmp/json_to_php_node.js")
+                     0)
+                  (buffer-string)
+                (error "❌ Node.js 解析失败：%s" (buffer-string))))))
+      (let* ((json-object-type 'alist)
+             (json-array-type 'vector)
+             (parsed-json (json-read-from-string json-output))
+             (php-code (json-to-php-array parsed-json 0)))
+        (kill-new php-code)
+        (message "✅ 已复制 PHP 数组代码到剪贴板。")))))
 
 (provide 'xcwen-misc)
 
