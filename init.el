@@ -173,6 +173,7 @@ This function should only modify configuration layer settings."
                                      git-modes
                                      yasnippet-snippets
                                      php-auto-yasnippets
+                                     code-review
 
                                      chinese-pyim
                                      org-contrib
@@ -551,7 +552,7 @@ It should only modify the values of Spacemacs settings."
    ;; List of search tool executable names. Spacemacs uses the first installed
    ;; tool of the list. Supported tools are `rg', `ag', `pt', `ack' and `grep'.
    ;; (default '("rg" "ag" "pt" "ack" "grep"))
-   dotspacemacs-search-tools '("rg" "ag" "pt" "ack" "grep")
+   ;;dotspacemacs-search-tools '("rg" "ag" "pt" "ack" "grep")
 
    ;; Format specification for setting the frame title.
    ;; %a - the `abbreviated-file-name', or `buffer-name'
@@ -640,16 +641,16 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
 
   (message "load user-init ===========")
 
-;  (setq configuration-layer-elpa-archives
-;        '(("melpa-cn" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/")
-;          ;; ("org-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/org/")
-;          ("gnu-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")))
+                                        ;  (setq configuration-layer-elpa-archives
+                                        ;        '(("melpa-cn" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/")
+                                        ;          ;; ("org-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/org/")
+                                        ;          ("gnu-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")))
 
   ;; (setq url-proxy-services nil)
-   (setq url-proxy-services
-   '(("no_proxy" . "^\\(localhost\\|10.*\\)")
-   ("http" . "127.0.0.1:7890")
-   ("https" . "127.0.0.1:7890")))
+  (setq url-proxy-services
+        '(("no_proxy" . "^\\(localhost\\|10.*\\)")
+          ("http" . "127.0.0.1:7890")
+          ("https" . "127.0.0.1:7890")))
   ;; (setq lsp-java-jdt-download-url "http://127.0.0.1:8080/jdt-language-server-1.15.0-202208290205.tar.gz")
   ;; (setq  lsp-java--download-root  "http://127.0.0.1:8080/")
 
