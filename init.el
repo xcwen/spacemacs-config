@@ -174,7 +174,6 @@ This function should only modify configuration layer settings."
                                      eat
                                      ;;phpcbf
                                      ;;auto-highlight-symbol
-                                     code-review
                                      gendoxy
                                      version-control
                                      git-modes
