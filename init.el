@@ -360,10 +360,11 @@ It should only modify the values of Spacemacs settings."
    ;;(if (string= (system-name) "jim-MacBookPro") 48 24  )
    dotspacemacs-default-font (list
                               ;;"MesloLGS NF"
-                              "XHei Mono.Ubuntu"
+                              ;;" XHei Mono.Ubuntu"
+                              "JetBrains Mono"
                               ;;"Source Code Pro"
                               ;;:size  (if (string= (system-name) "jim-PC" )  48 24  )
-                              :size (max (round(* 24 (string-to-number (shell-command-to-string "grep ScreenScaleFactors  ~/.config/deepin/qt-theme.ini | awk -F= '{print $2}' ") ))) 24 )
+                              :size (max (round(* 20 (string-to-number (shell-command-to-string "grep ScreenScaleFactors  ~/.config/deepin/qt-theme.ini | awk -F= '{print $2}' ") ))) 20 )
 
                               :weight 'normal
                               :width 'normal
