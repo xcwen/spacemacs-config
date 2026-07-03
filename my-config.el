@@ -212,6 +212,43 @@
 
   )
 
+(defmacro xcwen/vue-with-fast-paste (&rest body)
+  "Run BODY with expensive live helpers quieted for Vue paste."
+  `(let ((gc-cons-threshold most-positive-fixnum)
+         (gc-cons-percentage 0.6)
+         (inhibit-redisplay t)
+         (inhibit-message t)
+         (electric-indent-inhibit t)
+         (flycheck-check-syntax-automatically nil)
+         (company-idle-delay nil)
+         (lsp-debounce-full-sync-notifications t)
+         (lsp-enable-on-type-formatting nil)
+         (lsp-enable-symbol-highlighting nil)
+         (lsp-enable-indentation nil))
+     (when (fboundp 'company-abort)
+       (company-abort))
+     ,@body))
+
+(defun xcwen/vue-yank-fast (&optional arg)
+  "Yank in `vue-mode' without triggering expensive live helpers."
+  (interactive "*P")
+  (xcwen/vue-with-fast-paste
+   (yank arg)))
+
+(defun xcwen/vue-evil-paste-after-fast (count &optional register)
+  "Paste after point in `vue-mode' without triggering expensive live helpers."
+  (interactive "*P")
+  (setq this-command 'evil-paste-after)
+  (xcwen/vue-with-fast-paste
+   (evil-paste-after count (or register evil-this-register))))
+
+(defun xcwen/vue-evil-paste-before-fast (count &optional register)
+  "Paste before point in `vue-mode' without triggering expensive live helpers."
+  (interactive "*P")
+  (setq this-command 'evil-paste-before)
+  (xcwen/vue-with-fast-paste
+   (evil-paste-before count (or register evil-this-register))))
+
 (defun my-user-config ()
   "Configuration function for user code.
 This function is called at the very end of Spacemacs initialization after
@@ -262,7 +299,7 @@ you should place your code here."
   (setq lsp-enable-xref nil)
   (setq lsp-enable-indentation t )
   (setq lsp-auto-execute-action nil)
-  (setq lsp-debounce-full-sync-notifications nil)
+  (setq lsp-debounce-full-sync-notifications t)
   (setq lsp-enable-file-watchers nil)
   (setq lsp-enable-folding nil)
   ;; (setq lsp-java-workspace-dir "/home/jim/java_workspace/" )
@@ -363,7 +400,18 @@ you should place your code here."
                                (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
                                (my-set-evil-not-insert-local-map "="  'align-eq )
 
-                               (setq company-backends '(company-capf) )
+                               (setq-local company-backends '(company-capf) )
+                               (setq-local flycheck-check-syntax-automatically '(save mode-enabled))
+                               (setq-local lsp-debounce-full-sync-notifications t)
+                               (setq-local lsp-enable-on-type-formatting nil)
+                               (setq-local lsp-enable-indentation nil)
+                               (setq-local lsp-enable-symbol-highlighting nil)
+                               (define-key evil-insert-state-local-map (kbd "C-v") 'xcwen/vue-yank-fast)
+                               (define-key evil-insert-state-local-map (kbd "C-y") 'xcwen/vue-yank-fast)
+                               (define-key evil-normal-state-local-map "p" 'xcwen/vue-evil-paste-after-fast)
+                               (define-key evil-normal-state-local-map "P" 'xcwen/vue-evil-paste-before-fast)
+                               (define-key evil-visual-state-local-map "p" 'xcwen/vue-evil-paste-after-fast)
+                               (define-key evil-visual-state-local-map "P" 'xcwen/vue-evil-paste-before-fast)
                                ))
 
   (add-hook 'org-mode-hook #'(lambda ( )
