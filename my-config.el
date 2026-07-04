@@ -22,31 +22,27 @@
 ;;; Code:
 (require 'core-dotspacemacs)
 (add-to-list 'load-path   dotspacemacs-directory  )
-(load  (expand-file-name "xcwen-misc.el" dotspacemacs-directory) )
+
+(defun xcwen/spacemacs-file (file)
+  "Return FILE expanded under `dotspacemacs-directory'."
+  (expand-file-name file dotspacemacs-directory))
+
 (require 'xcwen-misc)
-(load  (expand-file-name "init-syntax-table.el" dotspacemacs-directory) )
+(require 'init-syntax-table)
 ;; (load  (expand-file-name "php-doc-block.el" dotspacemacs-directory) )
 (require 'core-jump)
 
-(require 'php-ts-mode)
-(require 'lsp-ui-doc)
-(require 'lsp-ui)
-(require 'lsp)
 ;;(require 'undo-tree)
-(require 'evil-org)
-(require 'info+)
-(require 'evil-commands)
-(require 'evil-matchit)
-(require 'evil-states)
-(require 'yasnippet)
 ;; (require 'eterm-256color)
-(require 'helm-projectile)
 ;; (require 'ccls)
-(setq my-keyboard-input-dev "/dev/input/event7")
+(autoload 'php-ts-mode "php-ts-mode" nil t)
+(autoload 'helm-projectile-grep "helm-projectile" nil t)
+(setq my-keyboard-input-dev "")
 
 
-(spacemacs|define-jump-handlers php-ts-mode)
-(add-to-list 'spacemacs-jump-handlers-php-ts-mode 'ac-php-find-symbol-at-point)
+(with-eval-after-load 'php-ts-mode
+  (spacemacs|define-jump-handlers php-ts-mode)
+  (add-to-list 'spacemacs-jump-handlers-php-ts-mode 'ac-php-find-symbol-at-point))
 
 (defun set-main-key()
   "D."
@@ -83,32 +79,28 @@
    "i"
    #'(lambda()
        (interactive )
-       (flycheck-explain-error-at-point   )
+       (when (fboundp 'flycheck-explain-error-at-point)
+         (flycheck-explain-error-at-point))
        (cond
         ((check-in-php-mode)
-         (progn
-           (ac-php-show-tip)
-           ))
+         (when (fboundp 'ac-php-show-tip)
+           (ac-php-show-tip)))
         (t
-         (progn
+         (when (fboundp 'lsp-ui-doc-show)
            (setq lsp-ui-doc-show-with-cursor t)
            (lsp-ui-doc-show)
-           (setq lsp-ui-doc-show-with-cursor nil)
-           ))
+           (setq lsp-ui-doc-show-with-cursor nil)))
         )))
 
   (set-evil-main-state-key "\""
                            #'(lambda()
                                (interactive )
-                               (if (ac-php--in-string-or-comment-p)
-                                   (cond
-                                    ((check-in-php-mode)
-                                     (progn
-
-                                       (insert  "\" . \"")
-                                       (backward-char 4 )
-                                       ))
-                                    )
+                               (if (and (check-in-php-mode)
+                                        (fboundp 'ac-php--in-string-or-comment-p)
+                                        (ac-php--in-string-or-comment-p))
+                                   (progn
+                                     (insert  "\" . \"")
+                                     (backward-char 4 ))
                                  (progn ;;单词加双引号
                                    (save-excursion
                                      (backward-word)
@@ -140,7 +132,8 @@
    "D"
    #'(lambda()
        (interactive )
-       (when (string= major-mode "php-mode")
+       (when (and (check-in-php-mode)
+                  (fboundp 'my-jump-table-sql))
          (my-jump-table-sql)
          )
        ))
@@ -148,7 +141,8 @@
    "r"
    #'(lambda()
        (interactive )
-       (when (string= major-mode "php-mode")
+       (when (and (check-in-php-mode)
+                  (fboundp 'ac-php-remake-tags))
          (ac-php-remake-tags )
          )
        ))
@@ -158,7 +152,8 @@
    "f"
    #'(lambda()
        (interactive )
-       (when (string= major-mode "php-mode")
+       (when (and (check-in-php-mode)
+                  (fboundp 'ac-php-gen-def))
          (ac-php-gen-def )
          )
        ))
@@ -264,14 +259,16 @@ you should place your code here."
   (add-to-list 'file-coding-system-alist '("\\.php" . utf-8) )
   (add-to-list 'file-coding-system-alist '("\\.go" . utf-8) )
   (with-eval-after-load 'lsp-mode
-    (lsp-register-client
-     (make-lsp-client
-      :new-connection (lsp-stdio-connection '("/Users/jim/brainrot-lsp/brainrot-lsp")) ;; 替换为你的路径
-      :activation-fn (lambda (filename _mode)
-                       (or (string-match-p "\\.txt\\'" filename)
-                           (string-match-p "\\.md\\'" filename)))
-      :priority -1
-      :server-id 'brainrot)))
+    (let ((brainrot-lsp (expand-file-name "brainrot-lsp/brainrot-lsp" (getenv "HOME"))))
+      (when (file-executable-p brainrot-lsp)
+        (lsp-register-client
+         (make-lsp-client
+          :new-connection (lsp-stdio-connection (list brainrot-lsp))
+          :activation-fn (lambda (filename _mode)
+                           (or (string-match-p "\\.txt\\'" filename)
+                               (string-match-p "\\.md\\'" filename)))
+          :priority -1
+          :server-id 'brainrot)))))
 
 
   (setq left-fringe-width 48)
@@ -279,7 +276,11 @@ you should place your code here."
   (setq indent-tabs-mode nil)
   (setq tab-width 4)
 
-  (setq my-keyboard-input-dev (s-trim (shell-command-to-string (concat  (getenv "HOME") "/desktop/key_send/get_kbd_eventid.sh" )) ))
+  (let ((keyboard-script (expand-file-name "desktop/key_send/get_kbd_eventid.sh" (getenv "HOME"))))
+    (setq my-keyboard-input-dev
+          (if (file-executable-p keyboard-script)
+              (s-trim (shell-command-to-string keyboard-script))
+            my-keyboard-input-dev)))
 
   ;; 关闭 生成 .#filename 文件
   (setq create-lockfiles nil)
@@ -303,7 +304,13 @@ you should place your code here."
   (setq lsp-enable-file-watchers nil)
   (setq lsp-enable-folding nil)
   ;; (setq lsp-java-workspace-dir "/home/jim/java_workspace/" )
-  (setq lsp-java-vmargs '("-noverify" "-Xmx1G" "-XX:+UseG1GC" "-XX:+UseStringDeduplication" "-javaagent:/home/jim/.spacemacs.d/bin/lombok-1.18.24.jar" "-Xbootclasspath/a:/home/jim/.spacemacs.d/bin/lombok-1.18.24.jar"))
+  (let ((lombok-jar (xcwen/spacemacs-file "bin/lombok-1.18.24.jar")))
+    (setq lsp-java-vmargs
+          (append
+           '("-noverify" "-Xmx1G" "-XX:+UseG1GC" "-XX:+UseStringDeduplication")
+           (when (file-readable-p lombok-jar)
+             (list (concat "-javaagent:" lombok-jar)
+                   (concat "-Xbootclasspath/a:" lombok-jar))))))
   ;;  (setq lsp-java-vmargs '("-noverify" "-Xmx1G" "-XX:+UseG1GC" "-XX:+UseStringDeduplication" "-javaagent:/home/jim/.spacemacs.d/bin/lombok-1.18.24.jar" ))
   ;; ;; (setq lsp-java-vmargs '("-noverify" "-Xmx1G" "-XX:+UseG1GC" "-XX:+UseStringDeduplication" ))
 
@@ -415,13 +422,14 @@ you should place your code here."
                                ))
 
   (add-hook 'org-mode-hook #'(lambda ( )
-                               (setq evil-org-key-theme
-                                     `(textobjects
-                                       navigation
-                                       ;;additional
-                                       ;;,@(when org-want-todo-bindings '(todo))
-                                       ))
-                               (evil-org-set-key-theme evil-org-key-theme)
+                               (when (require 'evil-org nil t)
+                                 (setq evil-org-key-theme
+                                       `(textobjects
+                                         navigation
+                                         ;;additional
+                                         ;;,@(when org-want-todo-bindings '(todo))
+                                         ))
+                                 (evil-org-set-key-theme evil-org-key-theme))
 
                                ;; (defun evil-org--populate-additional-bindings ()
                                ;;   )
@@ -494,7 +502,8 @@ you should place your code here."
                                                        )
                                                    (fcitx-inactivate-input-method)
                                                    (evil-force-normal-state)
-                                                   (lsp-ui-doc-hide)
+                                                   (when (fboundp 'lsp-ui-doc-hide)
+                                                     (lsp-ui-doc-hide))
                                                    )
 
                                                  ))
@@ -663,19 +672,21 @@ you should place your code here."
 
 
   (message "do user-config" )
-  (server-start)
+  (when (require 'server nil t)
+    (unless (server-running-p)
+      (server-start)))
 
   (setq ac-php-project-root-dir-use-truename   nil )
-  (setq flycheck-phpmd-rulesets (list  (concat (getenv "HOME") "/spacemacs-config/phpmd.xml"  ) ))
+  (setq flycheck-phpmd-rulesets (list (xcwen/spacemacs-file "phpmd.xml")))
   (setq lsp-flycheck-enable-unnecessary-info nil)
 
 
   (setq frame-title-format  '("file: %f "  ))
-  (setq yas-snippet-dirs   (list  "~/.spacemacs.d/my-yas"  )  )
+  (setq yas-snippet-dirs (list (xcwen/spacemacs-file "my-yas")))
 
 
-  ( setq phpcbf-standard (concat (getenv "HOME") "/spacemacs-config/ruleset.xml" ))
-  (setq phpcbf-executable (concat (getenv "HOME") "/spacemacs-config/bin/phpcbf" ) )
+  (setq phpcbf-standard (xcwen/spacemacs-file "ruleset.xml"))
+  (setq phpcbf-executable (xcwen/spacemacs-file "bin/phpcbf"))
 
   ;; 使用 PHP 8
   (setq php-mode-coding-style 'psr2)
@@ -813,19 +824,17 @@ you should place your code here."
                             '(simple  template html))
 
   (setq flycheck-idle-change-delay  5)
-  (setq company-idle-delay              1000)
+  (setq company-idle-delay nil)
 
   (setq flycheck-display-errors-delay  1300000)
-  (setq flycheck-check-syntax-automatically '( save
-                                               idle-change
-                                               new-line
-                                               mode-enabled))
+  (setq flycheck-check-syntax-automatically '(save mode-enabled))
 
                                         ;(setq undo-tree-auto-save-history nil)
 
 
-  (setq multi-term-program "/bin/bash")
-  (setq multi-term-program "/bin/zsh")
+  (setq multi-term-program (or (executable-find "zsh")
+                               (executable-find "bash")
+                               "/bin/sh"))
   (add-to-list 'auto-mode-alist '( "\\.blade\\.php\\'" . web-mode))
   (add-to-list 'auto-mode-alist '( "\\.xml\\'" . web-mode))
 
@@ -837,13 +846,17 @@ you should place your code here."
   ;; (recentf-load-list)
 
   ;; 指定
-  (setq ccls-initialization-options
-        `(:clang (:extraArgs ["--gcc-toolchain=/home/jim/pico/arm-none-eabi-gcc/arm-none-eabi/bin/" "--sysroot=/home/jim/pico/arm-none-eabi-gcc/arm-none-eabi/"])))
+  (let ((arm-toolchain "/home/jim/pico/arm-none-eabi-gcc/arm-none-eabi/"))
+    (when (file-directory-p arm-toolchain)
+      (setq ccls-initialization-options
+            `(:clang (:extraArgs [,(concat "--gcc-toolchain=" arm-toolchain "bin/")
+                                  ,(concat "--sysroot=" arm-toolchain)])))))
 
   (evil-declare-change-repeat 'company-complete-common)
   (define-key evil-motion-state-map (kbd "C-z") nil)
 
-  (yas-reload-all)
+  (when (fboundp 'yas-reload-all)
+    (yas-reload-all))
 
   )
 

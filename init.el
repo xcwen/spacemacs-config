@@ -6,6 +6,22 @@
 ;;(load  (expand-file-name "init-ex.el" dotspacemacs-directory) t t  t nil )
 ;;(load  (expand-file-name "shell-config.el" dotspacemacs-directory) t t  t nil )
 
+(defun xcwen/deepin-screen-scale ()
+  "Return Deepin screen scale, or 1.0 when the setting is unavailable."
+  (let ((scale-file (expand-file-name "~/.config/deepin/qt-theme.ini")))
+    (if (file-readable-p scale-file)
+        (with-temp-buffer
+          (insert-file-contents scale-file)
+          (goto-char (point-min))
+          (if (re-search-forward "^ScreenScaleFactors=\\([0-9.]+\\)" nil t)
+              (string-to-number (match-string 1))
+            1.0))
+      1.0)))
+
+(defun xcwen/default-font-size ()
+  "Return the configured default font size."
+  (max (round (* 20 (xcwen/deepin-screen-scale))) 20))
+
 (add-to-list 'image-types 'svg)
 (load (concat (file-name-directory load-file-name) "../.emacs.d/layers/+tools/shell/config")
       nil t )
@@ -118,14 +134,12 @@ This function should only modify configuration layer settings."
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
      ;;ivy
-     helm
-
      ;; (chinese :variables
      ;;          chinese-enable-youdao-dict t
      ;;          )
 
      protobuf
-     (conda :variables conda-anaconda-home "/home/jim/anaconda3")
+     (conda :variables conda-anaconda-home (expand-file-name "anaconda3" (getenv "HOME")))
 
      better-defaults
      emacs-lisp
@@ -364,7 +378,7 @@ It should only modify the values of Spacemacs settings."
                               "JetBrains Mono"
                               ;;"Source Code Pro"
                               ;;:size  (if (string= (system-name) "jim-PC" )  48 24  )
-                              :size (max (round(* 20 (string-to-number (shell-command-to-string "grep ScreenScaleFactors  ~/.config/deepin/qt-theme.ini | awk -F= '{print $2}' ") ))) 20 )
+                              :size (xcwen/default-font-size)
 
                               :weight 'normal
                               :width 'normal

@@ -79,7 +79,7 @@
           (cond
            ((stringp status)
             (error "`phpcbf` killed by signal %s%s" status stderr))
-           ((not (equal 1 status))
+           ((not (memq status '(0 1)))
             (error "`phpcbf` failed with code %d%s" status stderr))
            (t (message (format "Formatted to standard '%s'" phpcbf-standard))))))
     (delete-file temp-file)

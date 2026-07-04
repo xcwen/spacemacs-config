@@ -20,20 +20,18 @@
 (require 'f)
 (require 'cl-lib)
 (require 'evil)
-(require 'multi-term)
 (require 'yasnippet)
 (require 'xref)
 (require 'flycheck)
 (require 'ac-php-core)
-(require 'treemacs )
-(require 'lsp-sqls )
-(require 'lsp-eslint)
 (require 'sgml-mode)
-(require 'multi-vterm)
 (require 'phpcbf)
 ;; (require 'php-mode)
 (require 'company)
-(require 'flutter)
+(autoload 'multi-term "multi-term" nil t)
+(autoload 'multi-vterm "multi-vterm" nil t)
+(autoload 'multi-vterm-next "multi-vterm" nil t)
+(autoload 'multi-vterm-prev "multi-vterm" nil t)
 ;;; Commentary:
 (defvar term-local-cmd-start-line-regex-str
   "^⎣ $"
@@ -484,10 +482,10 @@ The test for presence of the car of ELT-CONS is done with `equal'."
       )
     (when (string= major-mode "vue-mode")
       (if (check-file-ts)
-          (progn
-            (lsp-eslint-apply-all-fixes)
-            )
-        (lsp-format-buffer))
+          (when (fboundp 'lsp-eslint-apply-all-fixes)
+            (lsp-eslint-apply-all-fixes))
+        (when (fboundp 'lsp-format-buffer)
+          (lsp-format-buffer)))
 
       )
     (when (string= major-mode "web-mode")
@@ -498,17 +496,20 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 
 
     (whitespace-cleanup)
-    (flycheck-buffer)
+    (when (fboundp 'flycheck-buffer)
+      (flycheck-buffer))
 
 
 
-    (setq  pos (flycheck-next-error-pos 1 t ))
+    (setq  pos (when (fboundp 'flycheck-next-error-pos)
+                 (flycheck-next-error-pos 1 t)))
     (if pos
         (progn
 
           (xref-push-marker-stack)
           (goto-char pos)
-          (flycheck-explain-error-at-point)
+          (when (fboundp 'flycheck-explain-error-at-point)
+            (flycheck-explain-error-at-point))
           )
 
       (message "No more Flycheck errors: pos:%S, %S" cur-pos (point-max))
@@ -1229,7 +1230,10 @@ PROJECT-NAME, PROJECT-ROOT-DIR CTRL-NAME, ACTION-NAME."
   "D."
   (interactive )
   (delete-other-windows)
-  (delete-window (treemacs-get-local-window))
+  (when (fboundp 'treemacs-get-local-window)
+    (let ((treemacs-window (treemacs-get-local-window)))
+      (when (window-live-p treemacs-window)
+        (delete-window treemacs-window))))
   )
 
 ;;最化大
@@ -1816,7 +1820,9 @@ object satisfying `yas--field-p' to restrict the expansion to."
     ;;(setq  cmd (concat "desc   "  cur-word  ";\n show create table " cur-word ";" ) )
     (setq  cmd (concat "desc   "  cur-word  ";" ) )
     (message "==%s" cmd)
-    (lsp-sql-execute-query cmd)
+    (if (fboundp 'lsp-sql-execute-query)
+        (lsp-sql-execute-query cmd)
+      (message "lsp-sqls is not loaded"))
     ))
 
 (defun yas-reset ()
@@ -2083,6 +2089,8 @@ object satisfying `yas--field-p' to restrict the expansion to."
 (defun flutter-monitor( &optional arg)
   "Doc ARG ."
   (interactive "P")
+  (unless (or (featurep 'flutter) (require 'flutter nil t))
+    (user-error "flutter package is not available"))
   (let (cur-frame-count)
     (when  (and arg ( =  arg 1) )
       (kill-buffer "*Flutter*" )

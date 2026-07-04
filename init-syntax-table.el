@@ -53,8 +53,8 @@
 
 
 
-(require 'org)
-(modify-syntax-entry ?_ "w" org-mode-syntax-table) ;将 _ 加入 单词中
+(with-eval-after-load 'org
+  (modify-syntax-entry ?_ "w" org-mode-syntax-table)) ;将 _ 加入 单词中
 
 
 
