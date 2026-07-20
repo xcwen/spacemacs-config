@@ -1124,7 +1124,7 @@ PROJECT-NAME, PROJECT-ROOT-DIR CTRL-NAME, ACTION-NAME."
             (setq tmp-arr (s-match  "/proto/src\\(/\\([^/]*\\)\\)?/\\([a-zA-Z0-9_-]*\\)__\\([a-zA-Z0-9_-]*\\).proto"  path-name ) )
             (when tmp-arr
               (setq  project-name (nth 2 tmp-arr) )
-              (setq  ctrl-name   (my-s-upper-camel-case (nth 3 tmp-arr)) )
+              (setq  ctrl-name    (nth 3 tmp-arr) )
               (setq  action-name   (nth 4 tmp-arr) )
               (setq path-fix (concat "/" (my-s-upper-camel-case ctrl-name) ".php" ) )
               (when  project-name
