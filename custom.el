@@ -23,16 +23,16 @@
               elisp-def elisp-demos elisp-slime-nav elixir-mode emmet-mode emr
               esh-help eshell-prompt-extras eshell-z evil-anzu evil-args
               evil-cleverparens evil-collection evil-easymotion evil-escape
-              evil-evilified-state evil-exchange evil-goggles evil-iedit-state
-              evil-indent-plus evil-lion evil-lisp-state evil-matchit
-              evil-nerd-commenter evil-numbers evil-org evil-surround
-              evil-textobj-line evil-tutor evil-visual-mark-mode evil-visualstar
-              expand-region eyebrowse fancy-battery flutter flycheck-credo
-              flycheck-elsa flycheck-kotlin flycheck-package flycheck-pos-tip
-              geben gh-md git-link git-messenger git-timemachine
-              gitignore-templates go-eldoc go-fill-struct go-gen-test go-guru
-              go-impl go-rename go-tag godoctor golden-ratio google-c-style
-              google-translate groovy-imports groovy-mode helm-ag
+              evil-evilified-state evil-exchange evil-ghostel evil-goggles
+              evil-iedit-state evil-indent-plus evil-lion evil-lisp-state
+              evil-matchit evil-nerd-commenter evil-numbers evil-org
+              evil-surround evil-textobj-line evil-tutor evil-visual-mark-mode
+              evil-visualstar expand-region eyebrowse fancy-battery flutter
+              flycheck-credo flycheck-elsa flycheck-kotlin flycheck-package
+              flycheck-pos-tip geben gh-md git-link git-messenger
+              git-timemachine gitignore-templates go-eldoc go-fill-struct
+              go-gen-test go-guru go-impl go-rename go-tag godoctor golden-ratio
+              google-c-style google-translate groovy-imports groovy-mode helm-ag
               helm-c-yasnippet helm-cider helm-comint helm-company helm-css-scss
               helm-descbinds helm-ls-git helm-lsp helm-make helm-mode-manager
               helm-org helm-projectile helm-purpose helm-pydoc helm-swoop

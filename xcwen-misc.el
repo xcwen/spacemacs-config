@@ -463,58 +463,55 @@ The test for presence of the car of ELT-CONS is done with `equal'."
     ))
 
 
-(defvar cleanup-flag t )
+(defvar cleanup-flag t
+  "PHP 格式化开关；每次执行 `cleanup-and-goto-error' 时反转。
+只有反转后的值为非 nil 时才运行 `phpcbf'，以降低频繁格式化的开销。")
 ;; (switch-cc-to-h ))))
 (defun cleanup-and-goto-error ()
-  "DOCSTRING."
-  (interactive)
+  "清理并格式化当前缓冲区，然后跳到下一个 Flycheck 错误。
 
-  (let (pos cur-pos
-            (flycheck-navigation-minimum-level 'error)
-            )
-    (setq cur-pos (point ) )
+PHP 缓冲区每隔一次调用运行一次 `phpcbf'。Vue 缓冲区根据文件
+类型应用 ESLint 修复或 LSP 格式化，Web 缓冲区使用 SGML 格式化。
+如果找到错误，则先记录当前位置以便通过 xref 返回。"
+  (interactive)
+  (let ((original-position (point))
+        (flycheck-navigation-minimum-level 'error))
     (whitespace-cleanup)
 
-    (when  (check-in-php-mode)
-
-      (setq cleanup-flag  (not cleanup-flag ) )
-      (when cleanup-flag (phpcbf))
-      )
-    (when (string= major-mode "vue-mode")
+    ;; 根据当前主模式调用对应的格式化器。
+    (cond
+     ((check-in-php-mode)
+      ;; phpcbf 较慢，因此沿用原有策略：每两次调用执行一次。
+      (setq cleanup-flag (not cleanup-flag))
+      (when cleanup-flag
+        (phpcbf)))
+     ((eq major-mode 'vue-mode)
       (if (check-file-ts)
           (when (fboundp 'lsp-eslint-apply-all-fixes)
             (lsp-eslint-apply-all-fixes))
         (when (fboundp 'lsp-format-buffer)
-          (lsp-format-buffer)))
+          (lsp-format-buffer))))
+     ((eq major-mode 'web-mode)
+      (sgml-pretty-print (point-min) (point-max))))
 
-      )
-    (when (string= major-mode "web-mode")
-      (message "xx web-mode"  )
-      (sgml-pretty-print 0  (point-max) )
-      )
-
-
-
+    ;; 格式化器可能再次产生多余空白，完成后统一清理。
     (whitespace-cleanup)
     (when (fboundp 'flycheck-buffer)
       (flycheck-buffer))
 
+    ;; 只导航到 error 级别，warning 和 info 不在本命令的处理范围内。
+    (let ((error-position
+           (when (fboundp 'flycheck-next-error-pos)
+             (flycheck-next-error-pos 1 t))))
+      (if error-position
+          (progn
+            (xref-push-marker-stack)
+            (goto-char error-position)
+            (when (fboundp 'flycheck-explain-error-at-point)
+              (flycheck-explain-error-at-point)))
+        (message "No more Flycheck errors: pos:%S, %S"
+                 original-position (point-max))))))
 
-
-    (setq  pos (when (fboundp 'flycheck-next-error-pos)
-                 (flycheck-next-error-pos 1 t)))
-    (if pos
-        (progn
-
-          (xref-push-marker-stack)
-          (goto-char pos)
-          (when (fboundp 'flycheck-explain-error-at-point)
-            (flycheck-explain-error-at-point))
-          )
-
-      (message "No more Flycheck errors: pos:%S, %S" cur-pos (point-max))
-      ))
-  )
 (defun switch-file-opt-ts-url ()
   "D."
 
