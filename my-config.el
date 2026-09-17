@@ -29,6 +29,7 @@
 
 (require 'xcwen-misc)
 (require 'init-syntax-table)
+(require 'init-sqruff)
 ;; (load  (expand-file-name "php-doc-block.el" dotspacemacs-directory) )
 (require 'core-jump)
 
@@ -42,7 +43,8 @@
 
 (with-eval-after-load 'php-ts-mode
   (spacemacs|define-jump-handlers php-ts-mode)
-  (add-to-list 'spacemacs-jump-handlers-php-ts-mode 'ac-php-find-symbol-at-point))
+  (add-to-list 'spacemacs-jump-handlers-php-ts-mode
+               '(ac-php-find-symbol-at-point :exclusive t)))
 
 (defun set-main-key()
   "D."
@@ -258,6 +260,18 @@ you should place your code here."
   (set-buffer-file-coding-system 'utf-8)
   (add-to-list 'file-coding-system-alist '("\\.php" . utf-8) )
   (add-to-list 'file-coding-system-alist '("\\.go" . utf-8) )
+
+  (defconst xcwen/vue-typescript-compat-sdk
+    (expand-file-name
+     ".cache/lsp/npm/@typescript/typescript6/lib/node_modules/@typescript/typescript6/lib"
+     user-emacs-directory))
+
+  (defun xcwen/vue-language-server-command ()
+    "Start Vue Language Server with the TypeScript 6 API compatibility SDK."
+    (list (lsp-package-path 'volar-language-server)
+          "--stdio"
+          (concat "--tsdk=" xcwen/vue-typescript-compat-sdk)))
+
   (with-eval-after-load 'lsp-mode
     (let ((brainrot-lsp (expand-file-name "brainrot-lsp/brainrot-lsp" (getenv "HOME"))))
       (when (file-executable-p brainrot-lsp)
@@ -269,6 +283,15 @@ you should place your code here."
                                (string-match-p "\\.md\\'" filename)))
           :priority -1
           :server-id 'brainrot)))))
+
+  (with-eval-after-load 'lsp-volar
+    (when-let ((client (gethash 'vue-semantic-server lsp-clients)))
+      ;; Expand the struct setter only after lsp-mode has defined lsp--client.
+      (let ((connection
+             (lsp-stdio-connection #'xcwen/vue-language-server-command)))
+        (eval (list 'setf
+                    (list 'lsp--client-new-connection (list 'quote client))
+                    (list 'quote connection))))))
 
 
   (setq left-fringe-width 48)
@@ -812,6 +835,11 @@ you should place your code here."
        ))
 
 
+  (setq ac-php-tags-backend 'mago
+        ac-php-mago-tags-executable
+        "/Users/jim/ac-php/ac-php-mago-tags/target/release/ac-php-mago-tags")
+  ;; (setq ac-php-tags-backend 'phpctags)
+
   (evilmi-load-plugin-rules '(web-mode
                               vue-mode
                               html-mode
@@ -822,6 +850,7 @@ you should place your code here."
                               message-mode
                               mhtml-mode)
                             '(simple  template html))
+
 
   (setq flycheck-idle-change-delay  5)
   (setq company-idle-delay nil)

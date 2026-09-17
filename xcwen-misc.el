@@ -472,10 +472,12 @@ The test for presence of the car of ELT-CONS is done with `equal'."
 
 PHP 缓冲区每隔一次调用运行一次 `phpcbf'。Vue 缓冲区根据文件
 类型应用 ESLint 修复或 LSP 格式化，Web 缓冲区使用 SGML 格式化。
-如果找到错误，则先记录当前位置以便通过 xref 返回。"
+PHP 缓冲区跳转到 warning 及以上级别，其他模式只跳转到 error。
+如果找到问题，则先记录当前位置以便通过 xref 返回。"
   (interactive)
   (let ((original-position (point))
-        (flycheck-navigation-minimum-level 'error))
+        (flycheck-navigation-minimum-level
+         (if (check-in-php-mode) 'warning 'error)))
     (whitespace-cleanup)
 
     ;; 根据当前主模式调用对应的格式化器。
@@ -499,7 +501,7 @@ PHP 缓冲区每隔一次调用运行一次 `phpcbf'。Vue 缓冲区根据文件
     (when (fboundp 'flycheck-buffer)
       (flycheck-buffer))
 
-    ;; 只导航到 error 级别，warning 和 info 不在本命令的处理范围内。
+    ;; PHP 包含 warning；其他模式只导航到 error，所有模式均忽略 info。
     (let ((error-position
            (when (fboundp 'flycheck-next-error-pos)
              (flycheck-next-error-pos 1 t))))

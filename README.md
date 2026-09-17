@@ -219,13 +219,49 @@ rustup component add rust-analyzer
 
 ### vue/ts 补全
 
-需要更新安装  \@vue/language-server 1.x.x 版本, 2.0xx 无效
+TypeScript 7 没有旧版 `ts.server` JavaScript API。项目使用 TS7 编译器，
+Vue Language Server 通过 `@typescript/typescript6` 兼容 SDK 访问旧 API：
 ```
-/usr/bin/npm view \@vue/language-server versions
-/usr/bin/npm -g --prefix /home/jim/.emacs.d/.cache/lsp/npm/\@vue/language-server install \@vue/language-server@1.9.0-alpha.3
-
+npm install -g --prefix ~/.emacs.d/.cache/lsp/npm/@typescript/typescript6 @typescript/typescript6@6.0.2
 ```
 
+项目依赖使用并行安装：
+```json
+{
+  "@typescript/native": "npm:typescript@7.0.2",
+  "typescript": "npm:@typescript/typescript6@6.0.2",
+  "vue-tsc": "3.3.11"
+}
+```
+
+
+### SQL / MySQL
+
+SQL LSP 使用 `sqruff`，提供诊断和整缓冲区格式化：
+
+```bash
+brew install sqruff
+```
+
+在 SQL 项目根目录创建 `.sqruff`，设置 MySQL 方言：
+
+```ini
+[sqruff]
+dialect = mysql
+templater = raw
+```
+
+`init-sqruff.el` 注册 `sqruff lsp`，SQL 缓冲区仅选择 `sqruff`，
+不再自动启动 `sql-ls` 或 `sqls`。`SPC m ==` 使用 LSP 格式化整个缓冲区。
+项目的 `.sqruff` 决定解析方言，Emacs 的 SQL 高亮默认使用 MySQL。
+sqruff 不提供数据库表、字段补全，也不提供区域格式化。
+
+sqruff 0.40.0 的 LSP 实测没有回传语法解析错误；需要检查解析错误时，
+在 SQL 项目目录执行以下命令（不会修改文件）：
+
+```bash
+sqruff --parsing-errors lint .
+```
 
 ### go 补全 需要
 ```bash

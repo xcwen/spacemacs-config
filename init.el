@@ -81,8 +81,7 @@ This function should only modify configuration layer settings."
      (json :variables json-backend  'company-json)
      (templates :variables templates-private-directory "~/.spacemacs.d/templates")
      (sql :variables
-          sql-backend 'lsp
-          sql-lsp-sqls-workspace-config-path 'workspace)
+          sql-backend 'lsp)
      windows-scripts
      (dart
       :variables dart-server-sdk-path  (concat (getenv "HOME") "/flutter/bin/cache/dart-sdk/")

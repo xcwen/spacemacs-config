@@ -16,8 +16,8 @@
               avy-jump-helm-line bmx-mode bundler ccls centered-cursor-mode
               cider-eval-sexp-fu clean-aindent-mode clojure-snippets code-cells
               column-enforce-mode command-log-mode company-c-headers company-php
-              company-quickhelp company-web conda cpp-auto-include csv-mode
-              cython-mode dactyl-mode define-word devdocs diminish
+              company-quickhelp company-web conda cperl-mode cpp-auto-include
+              csv-mode cython-mode dactyl-mode define-word devdocs diminish
               dired-quick-sort disable-mouse disaster docker dockerfile-mode
               dotenv-mode drag-stuff drupal-mode dumb-jump edit-indirect
               elisp-def elisp-demos elisp-slime-nav elixir-mode emmet-mode emr
