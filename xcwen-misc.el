@@ -757,40 +757,664 @@ PHP 缓冲区跳转到 warning 及以上级别，其他模式只跳转到 error�
   )
 
 
-(defun my-jump-table-sql()
-  "DOCSTRING."
+(defun xcwen/php-table-sql-location-at-point ()
+  "Return the generated table model location for the PHP expression at point.
+
+The return value is a list containing the file name and line number."
+  (let* ((tags-data (ac-php-get-tags-data))
+         (inherit-map (ac-php-g--inherit-map tags-data))
+         (class-map (ac-php-g--class-map tags-data))
+         (symbol-ret (ac-php-find-symbol-at-point-pri tags-data))
+         (class-name (nth 2 symbol-ret))
+         (check-class-list
+          (and class-name
+               (ac-php--get-check-class-list
+                class-name inherit-map class-map tags-data)))
+         (generated-class-name (nth 1 check-class-list))
+         (class-member-list
+          (and generated-class-name
+               (gethash generated-class-name class-map)))
+         definition-location location-parts file-list)
+    (unless (and (vectorp class-member-list)
+                 (> (length class-member-list) 0)
+                 (vectorp (aref class-member-list 0)))
+      (user-error "无法定位当前数据表的生成模型"))
+    (setq definition-location (aref (aref class-member-list 0) 3)
+          location-parts (s-split ":" definition-location)
+          file-list (ac-php-g--file-list tags-data))
+    (unless (and (car location-parts)
+                 (nth 1 location-parts)
+                 (< (string-to-number (car location-parts))
+                    (length file-list)))
+      (user-error "数据表模型的位置无效: %s" definition-location))
+    (list (aref file-list (string-to-number (car location-parts)))
+          (string-to-number (nth 1 location-parts)))))
+
+(defun my-jump-table-sql ()
+  "Jump to the CREATE TABLE statement for the PHP table at point."
   (interactive)
-  (let ((tags-data (ac-php-get-tags-data))
-        symbol-ret check-class-list  class-name inherit-map class-map z-class-name class-member-list  file-list  tmp-arr jump-pos )
-
-    (setq inherit-map (ac-php-g--inherit-map tags-data))
-    (setq class-map (ac-php-g--class-map tags-data))
-    (setq symbol-ret (ac-php-find-symbol-at-point-pri tags-data))
-    (message  "KKKK:%S " symbol-ret )
-
-    (setq class-name (nth 2 symbol-ret))
-    (setq check-class-list (ac-php--get-check-class-list class-name inherit-map class-map))
-    (setq z-class-name (nth 1 check-class-list ))
-
-
-    (setq class-member-list (gethash z-class-name class-map))
-
-
-
-    (setq tmp-arr (s-split ":" (aref  (aref   class-member-list 0 ) 3 )))
-    (setq file-list (ac-php-g--file-list tags-data))
-    (setq jump-pos
-          (concat
-           (aref file-list (string-to-number (nth 0 tmp-arr )))
-           ":" (nth 1 tmp-arr)))
-
+  (let* ((location (xcwen/php-table-sql-location-at-point))
+         (jump-pos (format "%s:%d" (car location) (cadr location))))
     (ac-php-location-stack-push)
-    (message "jump-pos :%S" jump-pos)
     (ac-php-goto-location jump-pos)
-    (re-search-forward  "CREATE TABLE" )
+    (unless (re-search-forward "CREATE[ \t\n]+TABLE\\_>" nil t)
+      (user-error "生成模型中没有 CREATE TABLE 定义"))))
 
-    )
-  )
+(defun xcwen/php-string-bounds-at-point ()
+  "Return the bounds of the PHP string at point, including its quotes."
+  (catch 'bounds
+    (dolist (pos (delete-dups
+                  (list (point)
+                        (min (point-max) (1+ (point)))
+                        (max (point-min) (1- (point))))))
+      (let* ((state (syntax-ppss pos))
+             (start (and (nth 3 state) (nth 8 state)))
+             end)
+        (when start
+          (setq end (ignore-errors (scan-sexps start 1)))
+          (when end
+            (throw 'bounds (cons start end))))))))
+
+(defun xcwen/php-field-list-context-at-point ()
+  "Return field-list context when point is on a field_get_list argument.
+
+The result contains the string bounds, selected field names, and the point of
+the table property used as the call receiver."
+  (let ((bounds (xcwen/php-string-bounds-at-point)))
+    (when bounds
+      (let* ((text (buffer-substring-no-properties
+                    (1+ (car bounds)) (1- (cdr bounds))))
+             (parts (mapcar #'s-trim (s-split "," text)))
+             table-point)
+        (when (and parts
+                   (cl-every
+                    (lambda (field)
+                      (string-match-p
+                       "\\`[A-Za-z_][A-Za-z0-9_]*\\'" field))
+                    parts))
+          (save-excursion
+            (goto-char (car bounds))
+            (condition-case nil
+                (progn
+                  (backward-up-list 1)
+                  (when (eq (char-after) ?\()
+                    (let (method-end method-start receiver-end)
+                      (skip-chars-backward " \t\r\n")
+                      (setq method-end (point))
+                      (when (and
+                             (re-search-backward
+                              "->field_get_list\\(?:_limit_1\\)?\\_>"
+                              (max (point-min) (- (point) 80)) t)
+                             (= (match-end 0) method-end))
+                        (setq method-start (match-beginning 0))
+                        (goto-char method-start)
+                        (skip-chars-backward " \t\r\n")
+                        (setq receiver-end (point))
+                        (when (and
+                               (re-search-backward
+                                "->\\([A-Za-z_][A-Za-z0-9_]*\\)"
+                                (max (point-min) (- (point) 160)) t)
+                               (= (match-end 0) receiver-end))
+                          (setq table-point (match-beginning 1)))))))
+              (scan-error nil)))
+          (when table-point
+            (list :bounds bounds :fields parts :table-point table-point)))))))
+
+(defun xcwen/php-sql-type-to-php-type (sql-type)
+  "Convert SQL-TYPE to the PHP type used in an array shape."
+  (let ((type (downcase sql-type)))
+    (cond
+     ((member type '("tinyint" "smallint" "mediumint" "int" "integer"
+                     "bigint" "bit" "year"))
+      "int")
+     ((member type '("decimal" "numeric" "dec" "fixed" "float" "double"
+                     "real"))
+      "float")
+     ((member type '("bool" "boolean")) "bool")
+     ((member type '("char" "varchar" "tinytext" "text" "mediumtext"
+                     "longtext" "binary" "varbinary" "tinyblob" "blob"
+                     "mediumblob" "longblob" "enum" "set" "date" "datetime"
+                     "timestamp" "time" "json"))
+      "string")
+     (t "mixed"))))
+
+(defun xcwen/php-table-column-types (location)
+  "Read column PHP types from the CREATE TABLE at LOCATION."
+  (let ((file (car location))
+        (line (cadr location))
+        (columns (make-hash-table :test #'equal))
+        create-found)
+    (with-current-buffer (find-file-noselect file)
+      (save-restriction
+        (widen)
+        (save-excursion
+          (goto-char (point-min))
+          (forward-line (max 0 (1- line)))
+          (setq create-found
+                (re-search-forward "CREATE[ \t\n]+TABLE\\_>" nil t))
+          (unless create-found
+            (user-error "生成模型 %s 中没有 CREATE TABLE 定义" file))
+          (forward-line 1)
+          (while (and (not (eobp))
+                      (not (looking-at-p "[ \t]*\\(?:\\*[ \t]*\\)?)[ \t]*")))
+            (let ((line-text (buffer-substring-no-properties
+                              (line-beginning-position) (line-end-position))))
+              (when (string-match
+                     "^[ \t]*\\(?:\\*[ \t]*\\)?`\\([^`]+\\)`[ \t]+\\([A-Za-z]+\\)"
+                     line-text)
+                (let* ((field (match-string 1 line-text))
+                       (sql-type (match-string 2 line-text))
+                       (php-type (xcwen/php-sql-type-to-php-type sql-type))
+                       (nullable
+                        (not (string-match-p
+                              "\\_<NOT[ \t]+NULL\\_>" (upcase line-text)))))
+                  (puthash field
+                           (concat php-type (if nullable "|null" ""))
+                           columns))))
+            (forward-line 1)))))
+    columns))
+
+(defun xcwen/php-array-shape-return-text (fields column-types indent)
+  "Build an array-shape @return for FIELDS using COLUMN-TYPES and INDENT."
+  (let ((remaining fields)
+        lines)
+    (while remaining
+      (push (format "%s *     %s: %s%s"
+                    indent (car remaining)
+                    (gethash (car remaining) column-types)
+                    (if (cdr remaining) "," ""))
+            lines)
+      (setq remaining (cdr remaining)))
+    (concat indent " * @return  array{\n"
+            (mapconcat #'identity (nreverse lines) "\n")
+            "\n" indent " * }|false")))
+
+(defun xcwen/php-return-annotation-end (doc-end)
+  "Return the end of the @return annotation before DOC-END.
+
+Point must be on the line containing @return."
+  (let ((depth 0) seen-array done)
+    (while (not done)
+      (let ((line (buffer-substring-no-properties
+                   (point) (min doc-end (line-end-position)))))
+        (when (string-match-p "array[ \t]*{" line)
+          (setq seen-array t))
+        (when seen-array
+          (setq depth (+ depth
+                         (cl-count ?\{ line)
+                         (- (cl-count ?\} line)))))
+        (setq done (or (not seen-array) (<= depth 0) (>= (point) doc-end))))
+      (unless done
+        (forward-line 1)))
+    (min doc-end (line-end-position))))
+
+(defun xcwen/php-update-current-function-return (return-text)
+  "Replace the current PHP function's @return annotation with RETURN-TEXT."
+  (let (function-start indent doc-start doc-end return-start return-end
+                       single-line-doc leading-doc-text)
+    (save-excursion
+      (unless (ac-php--beginning-of-defun)
+        (user-error "无法定位当前 PHP 函数"))
+      (setq function-start (point)
+            indent (make-string (current-indentation) ?\s))
+      (goto-char function-start)
+      (skip-chars-backward " \t\r\n")
+      (when (and (>= (- (point) 2) (point-min))
+                 (string= (buffer-substring-no-properties
+                           (- (point) 2) (point))
+                          "*/"))
+        (setq doc-end (point))
+        (when (search-backward "/**" nil t)
+          (setq doc-start (point)
+                single-line-doc
+                (= (line-number-at-pos doc-start)
+                   (line-number-at-pos doc-end)))))
+      (if (not doc-start)
+          (progn
+            (goto-char function-start)
+            (beginning-of-line)
+            (insert indent "/**\n" return-text "\n" indent " */\n"))
+        (goto-char doc-start)
+        (if (not (re-search-forward "@return\\_>" doc-end t))
+            (if single-line-doc
+                (progn
+                  (setq leading-doc-text
+                        (s-trim
+                         (buffer-substring-no-properties
+                          (+ doc-start 3) (- doc-end 2))))
+                  (delete-region doc-start doc-end)
+                  (goto-char doc-start)
+                  (insert "/**\n")
+                  (unless (string-empty-p leading-doc-text)
+                    (insert indent " * " leading-doc-text "\n"))
+                  (insert return-text "\n" indent " */"))
+              (goto-char (- doc-end 2))
+              (beginning-of-line)
+              (insert return-text "\n"))
+          (setq return-start (line-beginning-position))
+          (if single-line-doc
+              (progn
+                (setq leading-doc-text
+                      (s-trim
+                       (buffer-substring-no-properties
+                        (+ doc-start 3) (match-beginning 0))))
+                (delete-region doc-start doc-end)
+                (goto-char doc-start)
+                (insert "/**\n")
+                (unless (string-empty-p leading-doc-text)
+                  (insert indent " * " leading-doc-text "\n"))
+                (insert return-text "\n" indent " */"))
+            (beginning-of-line)
+            (setq return-end (xcwen/php-return-annotation-end doc-end))
+            (when (< return-end doc-end)
+              (setq return-end (min doc-end (1+ return-end))))
+            (delete-region return-start return-end)
+            (goto-char return-start)
+            (insert return-text "\n")))))))
+
+(defun xcwen/php-field-list-update-return (&optional context)
+  "Update the current function's @return from its field_get_list fields."
+  (interactive)
+  (let* ((field-context (or context
+                            (xcwen/php-field-list-context-at-point)))
+         (fields (plist-get field-context :fields))
+         (table-point (plist-get field-context :table-point))
+         location column-types missing return-text)
+    (unless field-context
+      (user-error "光标不在 field_get_list 的字段字符串上"))
+    (save-excursion
+      (goto-char table-point)
+      (setq location (xcwen/php-table-sql-location-at-point)))
+    (setq column-types (xcwen/php-table-column-types location))
+    (dolist (field fields)
+      (unless (gethash field column-types)
+        (push field missing)))
+    (when missing
+      (user-error "CREATE TABLE 中找不到字段: %s"
+                  (mapconcat #'identity (nreverse missing) ", ")))
+    (save-excursion
+      (ac-php--beginning-of-defun)
+      (setq return-text
+            (xcwen/php-array-shape-return-text
+             fields column-types
+             (make-string (current-indentation) ?\s))))
+    (xcwen/php-update-current-function-return return-text)
+    (message "已更新 @return: %s" (mapconcat #'identity fields ", "))))
+
+(defun xcwen/php-variable-at-point ()
+  "Return the PHP variable name at point, without its dollar sign."
+  (let ((origin (point)) variable)
+    (save-excursion
+      (goto-char (line-beginning-position))
+      (while (and (not variable)
+                  (re-search-forward
+                   "\\$\\([A-Za-z_][A-Za-z0-9_]*\\)"
+                   (line-end-position) t))
+        (when (and (<= (match-beginning 0) origin)
+                   (<= origin (match-end 0)))
+          (setq variable (match-string-no-properties 1)))))
+    variable))
+
+(defun xcwen/php-string-literals-in-region (start end)
+  "Return PHP string literal contents between START and END."
+  (let (strings)
+    (save-excursion
+      (goto-char start)
+      (while (re-search-forward "[\"']" end t)
+        (let* ((quote-start (match-beginning 0))
+               (state (syntax-ppss (min end (1+ quote-start))))
+               (string-start (nth 8 state))
+               string-end)
+          (when (and (nth 3 state) (= string-start quote-start))
+            (setq string-end (ignore-errors (scan-sexps quote-start 1)))
+            (when (and string-end (<= string-end end))
+              (push (buffer-substring-no-properties
+                     (1+ quote-start) (1- string-end))
+                    strings)
+              (goto-char string-end))))))
+    (nreverse strings)))
+
+(defun xcwen/php-sql-split-columns (sql)
+  "Split SQL select text at top-level commas."
+  (let ((index 0)
+        (start 0)
+        (depth 0)
+        quote escaped columns)
+    (while (< index (length sql))
+      (let ((char (aref sql index)))
+        (cond
+         (quote
+          (cond
+           (escaped (setq escaped nil))
+           ((eq char ?\\) (setq escaped t))
+           ((eq char quote) (setq quote nil))))
+         ((memq char '(?\" ?\' ?`)) (setq quote char))
+         ((eq char ?\() (setq depth (1+ depth)))
+         ((eq char ?\)) (setq depth (max 0 (1- depth))))
+         ((and (eq char ?,) (= depth 0))
+          (let ((column (s-trim (substring-no-properties sql start index))))
+            (unless (string-empty-p column)
+              (push column columns)))
+          (setq start (1+ index)))))
+      (setq index (1+ index)))
+    (let ((column (s-trim (substring-no-properties sql start))))
+      (unless (string-empty-p column)
+        (push column columns)))
+    (nreverse columns)))
+
+(defun xcwen/php-builder-alias-in-region (start end default-alias)
+  "Return an as() alias between START and END, or DEFAULT-ALIAS."
+  (save-excursion
+    (goto-char start)
+    (if (re-search-forward
+         "->as[ \t\r\n]*(?[ \t\r\n]*[\"']\\([^\"']+\\)[\"']"
+         end t)
+        (match-string-no-properties 1)
+      default-alias)))
+
+(defun xcwen/php-builder-item-context-at-point ()
+  "Return SqlBuilder foreach-item context when point is on its item variable."
+  (let ((item (xcwen/php-variable-at-point))
+        (origin (point))
+        function-start foreach-start foreach-open foreach-close list-variable
+        list-assignment-start list-assignment-end builder builder-start
+        builder-end base-table-point base-alias joins select-sql)
+    (when item
+      (save-excursion
+        (when (ac-php--beginning-of-defun)
+          (setq function-start (point)))
+      (when function-start
+        (save-excursion
+          (goto-char origin)
+          (end-of-line)
+          (let ((foreach-regexp
+                 (concat
+                  "foreach[ \t\r\n]*(?[ \t\r\n]*"
+                  "\\$\\([A-Za-z_][A-Za-z0-9_]*\\)[ \t\r\n]+"
+                  "as[ \t\r\n]+"
+                  "\\(?:\\$[A-Za-z_][A-Za-z0-9_]*[ \t\r\n]*=>[ \t\r\n]*\\)?"
+                  "&?[ \t\r\n]*\\$\\([A-Za-z_][A-Za-z0-9_]*\\)"
+                  "[ \t\r\n]*)?[ \t\r\n]*{")))
+            (while (and (not foreach-start)
+                        (re-search-backward foreach-regexp function-start t))
+              (when (string= item (match-string-no-properties 2))
+                (setq foreach-start (match-beginning 0)
+                      list-variable (match-string-no-properties 1)
+                      foreach-open (1- (match-end 0))
+                      foreach-close
+                      (ignore-errors (1- (scan-sexps foreach-open 1))))))))
+        (when (and foreach-start
+                   (or (<= origin foreach-open)
+                       (and foreach-close (<= origin foreach-close))))
+          (save-excursion
+            (goto-char foreach-start)
+            (let ((assignment-regexp
+                   (concat "\\$" (regexp-quote list-variable)
+                           "[ \t\r\n]*=[ \t\r\n]*"
+                           "\\$\\([A-Za-z_][A-Za-z0-9_]*\\)[ \t\r\n]*->")))
+              (when (re-search-backward assignment-regexp function-start t)
+                (setq list-assignment-start (match-beginning 0)
+                      builder (match-string-no-properties 1))
+                (save-excursion
+                  (goto-char (match-end 0))
+                  (when (re-search-forward
+                         "get_list[ \t\r\n]*(" foreach-start t)
+                    (setq list-assignment-end
+                          (or (ignore-errors
+                                (scan-sexps (1- (match-end 0)) 1))
+                              (match-end 0))))))))
+          (when (and builder list-assignment-end)
+            (save-excursion
+              (goto-char list-assignment-start)
+              (let ((builder-regexp
+                     (concat "\\$" (regexp-quote builder)
+                             "[ \t\r\n]*=[ \t\r\n]*"
+                             "\\$this[ \t\r\n]*->[ \t\r\n]*"
+                             "\\([A-Za-z_][A-Za-z0-9_]*\\)")))
+                (when (re-search-backward builder-regexp function-start t)
+                  (setq builder-start (match-beginning 0)
+                        base-table-point (match-beginning 1))
+                  (save-excursion
+                    (goto-char (match-end 0))
+                    (when (re-search-forward
+                           "->get_sql_builder[ \t\r\n]*(" list-assignment-start t)
+                      (setq builder-end
+                            (or (ignore-errors
+                                  (scan-sexps (1- (match-end 0)) 1))
+                                (match-end 0)))
+                      (setq base-alias
+                            (xcwen/php-builder-alias-in-region
+                             base-table-point builder-end
+                             (match-string-no-properties 1)))))))))
+          (when builder-end
+            (save-excursion
+              (goto-char builder-end)
+              (let ((join-regexp
+                     (concat
+                      "\\$" (regexp-quote builder)
+                      "[ \t\r\n]*->[ \t\r\n]*"
+                      "\\(left_join\\|right_join\\|inner_join\\|join\\)"
+                      "[ \t\r\n]*(?[ \t\r\n]*"
+                      "\\$this[ \t\r\n]*->[ \t\r\n]*"
+                      "\\([A-Za-z_][A-Za-z0-9_]*\\)")))
+                (while (re-search-forward join-regexp list-assignment-end t)
+                  (let* ((join-type (match-string-no-properties 1))
+                         (table-name (match-string-no-properties 2))
+                         (table-point (match-beginning 2))
+                         (argument-end
+                          (save-excursion
+                            (or (and (re-search-forward "," list-assignment-end t)
+                                     (point))
+                                list-assignment-end)))
+                         (alias (xcwen/php-builder-alias-in-region
+                                 table-point argument-end table-name)))
+                    (push (list :alias alias :table-point table-point
+                                :join-type join-type)
+                          joins)))))
+            (save-excursion
+              (goto-char builder-start)
+              (let ((select-regexp
+                     (concat "\\$" (regexp-quote builder)
+                             "[ \t\r\n]*->[ \t\r\n]*select"
+                             "[ \t\r\n]*("))
+                    select-open select-close)
+                (while (re-search-forward select-regexp list-assignment-end t)
+                  (setq select-open (1- (match-end 0))
+                        select-close (ignore-errors
+                                       (scan-sexps select-open 1)))
+                  (when (and select-close
+                             (<= select-close list-assignment-end))
+                    (setq select-sql
+                          (apply #'concat
+                                 (xcwen/php-string-literals-in-region
+                                  (1+ select-open) (1- select-close)))))))))
+          (when (and base-table-point select-sql
+                     (not (string-empty-p (s-trim select-sql))))
+            (list :item item
+                  :foreach-open foreach-open
+                  :foreach-close foreach-close
+                  :base (list :alias base-alias
+                              :table-point base-table-point
+                              :join-type "base")
+                  :joins (nreverse joins)
+                  :select select-sql)))))))
+
+(defun xcwen/php-builder-load-table-info (table)
+  "Add CREATE TABLE type metadata to TABLE."
+  (let (location)
+    (save-excursion
+      (goto-char (plist-get table :table-point))
+      (setq location (xcwen/php-table-sql-location-at-point)))
+    (append table
+            (list :location location
+                  :types (xcwen/php-table-column-types location)))))
+
+(defun xcwen/php-builder-table-by-alias (alias tables)
+  "Return the table named ALIAS from TABLES."
+  (cl-find-if
+   (lambda (table)
+     (string= (downcase alias)
+              (downcase (or (plist-get table :alias) ""))))
+   tables))
+
+(defun xcwen/php-builder-column-type (qualifier field tables)
+  "Return FIELD's PHP type from TABLES, optionally using QUALIFIER."
+  (if qualifier
+      (let ((table (xcwen/php-builder-table-by-alias qualifier tables)))
+        (unless table
+          (user-error "select 使用了未知表别名: %s" qualifier))
+        (or (gethash field (plist-get table :types))
+            (user-error "表别名 %s 中找不到字段: %s" qualifier field)))
+    (or (gethash field (plist-get (car tables) :types))
+        (let (matches)
+          (dolist (table (cdr tables))
+            (when-let ((type (gethash field (plist-get table :types))))
+              (push type matches)))
+          (cond
+           ((= (length matches) 1) (car matches))
+           ((> (length matches) 1)
+            (user-error "字段 %s 同时存在于多个 join 表，请加表别名" field))
+           (t (user-error "CREATE TABLE 中找不到字段: %s" field)))))))
+
+(defun xcwen/php-builder-select-field (column tables)
+  "Convert one selected COLUMN into an array-shape field using TABLES."
+  (let ((case-fold-search t)
+        (source (s-trim column))
+        output qualifier field type)
+    (when (string-match
+           "\\`\\(.+\\)[ \t]+as[ \t]+`?\\([A-Za-z_][A-Za-z0-9_]*\\)`?[ \t]*\\'"
+           source)
+      (setq output (match-string-no-properties 2 source)
+            source (s-trim (match-string-no-properties 1 source))))
+    (when (and (not output)
+               (string-match
+                "\\`\\(.+[])`]\\)[ \t]+`?\\([A-Za-z_][A-Za-z0-9_]*\\)`?[ \t]*\\'"
+                source))
+      (setq output (match-string-no-properties 2 source)
+            source (s-trim (match-string-no-properties 1 source))))
+    (if (string-match
+         "\\`\\(?:`?\\([A-Za-z_][A-Za-z0-9_]*\\)`?\\.\\)?`?\\([A-Za-z_][A-Za-z0-9_]*\\)`?\\'"
+         source)
+        (setq qualifier (match-string-no-properties 1 source)
+              field (match-string-no-properties 2 source)
+              output (or output field)
+              type (xcwen/php-builder-column-type qualifier field tables))
+      (unless output
+        (user-error "无法确定 select 表达式的返回字段名: %s" column))
+      (setq type
+            (cond
+             ((string-match-p "\\`[ \t]*count[ \t]*(" source) "int")
+             ((string-match-p
+               "\\`[ \t]*\\(?:concat\\|group_concat\\|date_format\\)[ \t]*("
+               source)
+              "string")
+             (t "mixed"))))
+    (cons output type)))
+
+(defun xcwen/php-array-shape-var-text (fields item indent)
+  "Build a PHPDoc array shape for FIELDS, ITEM, and INDENT."
+  (let ((remaining fields)
+        lines)
+    (while remaining
+      (push (format "%s *     %s: %s%s"
+                    indent (caar remaining) (cdar remaining)
+                    (if (cdr remaining) "," ""))
+            lines)
+      (setq remaining (cdr remaining)))
+    (concat indent " * @var  array{\n"
+            (mapconcat #'identity (nreverse lines) "\n")
+            "\n" indent " * } $" item)))
+
+(defun xcwen/php-update-foreach-item-var (context var-text)
+  "Update or insert the foreach item annotation described by CONTEXT.
+
+VAR-TEXT is the complete @var annotation without DocBlock delimiters."
+  (let* ((item (plist-get context :item))
+         (loop-open (plist-get context :foreach-open))
+         (loop-close (plist-get context :foreach-close))
+         (indent (save-excursion
+                   (goto-char loop-open)
+                   (make-string (+ 4 (current-indentation)) ?\s)))
+         doc-start doc-end var-start var-end)
+    (save-excursion
+      (goto-char (1+ loop-open))
+      (while (and (not doc-start)
+                  (re-search-forward "/\\*\\*" loop-close t))
+        (let ((candidate-start (match-beginning 0))
+              (candidate-end
+               (and (search-forward "*/" loop-close t) (point))))
+          (when (and candidate-end
+                     (save-excursion
+                       (goto-char candidate-start)
+                       (and (re-search-forward "@var\\_>" candidate-end t)
+                            (re-search-forward
+                             (concat "\\$" (regexp-quote item) "\\_>")
+                             candidate-end t))))
+            (setq doc-start candidate-start
+                  doc-end candidate-end))))
+      (if (not doc-start)
+          (progn
+            (goto-char loop-open)
+            (forward-line 1)
+            (insert indent "/**\n" var-text "\n" indent " */\n"))
+        (goto-char doc-start)
+        (re-search-forward "@var\\_>" doc-end)
+        (setq var-start (line-beginning-position))
+        (if (= (line-number-at-pos doc-start)
+               (line-number-at-pos doc-end))
+            (progn
+              (delete-region doc-start doc-end)
+              (goto-char doc-start)
+              (insert "/**\n" var-text "\n" indent " */"))
+          (beginning-of-line)
+          (setq var-end (xcwen/php-return-annotation-end doc-end))
+          (when (< var-end doc-end)
+            (setq var-end (min doc-end (1+ var-end))))
+          (delete-region var-start var-end)
+          (goto-char var-start)
+          (insert var-text "\n"))))))
+
+(defun xcwen/php-builder-item-update-var (&optional context)
+  "Update a foreach item @var from its SqlBuilder select list."
+  (interactive)
+  (let* ((builder-context
+          (or context (xcwen/php-builder-item-context-at-point)))
+         (item (plist-get builder-context :item))
+         (tables
+          (and builder-context
+               (mapcar #'xcwen/php-builder-load-table-info
+                       (cons (plist-get builder-context :base)
+                             (plist-get builder-context :joins)))))
+         fields indent var-text)
+    (unless builder-context
+      (user-error "无法从当前变量追踪到 SqlBuilder 查询"))
+    (dolist (column
+             (xcwen/php-sql-split-columns
+              (plist-get builder-context :select)))
+      (push (xcwen/php-builder-select-field column tables) fields))
+    (setq fields (nreverse fields))
+    (unless fields
+      (user-error "select 中没有可生成的字段"))
+    (setq indent
+          (save-excursion
+            (goto-char (plist-get builder-context :foreach-open))
+            (make-string (+ 4 (current-indentation)) ?\s))
+          var-text (xcwen/php-array-shape-var-text fields item indent))
+    (xcwen/php-update-foreach-item-var builder-context var-text)
+    (message "已更新 $%s 的 @var: %s"
+             item (mapconcat #'car fields ", "))))
+
+(defun xcwen/php-field-list-update-return-or-gen-def ()
+  "Update inferred PHPDoc types, or fall back to `ac-php-gen-def'."
+  (interactive)
+  (let ((field-context (xcwen/php-field-list-context-at-point))
+        builder-context)
+    (cond
+     (field-context
+      (xcwen/php-field-list-update-return field-context))
+     ((setq builder-context (xcwen/php-builder-item-context-at-point))
+      (xcwen/php-builder-item-update-var builder-context))
+     (t (ac-php-gen-def)))))
 
 (defvar  show-baidu-dict-flag nil)
 

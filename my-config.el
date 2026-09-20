@@ -40,11 +40,53 @@
 (autoload 'helm-projectile-grep "helm-projectile" nil t)
 (setq my-keyboard-input-dev "")
 
+(defun xcwen/ac-php-stop-jump-fallback (handlers)
+  "Make ac-php the final jump attempt in HANDLERS."
+  (cons '(ac-php-find-symbol-at-point :async t)
+        (cl-remove-if
+         (lambda (handler)
+           (eq (if (consp handler) (car handler) handler)
+               'ac-php-find-symbol-at-point))
+         handlers)))
+
+(setq spacemacs-jump-handlers-php-mode
+      (xcwen/ac-php-stop-jump-fallback
+       spacemacs-jump-handlers-php-mode))
 
 (with-eval-after-load 'php-ts-mode
   (spacemacs|define-jump-handlers php-ts-mode)
-  (add-to-list 'spacemacs-jump-handlers-php-ts-mode
-               '(ac-php-find-symbol-at-point :exclusive t)))
+  (setq spacemacs-jump-handlers-php-ts-mode
+        (xcwen/ac-php-stop-jump-fallback
+         spacemacs-jump-handlers-php-ts-mode)))
+
+(defvar xcwen/flycheck-pending-message nil
+  "Flycheck message waiting for the active minibuffer to exit.")
+
+(defun xcwen/flycheck-display-pending-message ()
+  "Display the Flycheck message saved while a minibuffer was active."
+  (remove-hook 'minibuffer-exit-hook
+               #'xcwen/flycheck-display-pending-message)
+  (when xcwen/flycheck-pending-message
+    (let ((text xcwen/flycheck-pending-message))
+      (setq xcwen/flycheck-pending-message nil)
+      (message "%s" text))))
+
+(defun xcwen/flycheck-display-error-messages (errors)
+  "Display Flycheck ERRORS directly in the echo area.
+
+When called from Helm `M-x', wait until its minibuffer exits so the
+diagnostic is not hidden by the command picker."
+  (when errors
+    (let ((text (flycheck-help-echo-all-error-messages errors)))
+      (if (active-minibuffer-window)
+          (progn
+            (setq xcwen/flycheck-pending-message text)
+            (add-hook 'minibuffer-exit-hook
+                      #'xcwen/flycheck-display-pending-message))
+        (message "%s" text)))))
+
+(setq flycheck-display-errors-function
+      #'xcwen/flycheck-display-error-messages)
 
 (defun set-main-key()
   "D."
@@ -81,9 +123,11 @@
    "i"
    #'(lambda()
        (interactive )
-       (when (fboundp 'flycheck-explain-error-at-point)
-         (flycheck-explain-error-at-point))
        (cond
+        ((and (bound-and-true-p flycheck-mode)
+              (fboundp 'flycheck-overlay-errors-at)
+              (flycheck-overlay-errors-at (point)))
+         (flycheck-display-error-at-point))
         ((check-in-php-mode)
          (when (fboundp 'ac-php-show-tip)
            (ac-php-show-tip)))
@@ -155,8 +199,8 @@
    #'(lambda()
        (interactive )
        (when (and (check-in-php-mode)
-                  (fboundp 'ac-php-gen-def))
-         (ac-php-gen-def )
+                  (fboundp 'xcwen/php-field-list-update-return-or-gen-def))
+         (xcwen/php-field-list-update-return-or-gen-def)
          )
        ))
 

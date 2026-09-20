@@ -139,10 +139,12 @@ emacs php-mode 快捷键
     C-]       : 跳转到定义
     C-t       : 跳转返回
     ,a        : 切换 control, view, js  对应的文件
-    ,i        : 查看定义
+    ,i        : 错误位置显示 Flycheck 错误，否则查看定义
     ,u        : 当前词，切换大小写
     ,e        : 删除多余空格，调整到出错的地方
     ,r        : 重新生成tags
+    ,D        : 跳转到数据表的 CREATE TABLE 定义
+    ,f        : 从 field_get_list 或 SqlBuilder select 更新 @return/@var
 ```
 补全案例：
 
