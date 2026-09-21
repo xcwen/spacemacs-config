@@ -66,6 +66,83 @@ localhost:~/site-lisp/config$"
         (string= major-mode "php-ts-mode")
         )
   )
+
+(defvar-local xcwen/php-default-indent-region-function nil
+  "Original region indenter wrapped by `xcwen/php-indent-region'.")
+
+(defun xcwen/php--block-comment-indentations (start end)
+  "Record block-comment indentation between START and END.
+
+Each entry contains a line marker and that line's indentation relative
+to the column of its opening `/*'."
+  (save-excursion
+    (goto-char start)
+    (beginning-of-line)
+    (let ((end-marker (copy-marker end))
+          indentations)
+      (unwind-protect
+          (while (< (point) end-marker)
+            (let* ((line-start (point))
+                   (parse-status (syntax-ppss line-start))
+                   (comment-start (nth 8 parse-status)))
+              (when (and (nth 4 parse-status)
+                         comment-start
+                         (save-excursion
+                           (goto-char comment-start)
+                           (looking-at-p "/\\*")))
+                (let ((comment-column
+                       (save-excursion
+                         (goto-char comment-start)
+                         (current-column))))
+                  (push (cons (copy-marker line-start)
+                              (- (current-indentation) comment-column))
+                        indentations))))
+            (forward-line 1))
+        (set-marker end-marker nil))
+      (nreverse indentations))))
+
+(defun xcwen/php--restore-block-comment-indentations (indentations)
+  "Restore block-comment line INDENTATIONS after PHP formatting."
+  (dolist (entry indentations)
+    (let ((line-marker (car entry))
+          (relative-indent (cdr entry)))
+      (unwind-protect
+          (save-excursion
+            (goto-char line-marker)
+            (beginning-of-line)
+            (let* ((parse-status (syntax-ppss (point)))
+                   (comment-start (nth 8 parse-status)))
+              (when (and (nth 4 parse-status)
+                         comment-start
+                         (save-excursion
+                           (goto-char comment-start)
+                           (looking-at-p "/\\*")))
+                (let ((comment-column
+                       (save-excursion
+                         (goto-char comment-start)
+                         (current-column))))
+                  (indent-line-to
+                   (max 0 (+ comment-column relative-indent)))))))
+        (set-marker line-marker nil)))))
+
+(defun xcwen/php-indent-region (start end)
+  "Indent PHP between START and END without flattening block comments."
+  (let ((indentations
+         (xcwen/php--block-comment-indentations start end)))
+    (unwind-protect
+        (progn
+          (funcall xcwen/php-default-indent-region-function start end)
+          (xcwen/php--restore-block-comment-indentations indentations))
+      (dolist (entry indentations)
+        (set-marker (car entry) nil)))))
+
+(defun xcwen/php-preserve-block-comment-indentation ()
+  "Keep block-comment indentation when formatting a PHP region."
+  (unless (eq indent-region-function #'xcwen/php-indent-region)
+    (setq-local xcwen/php-default-indent-region-function
+                indent-region-function)
+    (setq-local indent-region-function #'xcwen/php-indent-region)))
+
 (defun my-s-snake-case (s)
   "Convert S to snake_case."
   (declare (side-effect-free t))

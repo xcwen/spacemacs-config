@@ -514,6 +514,7 @@ you should place your code here."
 
   (add-hook 'php-mode-hook #'(lambda ( )
 
+                               (xcwen/php-preserve-block-comment-indentation)
                                (my-set-evil-local-map "<tab>"   'yas-expand-for-vim )
 
                                (my-set-evil-not-insert-local-map "g\C-]"   'my-jump-merber-class )
