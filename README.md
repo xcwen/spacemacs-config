@@ -145,7 +145,14 @@ emacs php-mode 快捷键
     ,r        : 重新生成tags
     ,D        : 跳转到数据表的 CREATE TABLE 定义
     ,f        : 从 field_get_list 或 SqlBuilder select 更新 @return/@var
+    ,m        : 运行 update_builder_item_types.php 刷新当前 PHP 文件
 ```
+SqlBuilder 的手动字段类型可在 `$item` DocBlock 中声明：
+`* @manual-item-type start_time: int`。`,f` 刷新时会保留并合并该字段。
+
+在本项目中，ac-php 会补全 `field_get_list` 和 SqlBuilder 字符串中的
+字段名及 `alias.field`，包括 `select`、`where`、`orderBy` 和 join ON。
+
 补全案例：
 
 ![补全案例gif](https://raw.githubusercontent.com/xcwen/site-lisp/master/other_script/ac-php.gif)

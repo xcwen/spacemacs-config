@@ -1118,7 +1118,7 @@ Point must be on the line containing @return."
         (origin (point))
         function-start foreach-start foreach-open foreach-close list-variable
         list-assignment-start list-assignment-end builder builder-start
-        builder-end base-table-point base-alias joins select-sql)
+        builder-end base-table-name base-table-point base-alias joins select-sql)
     (when item
       (save-excursion
         (when (ac-php--beginning-of-defun)
@@ -1130,7 +1130,10 @@ Point must be on the line containing @return."
           (let ((foreach-regexp
                  (concat
                   "foreach[ \t\r\n]*(?[ \t\r\n]*"
-                  "\\$\\([A-Za-z_][A-Za-z0-9_]*\\)[ \t\r\n]+"
+                  "\\$\\([A-Za-z_][A-Za-z0-9_]*\\)"
+                  "\\(?:[ \t\r\n]*\\[[ \t\r\n]*"
+                  "\\(?:[\"'][^\"']+[\"']\\|[0-9]+\\)"
+                  "[ \t\r\n]*\\]\\)*[ \t\r\n]+"
                   "as[ \t\r\n]+"
                   "\\(?:\\$[A-Za-z_][A-Za-z0-9_]*[ \t\r\n]*=>[ \t\r\n]*\\)?"
                   "&?[ \t\r\n]*\\$\\([A-Za-z_][A-Za-z0-9_]*\\)"
@@ -1158,7 +1161,10 @@ Point must be on the line containing @return."
                 (save-excursion
                   (goto-char (match-end 0))
                   (when (re-search-forward
-                         "get_list[ \t\r\n]*(" foreach-start t)
+                         (concat "get_list"
+                                 "\\(?:_as_page\\|_by_page\\)?"
+                                 "[ \t\r\n]*(")
+                         foreach-start t)
                     (setq list-assignment-end
                           (or (ignore-errors
                                 (scan-sexps (1- (match-end 0)) 1))
@@ -1173,6 +1179,7 @@ Point must be on the line containing @return."
                              "\\([A-Za-z_][A-Za-z0-9_]*\\)")))
                 (when (re-search-backward builder-regexp function-start t)
                   (setq builder-start (match-beginning 0)
+                        base-table-name (match-string-no-properties 1)
                         base-table-point (match-beginning 1))
                   (save-excursion
                     (goto-char (match-end 0))
@@ -1185,7 +1192,7 @@ Point must be on the line containing @return."
                       (setq base-alias
                             (xcwen/php-builder-alias-in-region
                              base-table-point builder-end
-                             (match-string-no-properties 1)))))))))
+                             base-table-name))))))))
           (when builder-end
             (save-excursion
               (goto-char builder-end)
@@ -1237,7 +1244,7 @@ Point must be on the line containing @return."
                               :table-point base-table-point
                               :join-type "base")
                   :joins (nreverse joins)
-                  :select select-sql)))))))
+                  :select select-sql))))))))
 
 (defun xcwen/php-builder-load-table-info (table)
   "Add CREATE TABLE type metadata to TABLE."
@@ -1257,18 +1264,27 @@ Point must be on the line containing @return."
               (downcase (or (plist-get table :alias) ""))))
    tables))
 
+(defun xcwen/php-builder-table-column-type (table field)
+  "Return FIELD's result type from TABLE, including outer-join nullability."
+  (when-let ((type (gethash field (plist-get table :types))))
+    (if (and (string= (plist-get table :join-type) "left_join")
+             (not (string-match-p "\\_<null\\_>" type)))
+        (concat type "|null")
+      type)))
+
 (defun xcwen/php-builder-column-type (qualifier field tables)
   "Return FIELD's PHP type from TABLES, optionally using QUALIFIER."
   (if qualifier
       (let ((table (xcwen/php-builder-table-by-alias qualifier tables)))
         (unless table
           (user-error "select 使用了未知表别名: %s" qualifier))
-        (or (gethash field (plist-get table :types))
+        (or (xcwen/php-builder-table-column-type table field)
             (user-error "表别名 %s 中找不到字段: %s" qualifier field)))
-    (or (gethash field (plist-get (car tables) :types))
+    (or (xcwen/php-builder-table-column-type (car tables) field)
         (let (matches)
           (dolist (table (cdr tables))
-            (when-let ((type (gethash field (plist-get table :types))))
+            (when-let ((type
+                        (xcwen/php-builder-table-column-type table field)))
               (push type matches)))
           (cond
            ((= (length matches) 1) (car matches))
@@ -1288,10 +1304,12 @@ Point must be on the line containing @return."
             source (s-trim (match-string-no-properties 1 source))))
     (when (and (not output)
                (string-match
-                "\\`\\(.+[])`]\\)[ \t]+`?\\([A-Za-z_][A-Za-z0-9_]*\\)`?[ \t]*\\'"
+                "\\`\\(.+\\S-\\)[ \t]+`?\\([A-Za-z_][A-Za-z0-9_]*\\)`?[ \t]*\\'"
                 source))
-      (setq output (match-string-no-properties 2 source)
-            source (s-trim (match-string-no-properties 1 source))))
+      (let ((candidate (s-trim (match-string-no-properties 1 source))))
+        (when (string-match-p "[.(]" candidate)
+          (setq output (match-string-no-properties 2 source)
+                source candidate))))
     (if (string-match
          "\\`\\(?:`?\\([A-Za-z_][A-Za-z0-9_]*\\)`?\\.\\)?`?\\([A-Za-z_][A-Za-z0-9_]*\\)`?\\'"
          source)
@@ -1325,20 +1343,15 @@ Point must be on the line containing @return."
             (mapconcat #'identity (nreverse lines) "\n")
             "\n" indent " * } $" item)))
 
-(defun xcwen/php-update-foreach-item-var (context var-text)
-  "Update or insert the foreach item annotation described by CONTEXT.
-
-VAR-TEXT is the complete @var annotation without DocBlock delimiters."
-  (let* ((item (plist-get context :item))
-         (loop-open (plist-get context :foreach-open))
-         (loop-close (plist-get context :foreach-close))
-         (indent (save-excursion
-                   (goto-char loop-open)
-                   (make-string (+ 4 (current-indentation)) ?\s)))
-         doc-start doc-end var-start var-end)
+(defun xcwen/php-foreach-item-docblock-bounds (context)
+  "Return the matching item DocBlock bounds described by CONTEXT."
+  (let ((item (plist-get context :item))
+        (loop-open (plist-get context :foreach-open))
+        (loop-close (plist-get context :foreach-close))
+        bounds)
     (save-excursion
       (goto-char (1+ loop-open))
-      (while (and (not doc-start)
+      (while (and (not bounds)
                   (re-search-forward "/\\*\\*" loop-close t))
         (let ((candidate-start (match-beginning 0))
               (candidate-end
@@ -1350,8 +1363,61 @@ VAR-TEXT is the complete @var annotation without DocBlock delimiters."
                             (re-search-forward
                              (concat "\\$" (regexp-quote item) "\\_>")
                              candidate-end t))))
-            (setq doc-start candidate-start
-                  doc-end candidate-end))))
+            (setq bounds (cons candidate-start candidate-end))))))
+    bounds))
+
+(defun xcwen/php-manual-item-types (context)
+  "Return @manual-item-type entries from the DocBlock in CONTEXT."
+  (let ((bounds (xcwen/php-foreach-item-docblock-bounds context))
+        types)
+    (when bounds
+      (save-excursion
+        (goto-char (car bounds))
+        (while (re-search-forward "@manual-item-type\\_>" (cdr bounds) t)
+          (let ((line (buffer-substring-no-properties
+                       (line-beginning-position) (line-end-position))))
+            (unless (string-match
+                     (concat
+                      "^[ \\t]*\\*[ \\t]*@manual-item-type[ \\t]+"
+                      "\\([A-Za-z_][A-Za-z0-9_]*\\)[ \\t]*:[ \\t]*"
+                      "\\(.+\\)[ \\t]*$")
+                     line)
+              (user-error "无效的 @manual-item-type: %s" (s-trim line)))
+            (let* ((name (match-string-no-properties 1 line))
+                   (type (s-trim (match-string-no-properties 2 line)))
+                   (existing (assoc name types)))
+              (when (or (string-empty-p type) (string-match-p "\\*/" type))
+                (user-error "无效的手动字段类型: %s" name))
+              (if existing
+                  (setcdr existing type)
+                (setq types (append types (list (cons name type))))))))))
+    types))
+
+(defun xcwen/php-merge-manual-item-types (fields manual-types)
+  "Merge MANUAL-TYPES into FIELDS, with manual definitions taking priority."
+  (let ((merged (mapcar (lambda (field)
+                          (cons (car field) (cdr field)))
+                        fields)))
+    (dolist (manual manual-types)
+      (if-let ((existing (assoc (car manual) merged)))
+          (setcdr existing (cdr manual))
+        (setq merged
+              (append merged (list (cons (car manual) (cdr manual)))))))
+    merged))
+
+(defun xcwen/php-update-foreach-item-var (context var-text)
+  "Update or insert the foreach item annotation described by CONTEXT.
+
+VAR-TEXT is the complete @var annotation without DocBlock delimiters."
+  (let* ((loop-open (plist-get context :foreach-open))
+         (indent (save-excursion
+                   (goto-char loop-open)
+                   (make-string (+ 4 (current-indentation)) ?\s)))
+         (doc-bounds (xcwen/php-foreach-item-docblock-bounds context))
+         (doc-start (car-safe doc-bounds))
+         (doc-end (cdr-safe doc-bounds))
+         var-start var-end)
+    (save-excursion
       (if (not doc-start)
           (progn
             (goto-char loop-open)
@@ -1385,7 +1451,7 @@ VAR-TEXT is the complete @var annotation without DocBlock delimiters."
                (mapcar #'xcwen/php-builder-load-table-info
                        (cons (plist-get builder-context :base)
                              (plist-get builder-context :joins)))))
-         fields indent var-text)
+         fields manual-types indent var-text)
     (unless builder-context
       (user-error "无法从当前变量追踪到 SqlBuilder 查询"))
     (dolist (column
@@ -1395,6 +1461,8 @@ VAR-TEXT is the complete @var annotation without DocBlock delimiters."
     (setq fields (nreverse fields))
     (unless fields
       (user-error "select 中没有可生成的字段"))
+    (setq manual-types (xcwen/php-manual-item-types builder-context)
+          fields (xcwen/php-merge-manual-item-types fields manual-types))
     (setq indent
           (save-excursion
             (goto-char (plist-get builder-context :foreach-open))
@@ -1415,6 +1483,292 @@ VAR-TEXT is the complete @var annotation without DocBlock delimiters."
      ((setq builder-context (xcwen/php-builder-item-context-at-point))
       (xcwen/php-builder-item-update-var builder-context))
      (t (ac-php-gen-def)))))
+
+(defun xcwen/ac-php-database-completion-project-p ()
+  "Return non-nil when the current buffer enables database completion."
+  (and buffer-file-name
+       (not (file-remote-p buffer-file-name))
+       (locate-dominating-file
+        buffer-file-name
+        (lambda (directory)
+          (file-executable-p
+           (expand-file-name
+            "bin/update_builder_item_types.php" directory))))))
+
+(defun xcwen/ac-php-database-field-prefix (text)
+  "Return the final field token prefix in TEXT."
+  (if (and (stringp text)
+           (string-match
+            "\\([[:alpha:]_][[:alnum:]_]*\\(?:\\.[[:alnum:]_]*\\)?\\)\\'"
+            text))
+      (match-string-no-properties 1 text)
+    ""))
+
+(defun xcwen/ac-php-database-string-context ()
+  "Return project database completion context at point."
+  (let* ((context (ac-php--string-literal-argument-context))
+         (callable (and context
+                        (downcase (plist-get context :callable))))
+         (index (and context (plist-get context :argument-index)))
+         kind)
+    (cond
+     ((and (member callable '("field_get_list" "field_get_list_limit_1"))
+           (= index 1))
+      (setq kind 'table))
+     ((and (member callable
+                   '("select" "where" "wherein" "wherenotin"
+                     "wherebetween" "orderby" "groupby" "having"
+                     "where_query_text_like" "set_date_range_date_type"))
+           (= index 0))
+      (setq kind 'builder))
+     ((and (member callable '("left_join" "right_join" "inner_join" "join"))
+           (= index 1))
+      (setq kind 'builder)))
+    (when kind
+      (list :kind kind
+            :callable callable
+            :argument-index index
+            :call-open (plist-get context :call-open)
+            :prefix
+            (xcwen/ac-php-database-field-prefix
+             (plist-get context :prefix))))))
+
+(defun xcwen/ac-php-receiver-before-call (call-open)
+  "Return the receiver identifier immediately before CALL-OPEN."
+  (save-excursion
+    (goto-char call-open)
+    (skip-chars-backward " \\t\\n\\r")
+    (skip-chars-backward "a-zA-Z0-9_")
+    (skip-chars-backward " \\t\\n\\r")
+    (cond
+     ((and (eq (char-before) ?>)
+           (eq (char-before (1- (point))) ?-)
+           (eq (char-before (- (point) 2)) ??))
+      (backward-char 3))
+     ((and (eq (char-before) ?>)
+           (eq (char-before (1- (point))) ?-))
+      (backward-char 2))
+     (t (goto-char (point-min))))
+    (let ((end (point)))
+      (skip-chars-backward "$a-zA-Z0-9_")
+      (when (< (point) end)
+        (list :name (buffer-substring-no-properties (point) end)
+              :start (point) :end end)))))
+
+(defun xcwen/ac-php-table-fields-at (tags-data pos)
+  "Return indexed table fields at POS using TAGS-DATA."
+  (save-match-data
+    (save-excursion
+      (goto-char pos)
+      (let* ((symbol (ac-php-find-symbol-at-point-pri tags-data))
+             (class-name (nth 2 symbol))
+             (class-map (ac-php-g--class-map tags-data))
+             (inherit-map (ac-php-g--inherit-map tags-data))
+             (classes
+              (and class-name
+                   (ac-php--get-check-class-list
+                    class-name inherit-map class-map tags-data))))
+        (catch 'fields
+          (dolist (class classes)
+            (let ((members (gethash class class-map)))
+              (when (vectorp members)
+                (dotimes (index (length members))
+                  (let ((member (aref members index)))
+                    (when (and (vectorp member)
+                               (> (length member) 4)
+                               (string= (aref member 1) "field_get_list("))
+                      (let ((fields
+                             (ac-php--array-shapes-fields
+                              (ac-php--array-shapes-from-type
+                               (aref member 4) nil))))
+                        (when fields
+                          (throw 'fields fields))))))))))))))
+
+(defun xcwen/ac-php-table-at-range (tags-data start end &optional base)
+  "Return table metadata between START and END using TAGS-DATA.
+BASE marks the query's base table."
+  (save-excursion
+    (goto-char start)
+    (when (re-search-forward "->\\(t_[A-Za-z0-9_]+\\)\\_>" end t)
+      (let* ((table-start (match-beginning 1))
+             (table-end (match-end 1))
+             (fields (xcwen/ac-php-table-fields-at tags-data table-start))
+             (alias
+              (save-excursion
+                (goto-char table-end)
+                (when (re-search-forward
+                       (concat
+                        "->as[ \\t\\n\\r]*(?[ \\t\\n\\r]*"
+                        "[\"']\\([^\"']+\\)[\"']")
+                       end t)
+                  (match-string-no-properties 1)))))
+        (when fields
+          (list :alias alias :fields fields :base base))))))
+
+(defun xcwen/ac-php-current-join-table (tags-data context)
+  "Return the current join's first-argument table from CONTEXT."
+  (when (and (member (plist-get context :callable)
+                     '("left_join" "right_join" "inner_join" "join"))
+             (= (plist-get context :argument-index) 1))
+    (let* ((string-start (nth 8 (syntax-ppss (point))))
+           (ranges
+            (and string-start
+                 (ac-php--argument-ranges
+                  (1+ (plist-get context :call-open)) string-start)))
+           (first (car ranges)))
+      (and first
+           (xcwen/ac-php-table-at-range
+            tags-data (car first) (cdr first))))))
+
+(defun xcwen/ac-php-builder-tables (tags-data context)
+  "Return SqlBuilder tables at completion CONTEXT using TAGS-DATA."
+  (let* ((call-open (plist-get context :call-open))
+         (receiver (xcwen/ac-php-receiver-before-call call-open))
+         (name (plist-get receiver :name)))
+    (when (and (stringp name) (string-prefix-p "$" name))
+      (let* ((variable (substring name 1))
+             (assignment (ac-php--variable-assignment variable call-open))
+             (start (plist-get assignment :start))
+             (end (plist-get assignment :end)))
+        (when (and assignment
+                   (string-match-p
+                    "->get_sql_builder[ \\t\\n\\r]*("
+                    (plist-get assignment :text)))
+          (let ((base (xcwen/ac-php-table-at-range
+                       tags-data start end t))
+                tables)
+            (when base
+              (push base tables)
+              (save-excursion
+                (goto-char end)
+                (let ((case-fold-search t)
+                      (pattern
+                       (concat
+                        "\\$" (regexp-quote variable)
+                        "[ \\t\\n\\r]*->[ \\t\\n\\r]*"
+                        "\\(?:left_join\\|right_join\\|inner_join\\|join\\)"
+                        "[ \\t\\n\\r]*(")))
+                  (while (re-search-forward pattern call-open t)
+                    (let* ((open (1- (point)))
+                           (close (condition-case nil (scan-sexps open 1)
+                                    (scan-error nil))))
+                      (when (and close (<= close call-open))
+                        (let* ((ranges (ac-php--argument-ranges
+                                        (1+ open) (1- close)))
+                               (first (car ranges))
+                               (table
+                                (and first
+                                     (xcwen/ac-php-table-at-range
+                                      tags-data (car first) (cdr first)))))
+                          (when table
+                            (push table tables)))
+                        (goto-char close))))))
+              (when-let ((current
+                          (xcwen/ac-php-current-join-table
+                           tags-data context)))
+                (push current tables))
+              (nreverse tables))))))))
+
+(defun xcwen/ac-php-field-get-table (tags-data context)
+  "Return field_get_list table metadata from CONTEXT."
+  (let* ((receiver
+          (xcwen/ac-php-receiver-before-call (plist-get context :call-open)))
+         (name (plist-get receiver :name))
+         (start (plist-get receiver :start)))
+    (when (and (stringp name) (string-prefix-p "t_" name))
+      (let ((fields (xcwen/ac-php-table-fields-at tags-data start)))
+        (and fields (list :alias nil :fields fields :base t))))))
+
+(defun xcwen/ac-php-database-candidates (tags-data context)
+  "Return project database field candidates for CONTEXT."
+  (let ((tables
+         (if (eq (plist-get context :kind) 'table)
+             (let ((table (xcwen/ac-php-field-get-table tags-data context)))
+               (and table (list table)))
+           (xcwen/ac-php-builder-tables tags-data context)))
+        (seen (make-hash-table :test #'equal))
+        candidates)
+    (cl-labels
+        ((add-candidate
+          (name type alias)
+          (unless (gethash name seen)
+            (puthash name t seen)
+            (push (propertize
+                   name
+                   'ac-php-help type
+                   'ac-php-return-type type
+                   'ac-php-tag-type "p"
+                   'ac-php-from (or alias "")
+                   'summary type)
+                  candidates))))
+      (dolist (table tables)
+        (let ((alias (plist-get table :alias)))
+          (dolist (field (plist-get table :fields))
+            (add-candidate (car field) (cdr field) alias)
+            (when alias
+              (add-candidate (concat alias "." (car field))
+                             (cdr field) alias)))))
+      (nreverse candidates))))
+
+(defun xcwen/ac-php-extra-database-completion (tags-data)
+  "Provide project database completion using optional TAGS-DATA."
+  (when (xcwen/ac-php-database-completion-project-p)
+    (when-let ((context (xcwen/ac-php-database-string-context)))
+      (if tags-data
+          (list :prefix (plist-get context :prefix)
+                :candidates
+                (xcwen/ac-php-database-candidates tags-data context))
+        (list :prefix (plist-get context :prefix))))))
+
+(add-hook 'ac-php-extra-completion-functions
+          #'xcwen/ac-php-extra-database-completion)
+
+(defun xcwen/php-update-builder-item-types-current-buffer ()
+  "Run update_builder_item_types.php for the current PHP buffer."
+  (interactive)
+  (unless (check-in-php-mode)
+    (user-error "当前 buffer 不是 PHP 模式"))
+  (unless buffer-file-name
+    (user-error "当前 PHP buffer 没有关联文件"))
+  (when (file-remote-p buffer-file-name)
+    (user-error "暂不支持远程 PHP 文件"))
+  (let* ((file (expand-file-name buffer-file-name))
+         (project-root
+          (locate-dominating-file
+           file
+           (lambda (directory)
+             (file-executable-p
+              (expand-file-name
+               "bin/update_builder_item_types.php" directory)))))
+         (script (and project-root
+                      (expand-file-name
+                       "bin/update_builder_item_types.php" project-root))))
+    (unless script
+      (user-error "找不到 bin/update_builder_item_types.php"))
+    (when (buffer-modified-p)
+      (save-buffer))
+    (let ((default-directory project-root)
+          (output-buffer (generate-new-buffer " *php-item-types*"))
+          status output summary)
+      (unwind-protect
+          (progn
+            (setq status
+                  (process-file script nil (list output-buffer t) nil
+                                "--verbose" file)
+                  output
+                  (with-current-buffer output-buffer
+                    (s-trim (buffer-substring-no-properties
+                             (point-min) (point-max))))
+                  summary (car (last (split-string output "\n" t))))
+            (revert-buffer t t t)
+            (if (and (integerp status) (= status 0))
+                (message "PHP 类型注释已刷新: %s"
+                         (or summary "完成"))
+              (user-error "PHP 类型注释刷新未完成: %s"
+                          (if (string-empty-p output)
+                              (format "%s" status)
+                            output))))
+        (kill-buffer output-buffer)))))
 
 (defvar  show-baidu-dict-flag nil)
 

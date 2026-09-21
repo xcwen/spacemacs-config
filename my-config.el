@@ -103,7 +103,13 @@ diagnostic is not hidden by the command picker."
   (set-evil-main-state-key "d" 'show-pot-dict-at-region)
   (set-evil-main-state-key "c" 'lsp-execute-code-action)
   (set-evil-main-state-key "o" 'other-window  )
-  (set-evil-main-state-key "m" 'restart-project  )
+  (set-evil-main-state-key
+   "m"
+   #'(lambda ()
+       (interactive)
+       (if (check-in-php-mode)
+           (xcwen/php-update-builder-item-types-current-buffer)
+         (restart-project))))
 
 
 
