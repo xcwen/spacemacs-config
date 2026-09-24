@@ -781,9 +781,7 @@ you should place your code here."
 
 
        ;; 绑定键到 vterm-mode-map 或 evil-insert-state-local-map
-       (define-key evil-insert-state-local-map (kbd "C-y") 'vterm-yank)
-       (define-key evil-insert-state-local-map (kbd "C-v") 'vterm-yank)
-       (define-key evil-insert-state-local-map (kbd "s-v") 'vterm-yank)
+       (xcwen/vterm-bind-reliable-yank)
        (define-key evil-insert-state-local-map (kbd "C-c") 'copy-region-or-whole-line)
        (define-key evil-insert-state-local-map (kbd "C-S-c") 'vterm-send-C-c)
        (define-key evil-insert-state-local-map (kbd "C-p") 'vterm-send-up)

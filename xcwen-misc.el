@@ -388,6 +388,65 @@ The test for presence of the car of ELT-CONS is done with `equal'."
   )
 
 
+(defcustom xcwen/vterm-paste-chunk-size 256
+  "Number of characters sent before yielding during a VTerm paste."
+  :type 'integer
+  :group 'vterm)
+
+(defcustom xcwen/vterm-paste-chunk-delay 0.01
+  "Maximum wait in seconds between chunks of a VTerm paste."
+  :type 'number
+  :group 'vterm)
+
+(defun xcwen/vterm-paste-string (string)
+  "Paste STRING into the current VTerm without overrunning its PTY.
+
+Keep the whole operation inside one bracketed paste, but periodically
+let the child process consume its input.  This avoids corruption when a
+large paste exceeds the small PTY input buffer used by macOS."
+  (unless (derived-mode-p 'vterm-mode)
+    (user-error "Current buffer is not a VTerm buffer"))
+  (unless (and (boundp 'vterm--process)
+               (process-live-p vterm--process))
+    (user-error "VTerm process is not running"))
+  (unless (> xcwen/vterm-paste-chunk-size 0)
+    (user-error "VTerm paste chunk size must be positive"))
+  (let ((offset 0)
+        (length (length string)))
+    (vterm--update vterm--term "<start_paste>")
+    (unwind-protect
+        (while (< offset length)
+          (let ((chunk-end
+                 (min length (+ offset xcwen/vterm-paste-chunk-size))))
+            (while (< offset chunk-end)
+              (vterm--update vterm--term
+                             (char-to-string (aref string offset)))
+              (setq offset (1+ offset)))
+            (accept-process-output
+             vterm--process xcwen/vterm-paste-chunk-delay nil t)))
+      (vterm--update vterm--term "<end_paste>"))
+    (setq vterm--redraw-immediately t)
+    (accept-process-output vterm--process vterm-timer-delay nil t)))
+
+(defun xcwen/vterm-yank (&optional arg)
+  "Yank into VTerm at a rate its PTY can consume.
+
+Pass prefix argument ARG to `yank'."
+  (interactive "P")
+  (deactivate-mark)
+  (vterm-goto-char (point))
+  (let ((inhibit-read-only t))
+    (cl-letf (((symbol-function 'insert-for-yank)
+               #'xcwen/vterm-paste-string))
+      (yank arg))))
+
+(defun xcwen/vterm-bind-reliable-yank ()
+  "Use the paced VTerm yank command in the current Evil buffer."
+  (dolist (key '("C-y" "C-v" "s-v"))
+    (define-key evil-insert-state-local-map (kbd key)
+                #'xcwen/vterm-yank)))
+
+
 
 
 
@@ -3379,7 +3438,7 @@ Using  sql-formatter and replace the buffer content."
      (t
       (with-current-buffer (window-buffer vterm-win)
         (goto-char (point-max))
-        (vterm-send-string text)
+        (xcwen/vterm-paste-string text)
         (vterm-send-return))
       (message "SQL 已发送到当前可见 vterm")))))
 
