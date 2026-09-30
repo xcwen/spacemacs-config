@@ -1,0 +1,204 @@
+#!/usr/bin/env python3
+"""Validate SQL statements with MySQL PREPARE for Flycheck."""
+
+import json
+import os
+import pathlib
+import re
+import shutil
+import subprocess
+import sys
+
+
+def split_statements(source):
+    statements = []
+    chars = []
+    state = "normal"
+    line = 1
+    start_line = 1
+    has_sql = False
+    index = 0
+
+    while index < len(source):
+        char = source[index]
+        following = source[index + 1] if index + 1 < len(source) else ""
+
+        if state == "normal":
+            if char == "-" and following == "-":
+                state = "line-comment"
+            elif char == "#":
+                state = "line-comment"
+            elif char == "/" and following == "*":
+                state = "block-comment"
+            elif char in ("'", '"', "`"):
+                state = {"'": "single", '"': "double", "`": "backtick"}[char]
+                has_sql = True
+            elif char == ";":
+                if has_sql:
+                    statements.append(("".join(chars), start_line))
+                chars = []
+                has_sql = False
+                start_line = line
+                index += 1
+                continue
+            elif not char.isspace():
+                has_sql = True
+        elif state == "line-comment":
+            if char == "\n":
+                state = "normal"
+        elif state == "block-comment":
+            if char == "*" and following == "/":
+                chars.extend((char, following))
+                index += 2
+                state = "normal"
+                continue
+        else:
+            delimiter = {"single": "'", "double": '"', "backtick": "`"}[state]
+            if char == "\\" and following:
+                chars.extend((char, following))
+                if following == "\n":
+                    line += 1
+                index += 2
+                continue
+            if char == delimiter:
+                if following == delimiter:
+                    chars.extend((char, following))
+                    index += 2
+                    continue
+                state = "normal"
+
+        chars.append(char)
+        if char == "\n":
+            line += 1
+        index += 1
+
+    if has_sql:
+        statements.append(("".join(chars), start_line))
+    return statements
+
+
+def find_config(path):
+    for directory in (path.parent, *path.parents):
+        candidate = directory / ".sqls" / "config.json"
+        if candidate.is_file():
+            return candidate
+    raise RuntimeError("cannot find .sqls/config.json")
+
+
+def load_connection(path):
+    data = json.loads(path.read_text(encoding="utf-8"))
+    connections = data.get("sqls", {}).get("connections", [])
+    connection = next(
+        (item for item in connections if item.get("driver") == "mysql"), None
+    )
+    if not connection:
+        raise RuntimeError(f"no MySQL connection in {path}")
+
+    dsn = connection.get("dataSourceName", "")
+    match = re.fullmatch(
+        r"([^:]+):(.*?)@tcp\(([^:)]+)(?::(\d+))?\)/([^?]+)(?:\?.*)?", dsn
+    )
+    if not match:
+        raise RuntimeError(f"unsupported MySQL dataSourceName in {path}")
+    user, password, host, port, database = match.groups()
+    return user, password, host, port or "3306", database
+
+
+def mysql_executable():
+    executable = shutil.which("mysql")
+    if executable:
+        return executable
+    fallback = pathlib.Path("/opt/homebrew/opt/mysql-client/bin/mysql")
+    if fallback.is_file():
+        return str(fallback)
+    raise RuntimeError("cannot find the mysql client")
+
+
+def prepare(executable, connection, statement):
+    user, password, host, port, database = connection
+    encoded = statement.encode("utf-8").hex()
+    query = (
+        f"SET @xcwen_sql = CONVERT(0x{encoded} USING utf8mb4); "
+        "PREPARE xcwen_sql_check FROM @xcwen_sql; "
+        "DEALLOCATE PREPARE xcwen_sql_check;"
+    )
+    command = [
+        executable,
+        "--host",
+        host,
+        "--port",
+        port,
+        "--user",
+        user,
+        "--database",
+        database,
+        "--connect-timeout=8",
+        "--batch",
+        "--skip-column-names",
+        "--execute",
+        query,
+    ]
+    environment = os.environ.copy()
+    environment["MYSQL_PWD"] = password
+    environment["LC_ALL"] = "C"
+    try:
+        return subprocess.run(
+            command,
+            capture_output=True,
+            text=True,
+            timeout=15,
+            check=False,
+            env=environment,
+        )
+    except subprocess.TimeoutExpired:
+        return None
+
+
+def mysql_error(result):
+    if result is None:
+        return "MySQL syntax check timed out", 1
+    if result.returncode == 0:
+        return None
+
+    output = "\n".join((result.stderr, result.stdout))
+    error_start = output.find("ERROR ")
+    if error_start < 0:
+        return "MySQL syntax check failed without an error message", 1
+
+    message = output[error_start:].strip()
+    source_lines = re.findall(r"at line (\d+)", message)
+    relative_line = int(source_lines[-1]) if source_lines else 1
+    return re.sub(r"\s+", " ", message).strip(), relative_line
+
+
+def report(path, line, message):
+    print(f"{path}:{line}:1: error: {message}")
+
+
+def main():
+    if len(sys.argv) != 2:
+        print("usage: sql-mysql-check FILE", file=sys.stderr)
+        return 2
+
+    path = pathlib.Path(sys.argv[1]).resolve()
+    try:
+        source = path.read_text(encoding="utf-8")
+        config = find_config(path)
+        connection = load_connection(config)
+        executable = mysql_executable()
+    except (OSError, ValueError, RuntimeError) as error:
+        report(path, 1, str(error))
+        return 1
+
+    failed = False
+    for statement, start_line in split_statements(source):
+        error = mysql_error(prepare(executable, connection, statement))
+        if error:
+            message, relative_line = error
+            report(path, start_line + relative_line - 1, message)
+            failed = True
+    return 1 if failed else 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
