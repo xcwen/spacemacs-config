@@ -107,9 +107,13 @@ diagnostic is not hidden by the command picker."
    "m"
    #'(lambda ()
        (interactive)
-       (if (check-in-php-mode)
-           (xcwen/php-update-builder-item-types-current-buffer)
-         (restart-project))))
+       (cond
+        ((derived-mode-p 'sql-mode)
+         (xcwen/sql-check-with-mysql))
+        ((check-in-php-mode)
+         (xcwen/php-update-builder-item-types-current-buffer))
+        (t
+         (restart-project)))))
 
 
 
@@ -199,20 +203,15 @@ diagnostic is not hidden by the command picker."
          )
        ))
 
-
   (set-evil-main-state-key
    "f"
    #'(lambda()
        (interactive )
        (when (and (check-in-php-mode)
-                  (fboundp 'xcwen/php-field-list-update-return-or-gen-def))
-         (xcwen/php-field-list-update-return-or-gen-def)
+                  (fboundp 'ac-php-gen-def))
+         (ac-php-gen-def )
          )
        ))
-
-
-
-
 
 
   (set-evil-all-state-key (kbd "C-S-j")    'switch-file-term)
@@ -230,7 +229,6 @@ diagnostic is not hidden by the command picker."
   ;;           #'(lambda ( )
   ;;               (set-evil-main-state-key-on-mode php-mode-map "D" 'my-jump-table-sql  )
   ;;               (set-evil-main-state-key-on-mode  php-mode-map "r" 'ac-php-remake-tags )
-  ;;               (set-evil-main-state-key-on-mode  php-mode-map "f" 'ac-php-gen-def )
   ;;               (set-evil-main-state-key-on-mode  php-mode-map "m" 'php-mode-make)
   ;;               ))
   ;; (add-hook 'php-ts-mode-hook
@@ -244,7 +242,6 @@ diagnostic is not hidden by the command picker."
   ;;               (set-evil-main-state-key-on-mode php-ts-mode-map "D" 'my-jump-table-sql  )
 
   ;;               (set-evil-main-state-key-on-mode  php-ts-mode-map "r" 'ac-php-remake-tags )
-  ;;               (set-evil-main-state-key-on-mode  php-ts-mode-map "f" 'ac-php-gen-def )
   ;;               (set-evil-main-state-key-on-mode  php-ts-mode-map "m" 'php-mode-make)
 
   ;;               (setq-local treesit-font-lock-level 4)
@@ -296,6 +293,68 @@ diagnostic is not hidden by the command picker."
   (xcwen/vue-with-fast-paste
    (evil-paste-before count (or register evil-this-register))))
 
+(defconst xcwen/vue-tsserver-project-retries 8
+  "Number of times to retry Volar's project lookup while tsserver starts.")
+
+(defun xcwen/vue--tsserver-response (volar-workspace id response)
+  "Forward tsserver RESPONSE for ID to VOLAR-WORKSPACE."
+  (lsp-volar--send-notify
+   volar-workspace "tsserver/response"
+   (vector (vector id (lsp-get response :body)))))
+
+(defun xcwen/vue--tsserver-error-message (error-response)
+  "Extract a message string from ERROR-RESPONSE."
+  (or (and (hash-table-p error-response)
+           (or (gethash "message" error-response)
+               (gethash :message error-response)))
+      (and (listp error-response)
+           (or (plist-get error-response :message)
+               (alist-get 'message error-response)
+               (alist-get "message" error-response nil nil #'equal)))
+      (format "%s" error-response)))
+
+(defun xcwen/vue--tsserver-error
+    (ts-ls-workspace volar-workspace id command payload retries error-response)
+  "Handle a forwarded tsserver ERROR-RESPONSE, retrying transient project races."
+  (if (and (> retries 0)
+           (string-match-p
+            "No Project"
+            (xcwen/vue--tsserver-error-message error-response)))
+      (run-at-time 0.25 nil #'xcwen/vue--forward-tsserver-request
+                   ts-ls-workspace volar-workspace id command payload
+                   (1- retries))
+    ;; Volar waits on every request ID.  Always answer so one tsserver error
+    ;; cannot leave the Vue language server permanently blocked.
+    (lsp--warn "tsserver/request failed: %S" error-response)
+    (lsp-volar--send-notify
+     volar-workspace "tsserver/response" (vector (vector id nil)))))
+
+(defun xcwen/vue--forward-tsserver-request
+    (ts-ls-workspace volar-workspace id command payload retries)
+  "Forward one Volar request to TS-LS-WORKSPACE, with RETRIES remaining."
+  (with-lsp-workspace ts-ls-workspace
+    (lsp-request-async
+     "workspace/executeCommand"
+     (list :command "typescript.tsserverRequest"
+           :arguments (vector command payload))
+     (apply-partially #'xcwen/vue--tsserver-response volar-workspace id)
+     :error-handler
+     (apply-partially #'xcwen/vue--tsserver-error
+                      ts-ls-workspace volar-workspace id command payload retries))))
+
+(defun xcwen/vue-tsserver-request-handler (volar-workspace params)
+  "Forward Volar PARAMS through the TypeScript LSP bridge."
+  (if-let* ((ts-ls-workspace
+             (lsp-find-workspace lsp-volar-typescript-server-id nil)))
+      (let ((request (aref params 0)))
+        (xcwen/vue--forward-tsserver-request
+         ts-ls-workspace volar-workspace
+         (aref request 0) (aref request 1) (aref request 2)
+         xcwen/vue-tsserver-project-retries))
+    (lsp--error
+     "[lsp-volar] Could not find `%s`; Vue TypeScript features are unavailable"
+     lsp-volar-typescript-server-id)))
+
 (defun my-user-config ()
   "Configuration function for user code.
 This function is called at the very end of Spacemacs initialization after
@@ -316,6 +375,11 @@ you should place your code here."
      ".cache/lsp/npm/@typescript/typescript6/lib/node_modules/@typescript/typescript6/lib"
      user-emacs-directory))
 
+  (defconst xcwen/vue-typescript-compat-tsserver
+    (expand-file-name
+     "../node_modules/@typescript/old/lib/tsserver.js"
+     xcwen/vue-typescript-compat-sdk))
+
   (defun xcwen/vue-language-server-command ()
     "Start Vue Language Server with the TypeScript 6 API compatibility SDK."
     (list (lsp-package-path 'volar-language-server)
@@ -335,7 +399,15 @@ you should place your code here."
           :server-id 'brainrot)))))
 
   (with-eval-after-load 'lsp-volar
+    ;; Keep both sides of Volar's TS bridge on the same compiler.  The
+    ;; @typescript/typescript6 package exposes the SDK through a wrapper, while
+    ;; its actual tsserver.js lives in the nested @typescript/old package.
+    (when (file-exists-p xcwen/vue-typescript-compat-tsserver)
+      (lsp-dependency
+       'typescript `(:system ,xcwen/vue-typescript-compat-tsserver)))
     (when-let ((client (gethash 'vue-semantic-server lsp-clients)))
+      (puthash "tsserver/request" #'xcwen/vue-tsserver-request-handler
+               (lsp--client-notification-handlers client))
       ;; Expand the struct setter only after lsp-mode has defined lsp--client.
       (let ((connection
              (lsp-stdio-connection #'xcwen/vue-language-server-command)))

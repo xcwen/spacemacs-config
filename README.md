@@ -144,12 +144,9 @@ emacs php-mode 快捷键
     ,e        : 删除多余空格，调整到出错的地方
     ,r        : 重新生成tags
     ,D        : 跳转到数据表的 CREATE TABLE 定义
-    ,f        : 从 field_get_list 或 SqlBuilder select 更新 @return/@var
+    ,f        : 生成局部变量定义
     ,m        : 运行 update_builder_item_types.php 刷新当前 PHP 文件
 ```
-SqlBuilder 的手动字段类型可在 `$item` DocBlock 中声明：
-`* @manual-item-type start_time: int`。`,f` 刷新时会保留并合并该字段。
-
 在本项目中，ac-php 会补全 `field_get_list` 和 SqlBuilder 字符串中的
 字段名及 `alias.field`，包括 `select`、`where`、`orderBy` 和 join ON。
 
@@ -264,6 +261,10 @@ templater = raw
 不再自动启动 `sql-ls` 或 `sqls`。`SPC m ==` 使用 LSP 格式化整个缓冲区。
 项目的 `.sqruff` 决定解析方言，Emacs 的 SQL 高亮默认使用 MySQL。
 sqruff 不提供数据库表、字段补全，也不提供区域格式化。
+
+SQL 缓冲区按 `,m` 时，从当前文件向上查找 `.sqls/config.json`，使用其中
+第一条 MySQL 连接逐条 `PREPARE` 当前缓冲区，并打开 Flycheck error list。
+检查器不会执行原始 SQL，因此不会创建、修改或删除数据库对象。
 
 sqruff 0.40.0 的 LSP 实测没有回传语法解析错误；需要检查解析错误时，
 在 SQL 项目目录执行以下命令（不会修改文件）：
