@@ -1,4 +1,4 @@
-;;; phpcbf.el --- Format PHP code in Emacs using PHP_CodeSniffer's phpcbf
+;;; phpcbf.el --- Format PHP code in Emacs using PHP_CodeSniffer's phpcbf -*- lexical-binding: nil; -*-
 
 ;;; Copyright (c) 2015 nishimaki10
 

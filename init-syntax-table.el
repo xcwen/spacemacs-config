@@ -1,4 +1,4 @@
-;;; --- 绑定扩展名到特定的模式
+;;; init-syntax-table.el --- 模式语法表设置 -*- lexical-binding: t; -*-
 
 
 

@@ -1,4 +1,4 @@
-;;; my-config.el --- Some basic utility function of xcwen
+;;; my-config.el --- Some basic utility function of xcwen -*- lexical-binding: nil; -*-
 ;; -*- Emacs-Lisp -*-
 
 ;; Time-stamp: <2010-09-11 09:53:02 Saturday by taoshanwen>
@@ -844,6 +844,155 @@ you should place your code here."
     (evil-collection-define-key 'insert 'vterm-mode-map
       (kbd "<escape>") 'vterm--self-insert)) ; 将 ESC 绑定为自插入，发送到终端
 
+
+  ;; 在终端窗口顶部显示所有 vterm buffer 的标签栏（Emacs 27.1+）。
+  (require 'tab-line)
+  (require 'seq)
+
+  (defvar my/vterm-tab-order nil
+    "终端标签的固定顺序，新终端追加到末尾。")
+
+  (defun my/vterm-tab-buffers ()
+    "按固定顺序显示 vterm buffer，不随终端切换重新排序。"
+    (let ((buffers
+           (seq-filter
+            (lambda (buffer)
+              (with-current-buffer buffer
+                (derived-mode-p 'vterm-mode)))
+            (buffer-list))))
+      ;; 清理已关闭的终端，并保留其余标签的位置。
+      (setq my/vterm-tab-order
+            (seq-filter (lambda (buffer) (memq buffer buffers))
+                        my/vterm-tab-order))
+      (dolist (buffer buffers)
+        (unless (memq buffer my/vterm-tab-order)
+          (setq my/vterm-tab-order
+                (append my/vterm-tab-order (list buffer)))))
+      my/vterm-tab-order))
+
+  (defvar-local my/vterm-ssh-label nil
+    "SSH 会话期间覆盖目录名的终端标签。")
+
+  (defun my/vterm-set-ssh-label (label)
+    "由 shell 设置 SSH 标签；空字符串恢复目录名。"
+    (when (derived-mode-p 'vterm-mode)
+      (setq my/vterm-ssh-label
+            (and (string-match-p "\\`ssh-[[:alnum:]._-]+\\'" label) label))
+      (force-mode-line-update t)))
+
+  (with-eval-after-load 'vterm
+    (add-to-list 'vterm-eval-cmds
+                 '("my-vterm-ssh-label" my/vterm-set-ssh-label)))
+
+  (defun my/vterm-tab-name (buffer &optional _buffers)
+    "使用终端当前目录的最后一级作为标签名。"
+    (with-current-buffer buffer
+      (let* ((directory (directory-file-name
+                         (file-local-name default-directory)))
+             (name (file-name-nondirectory directory)))
+        (propertize (or my/vterm-ssh-label (if (string= name "") "/" name))
+                    'my/vterm-buffer buffer))))
+
+  (defun my/vterm-tab-at-position (position)
+    "获取鼠标 POSITION 下的终端标签对应的 buffer。"
+    (let ((string-info (posn-string position)))
+      (when string-info
+        (get-text-property (cdr string-info) 'my/vterm-buffer
+                           (car string-info)))))
+
+  (defun my/vterm-move-tab (source target)
+    "将 SOURCE 标签移动到 TARGET 标签的位置。"
+    (let* ((order (copy-sequence (my/vterm-tab-buffers)))
+           (source-index (seq-position order source))
+           (target-index (seq-position order target)))
+      (when (and source-index target-index (not (eq source target)))
+        (setq order (delq source order))
+        (setq my/vterm-tab-order
+              (append (seq-take order target-index)
+                      (list source)
+                      (seq-drop order target-index)))
+        (force-mode-line-update t))))
+
+  (defun my/vterm-drag-tab (event)
+    "按住终端标签拖动到另一个标签的位置以调整顺序。"
+    (interactive "e")
+    (let ((source (my/vterm-tab-at-position (event-start event)))
+          (target (my/vterm-tab-at-position (event-end event))))
+      (when (and (buffer-live-p source) (buffer-live-p target))
+        (my/vterm-move-tab source target))))
+
+  (defun my/vterm-tab-cache-key (tabs)
+    "将各终端的当前目录加入缓存键，cd 后重新生成标签。"
+    (append (tab-line-cache-key-default tabs)
+            (mapcar (lambda (buffer)
+                      (with-current-buffer buffer
+                        (list default-directory my/vterm-ssh-label)))
+                    tabs)))
+
+  (defun my/vterm-close-other-tabs (&optional event)
+    "关闭点击按钮所在窗口之外的其他终端 buffer，保留当前终端。"
+    (interactive (list last-input-event))
+    (let* ((window (and (mouse-event-p event)
+                        (posn-window (event-start event))))
+           (keep (if (windowp window)
+                     (window-buffer window)
+                   (current-buffer))))
+      (unless (with-current-buffer keep (derived-mode-p 'vterm-mode))
+        (user-error "当前窗口不是 vterm 终端"))
+      (let ((others (delq keep (copy-sequence (my/vterm-tab-buffers)))))
+        (when (and others
+                   (yes-or-no-p
+                    (format "关闭其他 %d 个终端及其运行中的进程？ "
+                            (length others))))
+          (dolist (buffer others)
+            (when (buffer-live-p buffer)
+              ;; 本次批量操作已确认，跳过逐个终端的进程退出确认。
+              (with-current-buffer buffer
+                (let ((kill-buffer-query-functions nil))
+                  (dolist (process (process-list))
+                    (when (eq (process-buffer process) buffer)
+                      (set-process-query-on-exit-flag process nil)))
+                  (set-buffer-modified-p nil)
+                  (kill-buffer buffer)))))))
+      (force-mode-line-update t)))
+
+  (defvar my/vterm-close-others-map
+    (let ((map (make-sparse-keymap)))
+      (define-key map [tab-line mouse-1] #'my/vterm-close-other-tabs)
+      map)
+    "终端标签栏的关闭其他按钮键映射。")
+
+  (defun my/vterm-close-others-button ()
+    "生成终端标签栏的关闭其他按钮。"
+    (propertize " [关闭其他] "
+                'local-map my/vterm-close-others-map
+                'mouse-face 'tab-line-highlight
+                'help-echo "关闭其余终端，保留当前终端"))
+
+  (defun my/vterm-enable-tabs ()
+    "为当前终端启用标签栏，点击 + 新建终端。"
+    (setq-local tab-line-tabs-function #'my/vterm-tab-buffers)
+    (setq-local tab-line-tab-name-function #'my/vterm-tab-name)
+    (setq-local tab-line-cache-key-function #'my/vterm-tab-cache-key)
+    (setq-local tab-line-new-tab-choice #'multi-vterm)
+    ;; 默认 bury-buffer 只隐藏 buffer，而我们的列表仍包含它；需要真正关闭。
+    (setq-local tab-line-close-tab-function #'kill-buffer)
+    (setq-local tab-line-tab-map (copy-keymap tab-line-tab-map))
+    ;; 在松开鼠标时切换，保留完整的按下—拖动—松开事件。
+    (define-key tab-line-tab-map [tab-line down-mouse-1] #'ignore)
+    (define-key tab-line-tab-map [tab-line mouse-1] #'tab-line-select-tab)
+    (define-key tab-line-tab-map [tab-line drag-mouse-1] #'my/vterm-drag-tab)
+    (tab-line-mode 1)
+    (setq-local tab-line-format
+                '((:eval (my/vterm-close-others-button))
+                  (:eval (tab-line-format)))))
+
+  (add-hook 'vterm-mode-hook #'my/vterm-enable-tabs)
+
+  ;; 重新加载配置时，也为已经打开的终端启用标签栏。
+  (dolist (buffer (my/vterm-tab-buffers))
+    (with-current-buffer buffer
+      (my/vterm-enable-tabs)))
 
   (add-hook
    'vterm-mode-hook
