@@ -29,19 +29,52 @@
     "aigc-vue": {
       "root": "aigc-vue",
       "adapter": "vue-typescript",
-      "sourceRoots": ["src/views", "src/partner"],
-      "importAliases": {"@/": "src/"},
-      "companionExtensions": ["vue", "ts"],
-      "backendScope": ["aigc-php", "node", "rust", "go"],
+      "sourceRoots": [
+        "src/views",
+        "src/partner"
+      ],
+      "importAliases": {
+        "@/": "src/"
+      },
+      "companionExtensions": [
+        "vue",
+        "ts"
+      ],
+      "backendScope": [
+        "aigc-php",
+        "node",
+        "rust",
+        "go"
+      ],
       "gateway": {
-        "stripPrefixes": ["/api"],
+        "stripPrefixes": [
+          "/api"
+        ],
         "routes": [
-          {"prefix": "/route__live_audio", "project": "node"},
-          {"prefix": "/route__node_use_shell", "project": "node"},
-          {"prefix": "/route__menu_similarity", "project": "node"},
-          {"prefix": "/route__mindshow_node_common", "project": "node"},
-          {"prefix": "/route__platform_node_core", "project": "node"},
-          {"prefix": "/route__node_admin", "project": "node"}
+          {
+            "prefix": "/route__live_audio",
+            "project": "node"
+          },
+          {
+            "prefix": "/route__node_use_shell",
+            "project": "node"
+          },
+          {
+            "prefix": "/route__menu_similarity",
+            "project": "node"
+          },
+          {
+            "prefix": "/route__mindshow_node_common",
+            "project": "node"
+          },
+          {
+            "prefix": "/route__platform_node_core",
+            "project": "node"
+          },
+          {
+            "prefix": "/route__node_admin",
+            "project": "node"
+          }
         ],
         "fallback": "ask"
       },
@@ -50,7 +83,10 @@
           "id": "common-ajax",
           "importFrom": "@/utils/common",
           "importName": "default",
-          "members": ["do_ajax_async", "do_ajax"],
+          "members": [
+            "do_ajax_async",
+            "do_ajax"
+          ],
           "urlArgument": 0
         },
         {
@@ -65,7 +101,19 @@
         {
           "id": "crud-spec",
           "importGlob": "@/gen/crud_spec/*",
-          "urlFields": ["urls.list", "urls.opt"],
+          "urlFields": [
+            "urls.list",
+            "urls.opt"
+          ],
+          "project": "aigc-php"
+        },
+        {
+          "id": "table-mixin",
+          "importFrom": "@/components/mixins/table",
+          "urlFields": [
+            "get_list_url",
+            "opt_url"
+          ],
           "project": "aigc-php"
         }
       ]
@@ -73,16 +121,34 @@
   },
   "links": [
     {
-      "source": {"project": "aigc-vue", "file": "src/views/admin/notify/task_list.vue"},
+      "source": {
+        "project": "aigc-vue",
+        "file": "src/views/admin/notify/task_list.vue"
+      },
       "endpoints": [
-        {"project": "aigc-php", "id": "admin/notify/task_list", "method": "POST"},
-        {"project": "aigc-php", "id": "admin/notify/task_opt", "method": "POST"}
+        {
+          "project": "aigc-php",
+          "id": "admin/notify/task_list",
+          "method": "POST"
+        },
+        {
+          "project": "aigc-php",
+          "id": "admin/notify/task_opt",
+          "method": "POST"
+        }
       ]
     },
     {
-      "source": {"project": "aigc-vue", "file": "src/views/llm_admin/manage/LlmSubmit.vue"},
+      "source": {
+        "project": "aigc-vue",
+        "file": "src/views/llm_admin/manage/LlmSubmit.vue"
+      },
       "endpoints": [
-        {"project": "node", "id": "llm_admin/manage/submit", "method": "POST"}
+        {
+          "project": "node",
+          "id": "llm_admin/manage/submit",
+          "method": "POST"
+        }
       ]
     }
   ],

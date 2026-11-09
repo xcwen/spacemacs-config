@@ -33,7 +33,8 @@
   (xcwen-jump--load-config)
   (dolist (case '(("src/views/admin/notify/task_list.vue" "spec: notify_task_crud_spec" "aigc-php" 2)
                   ("src/views/llm_admin/manage/LlmSubmit.vue" "/route__node_admin/llm_admin/manage/submit" "node" 1)
-                  ("src/partner/NotificationCurl.vue" "'/partner/data/notify_curl'" "node" 1)))
+                  ("src/partner/NotificationCurl.vue" "'/partner/data/notify_curl'" "node" 1)
+                  ("src/views/mindshow_admin/user/introduction_list.ts" "this.table_init" "aigc-php" 1)))
     (let ((project (xcwen-jump--project "aigc-vue")))
       (xcwen-jump--with-source
        (xcwen-jump--file project (nth 0 case))
