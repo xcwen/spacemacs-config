@@ -474,15 +474,23 @@ Move by COUNT candidates when Company is active."
        volar-workspace "tsserver/response" (vector (vector (aref request 0) nil))))))
 
 (defconst xcwen/vue-typescript-compat-sdk
-  (expand-file-name
-   ".cache/lsp/npm/@typescript/typescript6/lib/node_modules/@typescript/typescript6/lib"
-   user-emacs-directory)
+  (let ((compat (expand-file-name
+                 ".cache/lsp/npm/@typescript/typescript6/lib/node_modules/@typescript/typescript6/lib"
+                 user-emacs-directory)))
+    (if (file-readable-p (expand-file-name "typescript.js" compat))
+        compat
+      (expand-file-name
+       ".cache/lsp/npm/typescript/lib/node_modules/typescript/lib"
+       user-emacs-directory)))
   "TypeScript compatibility SDK used by the Vue language server.")
 
 (defconst xcwen/vue-typescript-compat-tsserver
-  (expand-file-name
-   "../node_modules/@typescript/old/lib/tsserver.js"
-   xcwen/vue-typescript-compat-sdk)
+  (let ((legacy (expand-file-name
+                 "../node_modules/@typescript/old/lib/tsserver.js"
+                 xcwen/vue-typescript-compat-sdk)))
+    (if (file-readable-p legacy)
+        legacy
+      (expand-file-name "tsserver.js" xcwen/vue-typescript-compat-sdk)))
   "tsserver executable paired with the Vue compatibility SDK.")
 
 (defun xcwen/vue-language-server-command ()

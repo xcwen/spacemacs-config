@@ -136,7 +136,7 @@ Comments are omitted. Template expressions are deliberately opaque."
              (receiver (xcwen-jump--tok tokens (1- i)))
              (go (and (equal adapter "go-controller") (equal previous ")")
                       (xcwen-jump-token-pair receiver)))
-             (valid (if go
+             (valid (and (equal (xcwen-jump-token-text token) symbol) (if go
                         (let* ((open (xcwen-jump-token-pair receiver))
                                (idx (cl-position open tokens :test #'eq)))
                           (and (equal (xcwen-jump--text tokens (1- idx)) "func")
@@ -146,7 +146,7 @@ Comments are omitted. Template expressions are deliberately opaque."
                            (cond ((equal adapter "php-controller") (equal previous "function"))
                                  ((equal adapter "rust-controller") (equal previous "fn"))
                                  ((equal adapter "typescript-controller")
-                                  (not (member previous '("." "function" "=" "return")))))))))
+                                  (not (member previous '("." "function" "=" "return"))))))))))
         (when (and valid (xcwen-jump--code-p token) (equal (xcwen-jump-token-text token) symbol)
                    (equal (xcwen-jump--text tokens (1+ i)) "(") (xcwen-jump-token-pair params))
           (let ((j (1+ (cl-position (xcwen-jump-token-pair params) tokens :test #'eq))))

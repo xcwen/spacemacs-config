@@ -63,7 +63,7 @@ method  = GET
 | proto 的接口文件 | 只到所属后端的 Controller 方法。公共消息 proto 不拼造 Controller 路径。 |
 | 普通文件或 Controller 辅助方法 | 仅提供显式关系和同名配套文件；没有接口上下文不猜上一段 async。 |
 
-`,A` 专门打开当前接口所属后端的 proto；请求处有多个候选时选择接口。proto 本身不重复打开。`C-u ,a` 列出所有关联页面、proto、Controller 以及其他后端的同逻辑接口，明确显示项目与目标类型。
+`,A` 直接列出全部关联目标，默认选中当前后端的 proto；按回车确认。`C-u ,a` 列出所有关联页面、proto、Controller 以及其他后端的同逻辑接口，明确显示项目与目标类型。
 
 同优先级多候选使用 `completing-read`，显示例如 `[go] Controller root/test/user_list → TestController.UserList`；不依赖目录遍历顺序。单个结果直接打开；零结果使用 `user-error` 给出可操作原因。缺少目标文件不创建文件；文件存在但方法缺失时只到文件开头并提示定位失败。成功打开前压入 xref 栈，统一用 `xref-go-back` 返回。
 

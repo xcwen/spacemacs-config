@@ -237,3 +237,22 @@
         (should-not (file-exists-p missing))))))
 
 ;;; xcwen-project-jump-tests.el ends here
+
+(ert-deftest xcwen-jump-picker-defaults-to-proto ()
+  (xcwen-jump-test-workspace
+    (xcwen-jump-test-source "go/proto/src/root/test__user_list.proto"
+      (cl-letf (((symbol-function 'completing-read)
+                 (lambda (_prompt choices _predicate _require &optional _initial _history default &rest _)
+                   (should (eq (plist-get (cdr (assoc default choices)) :kind) 'proto))
+                   default))
+                ((symbol-function 'xcwen-jump--open) #'ignore))
+        (xcwen-jump-proto)))))
+
+(ert-deftest xcwen-jump-open-preserves-position-in-target-method ()
+  (xcwen-jump-test-workspace
+    (with-current-buffer (find-file-noselect (expand-file-name "go/controllers/root/test.go" root))
+      (goto-char (point-min)) (search-forward "x :=")
+      (let* ((position (point)) (context (xcwen-jump--context))
+             (candidate (xcwen-jump--candidate (car (plist-get context :refs)) 'controller)))
+        (xcwen-jump--open candidate)
+        (should (= position (point)))))))

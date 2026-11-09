@@ -24,16 +24,27 @@
             (when (and xcwen-jump--request-state (null refs))
               (setq at-point 'unresolved)
               (push "光标处的请求无法解析，请检查路由/索引；动态请求可配置 links" xcwen-jump--diagnostics)))
-        (let ((tokens (xcwen-jump--tokens)) (pos (point)))
+        (let ((tokens nil) php-symbol (pos (point))
+              (relative (file-relative-name file (xcwen-jump-project-root project))))
           (dolist (entry (xcwen-jump--index project))
             (let* ((ctrl (alist-get 'controller entry))
-                   (proto (xcwen-jump--file project (alist-get 'proto entry)))
-                   (controller (xcwen-jump--file project (alist-get 'file ctrl))))
-              (cond ((equal file (file-truename proto))
+                   (proto (alist-get 'proto entry))
+                   (controller (alist-get 'file ctrl)))
+              (cond ((equal relative proto)
                      (setq role 'proto) (push (xcwen-jump--ref project entry "协议文件") refs))
-                    ((equal file (file-truename controller))
+                    ((equal relative controller)
                      (setq role 'controller)
-                     (dolist (range (xcwen-jump--method-ranges tokens adapter (alist-get 'owner ctrl) (alist-get 'symbol ctrl)))
+                     (unless tokens
+                       (setq tokens (xcwen-jump--tokens))
+                       (when (equal adapter "php-controller")
+                         (dotimes (i (1- (length tokens)))
+                           (when (and (xcwen-jump--code-p (aref tokens i))
+                                      (equal (xcwen-jump--text tokens i) "function")
+                                      (<= (xcwen-jump-token-start (aref tokens i)) pos))
+                             (setq php-symbol (xcwen-jump--text tokens (1+ i)))))))
+                     (dolist (range (when (or (not (equal adapter "php-controller"))
+                                              (equal php-symbol (alist-get 'symbol ctrl)))
+                                      (xcwen-jump--method-ranges tokens adapter (alist-get 'owner ctrl) (alist-get 'symbol ctrl))))
                        (when (and (<= (nth 0 range) pos) (<= pos (nth 1 range))
                                   (not (xcwen-jump--nested-function-p tokens (nth 3 range) pos)))
                          (push (xcwen-jump--ref project entry "Controller 方法") refs)))))))))
@@ -160,29 +171,38 @@
              (ranges (xcwen-jump--method-ranges (xcwen-jump--tokens)
                                                (xcwen-jump-project-adapter (plist-get candidate :project))
                                                (alist-get 'owner ctrl) (alist-get 'symbol ctrl))))
-        (goto-char (if (= (length ranges) 1) (nth 2 (car ranges)) (point-min)))
+        (unless (and (= (length ranges) 1)
+                     (<= (nth 0 (car ranges)) (point))
+                     (<= (point) (nth 1 (car ranges))))
+          (goto-char (if (= (length ranges) 1) (nth 2 (car ranges)) (point-min))))
         (unless (= (length ranges) 1)
           (message "已打开文件，但无法唯一定位 %s::%s，请检查方法或重新生成索引"
                    (alist-get 'owner ctrl) (alist-get 'symbol ctrl)))))))
 
-(defun xcwen-jump--run (mode)
+(defun xcwen-jump--run (mode &optional prefer-proto)
   (setq xcwen-jump--diagnostics nil)
   (let* ((context (xcwen-jump--context)) (candidates (xcwen-jump--candidates context mode)))
     (unless candidates
       (user-error "%s" (if (and (eq mode 'proto) (eq (plist-get context :role) 'proto)) "当前已是协议文件"
                          (or (car xcwen-jump--diagnostics) "没有关联目标；请在接口方法/请求处调用，或配置 links"))))
     (xcwen-jump--open
-     (if (= (length candidates) 1) (car candidates)
+     (if (and (not prefer-proto) (= (length candidates) 1)) (car candidates)
        (let* ((choices (sort (mapcar (lambda (c) (cons (xcwen-jump--label c) c)) candidates)
                              (lambda (a b) (string-lessp (car a) (car b))))))
-         (cdr (assoc (completing-read "关联目标: " choices nil t) choices)))))))
+         (let* ((preferred (and prefer-proto
+                                (cl-find-if (lambda (pair)
+                                  (and (eq (plist-get (cdr pair) :kind) 'proto)
+                                       (eq (plist-get (cdr pair) :project) (plist-get context :project)))) choices)))
+                  (default (car (or preferred (and prefer-proto
+                                (cl-find-if (lambda (pair) (eq (plist-get (cdr pair) :kind) 'proto)) choices))))))
+           (cdr (assoc (completing-read "关联目标: " choices nil t nil nil default) choices))))))))
 
 (defun xcwen-jump-related (all)
   "Jump to the related source; with prefix ALL, choose among all relationships."
   (interactive "P") (xcwen-jump--run (if all 'all 'related)))
 (defun xcwen-jump-proto ()
   "Jump to the current endpoint's protocol in its own backend."
-  (interactive) (xcwen-jump--run 'proto))
+  (interactive) (xcwen-jump--run 'all t))
 
 (defun xcwen-jump-describe-context ()
   "Explain current endpoint identities, candidates and unresolved expressions."

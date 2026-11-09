@@ -1,6 +1,6 @@
 # Emacs 配置文件
 
-`,a` 关联跳转现支持 PHP、Node、Vue、Rust、Go；`,A` 打开当前接口的 proto，
+`,a` 关联跳转现支持 PHP、Node、Vue、Rust、Go；`,A` 列出全部关联目标并默认选中 proto，
 `C-u ,a` 选择全部关联目标。配置入口为
 `~/.config/emacs/project-jump/workspaces/aigc.json`，默认也可使用仓库内示例。
 详见 [跳转配置、生成器安装与验收](docs/project-jump-redesign.md)。
