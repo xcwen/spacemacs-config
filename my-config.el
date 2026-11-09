@@ -30,6 +30,7 @@
   (expand-file-name file dotspacemacs-directory))
 
 (require 'xcwen-misc)
+(require 'xcwen-project-jump)
 (require 'init-syntax-table)
 (require 'init-sqruff)
 (require 'core-jump)
@@ -198,8 +199,8 @@ diagnostic is not hidden by the command picker."
            '(("w" . save-buffer)
              ("u" . upper-or-lower-whole-word)
              ("L" . revert-buffer)
-             ("a" . switch-file-opt)
-             ("A" . switch-file-opt-proto)
+             ("a" . xcwen-jump-related)
+             ("A" . xcwen-jump-proto)
              ("e" . cleanup-and-goto-error)
              ("d" . show-pot-dict-at-region)
              ("c" . lsp-execute-code-action)
@@ -634,6 +635,7 @@ Move by COUNT candidates when Company is active."
   (xcwen/setup-lsp)
   (xcwen/setup-keybindings)
   (xcwen/setup-mode-hooks)
+  (xcwen-jump-initialize)
 
   (when (require 'server nil t)
     (unless (server-running-p)
