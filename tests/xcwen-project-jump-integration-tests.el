@@ -45,3 +45,14 @@
            (dolist (ref refs) (should (equal (nth 2 case) (xcwen-jump-project-id (plist-get ref :project)))))))))))
 
 ;;; xcwen-project-jump-integration-tests.el ends here
+
+(ert-deftest xcwen-jump-local-task-page-without-background-scan ()
+  (xcwen-jump--load-config)
+  (clrhash xcwen-jump--source-cache)
+  (with-temp-buffer
+    (setq buffer-file-name "/Users/jim/aigc-php-core/src/app/Controllers/MindshowAdmin/User.php")
+    (insert-file-contents buffer-file-name)
+    (goto-char (point-min)) (forward-line 1190)
+    (let ((candidates (xcwen-jump--candidates (xcwen-jump--context) 'all)))
+      (should (cl-find "/Users/jim/aigc-vue/src/views/mindshow_admin/user/task_list.vue"
+                       candidates :key (lambda (c) (plist-get c :file)) :test #'equal)))))

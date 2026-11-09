@@ -256,3 +256,18 @@
              (candidate (xcwen-jump--candidate (car (plist-get context :refs)) 'controller)))
         (xcwen-jump--open candidate)
         (should (= position (point)))))))
+
+(ert-deftest xcwen-jump-vue-external-script-and-dependency ()
+  (xcwen-jump-test-workspace
+    (let* ((script (xcwen-jump-test-write root "vue/src/views/logic.ts"
+                    "import common from '@/utils/common'; common.do_ajax_async('/route__node/root/test/user_list');"))
+           (page (xcwen-jump-test-write root "vue/src/views/external.vue"
+                    "<template><div/></template><script lang='ts' src='./logic.ts' />"))
+           (project (xcwen-jump--project "vue")))
+      (let* ((refs (xcwen-jump--cached-source project page))
+             (pages (xcwen-jump--pages (car refs))))
+        (should (= 1 (length refs)))
+        (should (cl-find (file-truename page) pages :key (lambda (c) (file-truename (plist-get c :file))) :test #'equal)))
+      (with-current-buffer (find-file-noselect script)
+        (erase-buffer) (insert "export {};"))
+      (should-not (xcwen-jump--cached-source project page)))))

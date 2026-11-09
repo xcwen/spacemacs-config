@@ -243,6 +243,22 @@
                       (setq refs (append refs (xcwen-jump--url-refs project (xcwen-jump--text tokens (+ j 2)) (alist-get 'project provider)
                                       "table mixin" (xcwen-jump-token-start (aref tokens i)) (xcwen-jump-token-end end)))))
                     (setq j (1+ j))))))))))
+    (when (string-suffix-p ".vue" (or buffer-file-name ""))
+      (save-excursion
+        (goto-char (point-min))
+        (while (re-search-forward "<script\\b[^>]*>" nil t)
+          (let ((start (match-beginning 0)) (end (match-end 0))
+                (tag (match-string-no-properties 0)))
+            (when (string-match "\\bsrc[ \t\n]*=[ \t\n]*[\"']\\([^\"']+\\)[\"']" tag)
+              (let ((file (xcwen-jump--import-file project (match-string 1 tag))))
+                (when (and file (string-suffix-p ".ts" file))
+                  (when xcwen-jump--collect-dependencies
+                    (push (cons file (xcwen-jump--stamp file)) xcwen-jump--dependencies))
+                  (dolist (ref (xcwen-jump--with-source file (lambda () (xcwen-jump--frontend-refs project))))
+                    (let ((mapped (copy-sequence ref)))
+                      (setq mapped (plist-put mapped :start start))
+                      (setq mapped (plist-put mapped :end end))
+                      (push mapped refs))))))))))
     refs))
 
 (defun xcwen-jump--cached-source (project file)

@@ -79,6 +79,19 @@
 
 (defun xcwen-jump--pages (ref)
   (let (pages)
+    ;; Seed plausible files on demand, then verify their actual requests.
+    ;; Background enumeration is optional for these conventional page paths.
+    (dolist (frontend xcwen-jump--projects)
+      (when (and (equal (xcwen-jump-project-adapter frontend) "vue-typescript")
+                 (equal (xcwen-jump-project-workspace frontend)
+                        (xcwen-jump-project-workspace (plist-get ref :project))))
+        (dolist (root (alist-get 'sourceRoots (xcwen-jump-project-settings frontend)))
+          (dolist (extension '("vue" "ts"))
+            (let ((file (xcwen-jump--file frontend
+                          (concat (string-remove-suffix "/" root) "/"
+                                  (alist-get 'id (plist-get ref :entry)) "." extension))))
+              (when (file-readable-p file)
+                (xcwen-jump--cached-source frontend file)))))))
     ;; Visiting buffers may contain new requests not yet present in the disk index.
     (dolist (buffer (buffer-list))
       (with-current-buffer buffer
