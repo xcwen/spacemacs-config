@@ -392,6 +392,55 @@
       (should (eq (lookup-key term-raw-map (kbd "M-x")) 'helm-M-x))
       (should (eq (lookup-key evil-insert-state-local-map (kbd "C-y")) 'term-paste)))))
 
+(ert-deftest my-config-php-tip-scrolls-and-closes-without-editing ()
+  (with-temp-buffer
+    (insert "source code\n")
+    (goto-char (point-min))
+    (let ((xcwen/ac-php-scrollable-tip t)
+          (keys '("j" "<next>" "<next>" "<next>" "k" "<prior>" "<prior>" "q"))
+          positions tip)
+      (cl-letf (((symbol-function 'popup-menu-read-key-sequence)
+                 (lambda (&rest _)
+                   (setq tip (car popup-instances))
+                   (push (popup-scroll-top tip) positions)
+                   (kbd (pop keys)))))
+        (popup-tip (mapconcat #'number-to-string (number-sequence 1 12) "\n")
+                   :height 4 :scroll-bar t))
+      ;; Scroll down, page down, clamp at the bottom, then return to the top.
+      (should (equal (nreverse positions) '(0 1 4 7 8 7 4 1)))
+      (should-not (popup-live-p tip))
+      (should (equal (buffer-string) "source code\n"))
+      (should (= (point) (point-min))))))
+
+(ert-deftest my-config-php-short-tip-replays-edit-key ()
+  (with-temp-buffer
+    (let ((xcwen/ac-php-scrollable-tip t)
+          (unread-command-events '(existing-event))
+          (keys '("j" "<next>" "k" "x"))
+          tip)
+      (cl-letf (((symbol-function 'popup-menu-read-key-sequence)
+                 (lambda (&rest _)
+                   (setq tip (car popup-instances))
+                   (should (= (popup-scroll-top tip) 0))
+                   (kbd (pop keys)))))
+        (popup-tip "Short documentation" :height 4))
+      (should (equal unread-command-events '(?x existing-event)))
+      (should-not (popup-live-p tip)))))
+
+(ert-deftest my-config-php-tip-cleans-up-on-quit ()
+  (with-temp-buffer
+    (let ((xcwen/ac-php-scrollable-tip t)
+          tip)
+      (cl-letf (((symbol-function 'popup-menu-read-key-sequence)
+                 (lambda (&rest _)
+                   (setq tip (car popup-instances))
+                   (signal 'quit nil))))
+        (should (eq (condition-case nil
+                        (popup-tip "Documentation")
+                      (quit 'quit))
+                    'quit)))
+      (should-not (popup-live-p tip)))))
+
 (provide 'my-config-tests)
 
 ;;; my-config-tests.el ends here

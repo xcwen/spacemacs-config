@@ -147,6 +147,10 @@ emacs php-mode 快捷键
     ,f        : 生成局部变量定义
     ,m        : 运行 update_builder_item_types.php 刷新当前 PHP 文件
 ```
+`,i` 或 `M-x ac-php-show-tip` 打开 PHP 文档提示后，`j/k`、上下方向键、
+`C-n/C-p` 或鼠标滚轮可滚动内容；`PgDn/PgUp`、`C-f/C-b` 可翻页。
+按 `q`、`Esc`、`Enter` 或 `C-g` 关闭。其他编辑按键会关闭提示并继续执行。
+
 在本项目中，ac-php 会补全 `field_get_list` 和 SqlBuilder 字符串中的
 字段名及 `alias.field`，包括 `select`、`where`、`orderBy` 和 join ON。
 
@@ -217,11 +221,20 @@ bear -- make
 ### python
 安装 anaconda3
 
-### rust 
-安装 rust-analyzer
+### rust
+
+使用 Homebrew 安装 Rust 时，另外安装语言服务器：
+```bash
+brew install rust-analyzer
 ```
+
+使用 rustup 管理 Rust 时，安装对应组件：
+```bash
 rustup component add rust-analyzer
 ```
+
+在 Emacs 中通过 `M-: (executable-find "rust-analyzer")` 确认能找到程序。
+安装后，在 Rust 缓冲区执行 `M-x lsp`；已有工作区可执行 `M-x lsp-workspace-restart`。
 
 ### vue/ts 补全
 

@@ -142,6 +142,62 @@ diagnostic is not hidden by the command picker."
    ((fboundp 'lsp-ui-doc-show)
     (lsp-ui-doc-show))))
 
+(defvar xcwen/ac-php-scrollable-tip nil
+  "Non-nil while displaying an explicitly requested PHP tip.")
+
+(defun xcwen/ac-php-with-scrollable-tip (function &rest args)
+  "Call FUNCTION with ARGS and enable scrolling for its PHP tip."
+  (let ((xcwen/ac-php-scrollable-tip t))
+    (apply function args)))
+
+(defvar xcwen/php-tip-keymap
+  (let ((map (make-sparse-keymap)))
+    (dolist (key '("j" "C-n" "<down>" "<wheel-down>" "<mouse-5>"))
+      (define-key map (kbd key) 'line-down))
+    (dolist (key '("k" "C-p" "<up>" "<wheel-up>" "<mouse-4>"))
+      (define-key map (kbd key) 'line-up))
+    (dolist (key '("C-f" "C-v" "<next>"))
+      (define-key map (kbd key) 'page-down))
+    (dolist (key '("C-b" "M-v" "<prior>"))
+      (define-key map (kbd key) 'page-up))
+    (dolist (key '("q" "<escape>" "RET" "C-g"))
+      (define-key map (kbd key) 'close))
+    map)
+  "Keys active while an explicit PHP documentation tip is visible.")
+
+(defun xcwen/popup-tip-scrollable (function text &rest args)
+  "Let FUNCTION display TEXT with ARGS and scroll explicit PHP tips."
+  (if (or (not xcwen/ac-php-scrollable-tip) (plist-get args :nowait))
+      (apply function text args)
+    (let ((tip (apply function text (plist-put (copy-sequence args) :nowait t))))
+      (unwind-protect
+          (when (and tip (popup-live-p tip))
+            (catch 'done
+              (while (popup-live-p tip)
+                (let* ((key (popup-menu-read-key-sequence
+                             xcwen/php-tip-keymap
+                             "PHP tip: j/k scroll, C-f/C-b page, q close"))
+                       (action (lookup-key xcwen/php-tip-keymap key))
+                       (page (max 1 (1- (popup-height tip)))))
+                  (pcase action
+                    ((or 'line-down 'page-down)
+                     ;; popup-scroll-down assumes the content exceeds the height.
+                     (when (> (length (popup-list tip)) (popup-height tip))
+                       (popup-scroll-down tip (if (eq action 'page-down) page 1))))
+                    ((or 'line-up 'page-up)
+                     (popup-scroll-up tip (if (eq action 'page-up) page 1)))
+                    ('close (throw 'done t))
+                    (_ (setq unread-command-events
+                             (append (listify-key-sequence key)
+                                     unread-command-events))
+                       (throw 'done t)))))))
+        (when tip (popup-delete tip))))))
+
+(with-eval-after-load 'popup
+  (advice-add 'popup-tip :around #'xcwen/popup-tip-scrollable))
+(with-eval-after-load 'ac-php-core
+  (advice-add 'ac-php-show-tip :around #'xcwen/ac-php-with-scrollable-tip))
+
 (defun xcwen/quote-word ()
   "Quote the symbol at point, or split a PHP string for concatenation."
   (interactive "*")
