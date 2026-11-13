@@ -115,9 +115,16 @@
       (cl-find-if #'file-readable-p (list file (concat file ".ts") (concat file ".vue") (concat file "/index.ts"))))))
 
 (defun xcwen-jump--with-source (file function)
+  "Call FUNCTION with FILE's source, preserving any visiting buffer's edits."
   (let ((buffer (find-buffer-visiting file)))
     (if buffer (with-current-buffer buffer (save-restriction (widen) (funcall function)))
-      (with-temp-buffer (setq buffer-file-name file) (insert-file-contents file) (funcall function)))))
+      (with-temp-buffer
+        (insert-file-contents file)
+        (set-buffer-modified-p nil)
+        ;; Parsers need the filename, but the disposable buffer must stop
+        ;; visiting it before cleanup, including when FUNCTION signals.
+        (let ((buffer-file-name file))
+          (funcall function))))))
 
 (defun xcwen-jump--import-matches-p (project source expected)
   "Compare resolved import files, allowing relative paths and configured aliases."

@@ -258,7 +258,7 @@ diagnostic is not hidden by the command picker."
              ("a" . xcwen-jump-related)
              ("A" . xcwen-jump-proto)
              ("e" . cleanup-and-goto-error)
-             ("d" . show-pot-dict-at-region)
+             ("d" . manggo-translate-region)
              ("c" . lsp-execute-code-action)
              ("o" . other-window)
              ("m" . xcwen/project-action)
@@ -717,7 +717,7 @@ Move by COUNT candidates when Company is active."
   (setq php-mode-warn-if-html-template nil)
 
   (dolist (entry '(("\\.wxml\\'" . web-mode)
-                    ("\\.wxss\\'" . css-mode)))
+                   ("\\.wxss\\'" . css-mode)))
     (add-to-list 'auto-mode-alist entry))
 
   (xcwen/setup-terminals)
@@ -727,16 +727,16 @@ Move by COUNT candidates when Company is active."
         (expand-file-name "~/ac-php/ac-php-mago-tags/target/release/ac-php-mago-tags"))
 
   (evilmi-load-plugin-rules '(web-mode vue-mode html-mode nxml-mode nxhtml-mode
-                            sgml-mode php-mode message-mode mhtml-mode)
-                           '(simple template html))
+                                       sgml-mode php-mode message-mode mhtml-mode)
+                            '(simple template html))
   ;; Keep diagnostics on save and documentation on demand.
   (setq flycheck-idle-change-delay 5
         company-idle-delay nil
         flycheck-display-errors-delay 1300000
         flycheck-check-syntax-automatically '(save mode-enabled))
   (setq multi-term-program (or (executable-find "zsh")
-                              (executable-find "bash")
-                              "/bin/sh"))
+                               (executable-find "bash")
+                               "/bin/sh"))
   (add-to-list 'auto-mode-alist '("\\.blade\\.php\\'" . web-mode))
   (add-to-list 'auto-mode-alist '("\\.xml\\'" . web-mode))
   (setq lsp-gopls-build-flags ["--tags=mod_all"])

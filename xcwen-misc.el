@@ -26,6 +26,8 @@
 (require 'ac-php-core)
 (require 'sgml-mode)
 (require 'phpcbf)
+(require 'subr-x)
+
 ;; (require 'php-mode)
 (require 'company)
 (autoload 'multi-term "multi-term" nil t)
@@ -912,17 +914,17 @@ BASE marks the query's base table."
         candidates)
     (cl-labels
         ((add-candidate
-          (name type alias)
-          (unless (gethash name seen)
-            (puthash name t seen)
-            (push (propertize
-                   name
-                   'ac-php-help type
-                   'ac-php-return-type type
-                   'ac-php-tag-type "p"
-                   'ac-php-from (or alias "")
-                   'summary type)
-                  candidates))))
+           (name type alias)
+           (unless (gethash name seen)
+             (puthash name t seen)
+             (push (propertize
+                    name
+                    'ac-php-help type
+                    'ac-php-return-type type
+                    'ac-php-tag-type "p"
+                    'ac-php-from (or alias "")
+                    'summary type)
+                   candidates))))
       (dolist (table tables)
         (let ((alias (plist-get table :alias)))
           (dolist (field (plist-get table :fields))
@@ -2254,6 +2256,79 @@ try {
              (php-code (json-to-php-array parsed-json 0)))
         (kill-new php-code)
         (message "✅ 已复制 PHP 数组代码到剪贴板。")))))
+
+(defun send-manggo-request (data)
+  "将 DATA 写入剪贴板，并调用 Manggo 的“粘贴并翻译”。"
+  (unless (eq system-type 'darwin)
+    (user-error "此函数仅适用于 macOS"))
+  (when (string-empty-p (string-trim data))
+    (user-error "没有需要翻译的文本"))
+
+  (with-temp-buffer
+    (insert data)
+    (let ((coding-system-for-write 'utf-8-unix))
+      (unless (eq 0
+                  (call-process-region
+                   (point-min) (point-max)
+                   "/usr/bin/pbcopy" nil nil nil))
+        (user-error "写入系统剪贴板失败"))))
+
+  (let ((script
+         "on pasteAndTranslate()
+  tell application \"System Events\"
+    if not (exists process \"Manggo\") then return false
+    tell process \"Manggo\"
+      repeat with win in windows
+        set controls to entire contents of win
+        repeat with ctl in controls
+          set matched to false
+          try
+            set matched to (description of ctl is \"粘贴并翻译\")
+          end try
+          if not matched then
+            try
+              set matched to (name of ctl is \"粘贴并翻译\")
+            end try
+          end if
+          if matched then
+            click ctl
+            return true
+          end if
+        end repeat
+      end repeat
+    end tell
+  end tell
+  return false
+end pasteAndTranslate
+
+-- 已有输入浮窗时，直接使用。
+if my pasteAndTranslate() then return
+
+-- 否则按当前配置的 Option+G 打开输入翻译。
+tell application \"System Events\"
+  if not (exists process \"Manggo\") then error \"请先启动 Manggo\"
+  key code 5 using {option down}
+end tell
+
+repeat 40 times
+  delay 0.1
+  if my pasteAndTranslate() then return
+end repeat
+
+error \"未找到 Manggo 的粘贴并翻译按钮，请检查输入翻译窗口和辅助功能权限\"
+"))
+    (with-temp-buffer
+      (let ((status
+             (call-process "/usr/bin/osascript"
+                           nil t nil "-e" script)))
+        (unless (eq status 0)
+          (user-error "调用 Manggo 失败：%s"
+                      (string-trim (buffer-string))))))))
+(defun manggo-translate-region (beg end)
+  "使用 Manggo 翻译选区文本。"
+  (interactive "r")
+  (send-manggo-request
+   (buffer-substring-no-properties beg end)))
 
 (provide 'xcwen-misc)
 

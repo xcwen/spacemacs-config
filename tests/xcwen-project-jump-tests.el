@@ -63,6 +63,52 @@
   `(with-temp-buffer (setq buffer-file-name (expand-file-name ,file root))
      (insert-file-contents buffer-file-name) ,@body))
 
+(ert-deftest xcwen-jump-source-disposes-temporary-file-buffer-without-prompt ()
+  (xcwen-jump-test-workspace
+    (let ((file (expand-file-name "vue/src/views/page.vue" root))
+          (noninteractive nil) prompts temporary)
+      (cl-letf (((symbol-function 'yes-or-no-p)
+                 (lambda (&rest _) (push t prompts) t)))
+        (dolist (exit '(normal error quit))
+          (let ((read-source
+                 (lambda ()
+                   (setq temporary (current-buffer))
+                   (should (equal buffer-file-name file))
+                   (should-not (buffer-modified-p))
+                   (should (string-match-p "do_ajax_async" (buffer-string)))
+                   ;; Even a callback that edits then signals must not prompt.
+                   (insert " ")
+                   (pcase exit
+                     ('error (error "Source parser failed"))
+                     ('quit (signal 'quit nil))
+                     (_ 'parsed)))))
+            (pcase exit
+              ('normal (should (eq (xcwen-jump--with-source file read-source) 'parsed)))
+              ('error (should-error (xcwen-jump--with-source file read-source)))
+              ('quit (should (eq (condition-case nil
+                                    (xcwen-jump--with-source file read-source)
+                                  (quit 'cancelled)) 'cancelled)))))
+          (should-not (buffer-live-p temporary)))
+        (should-not prompts)))))
+
+(ert-deftest xcwen-jump-source-preserves-visiting-buffer-edits-and-narrowing ()
+  (xcwen-jump-test-workspace
+    (let* ((file (expand-file-name "vue/src/views/page.vue" root))
+           (buffer (find-file-noselect file)))
+      (with-current-buffer buffer
+        (goto-char (point-max)) (insert "unsaved request")
+        (narrow-to-region (- (point-max) 7) (point-max))
+        (let ((start (point-min)) (end (point-max)))
+          (should (equal (xcwen-jump--with-source
+                          file (lambda ()
+                                 (should (eq (current-buffer) buffer))
+                                 (should (= (point-min) 1))
+                                 (buffer-substring-no-properties (- (point-max) 15) (point-max))))
+                         "unsaved request"))
+          (should (= start (point-min)))
+          (should (= end (point-max)))
+          (should (buffer-modified-p)))))))
+
 (ert-deftest xcwen-jump-method-context-four-languages ()
   (xcwen-jump-test-workspace
     (dolist (pair '(("php" . "php") ("node" . "ts") ("rust" . "rs") ("go" . "go")))

@@ -56,3 +56,31 @@
     (let ((candidates (xcwen-jump--candidates (xcwen-jump--context) 'all)))
       (should (cl-find "/Users/jim/aigc-vue/src/views/mindshow_admin/user/task_list.vue"
                        candidates :key (lambda (c) (plist-get c :file)) :test #'equal)))))
+
+(ert-deftest xcwen-jump-local-user-exchange-list-without-temp-buffer-prompt ()
+  (xcwen-jump--load-config)
+  (clrhash xcwen-jump--source-cache)
+  (let ((before (buffer-list)) (noninteractive nil) (auto-mode-alist nil) prompts)
+    (unwind-protect
+        (cl-letf (((symbol-function 'yes-or-no-p)
+                   (lambda (&rest _) (push t prompts) t))
+                  ((symbol-function 'completing-read)
+                   (lambda (_prompt choices &rest _)
+                     (car (or (cl-find-if
+                               (lambda (choice)
+                                 (equal (plist-get (cdr choice) :file)
+                                        "/Users/jim/aigc-vue/src/views/mindshow_admin/user/exchange_list.vue"))
+                               choices)
+                              (ert-fail "Exchange list page missing from choices"))))))
+          (save-window-excursion
+            (find-file "/Users/jim/aigc-php-core/src/app/Controllers/MindshowAdmin/User.php")
+            (goto-char (point-min)) (forward-line 25)
+            (xcwen-jump-related nil)
+            (should (equal buffer-file-name
+                           "/Users/jim/aigc-vue/src/views/mindshow_admin/user/exchange_list.vue")))
+          (should-not prompts)
+          (should-not (cl-find-if
+                       (lambda (buffer) (string-prefix-p " *temp*" (buffer-name buffer)))
+                       (cl-set-difference (buffer-list) before))))
+      (dolist (buffer (cl-set-difference (buffer-list) before))
+        (kill-buffer buffer)))))
